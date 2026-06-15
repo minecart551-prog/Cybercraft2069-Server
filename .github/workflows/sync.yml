@@ -1,22 +1,23 @@
-name: Sync to Pterodactyl game servers
+name: Deploy via SFTP
 
 on:
   push:
-    branches:
-      - main  # Change to 'master' if your branch is named master
+    branches: [ main ]
 
 jobs:
-  sync:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      # Checks out your code so the action can see the files
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       
-      # Runs the sync action
-      - name: Sync to Pterodactyl game servers
-        uses: zodtf/ptero-sync@v1
+      - name: Sync Files via SFTP
+        uses: pressidium/lftp-mirror-action@v1
         with:
-          api_key: ${{ secrets.PTERODACTYL_API_KEY }}
-          ptero_url: ${{ secrets.PTERODACTYL_URL }}
-          send_path: 'world/customnpcs/scripts/ecmascript'          # CHANGE THIS: '.' for root, or './dist' for build folders
-          server_ids: 'dacbcbbc-1775-4dc6-9a6e-e570cab05a72'          # CHANGE THIS: Your actual Server ID (e.g., '5' or '5,6,7')   
+          host: ${{ secrets.SFTP_HOST }}
+          port: ${{ secrets.SFTP_PORT }}
+          user: ${{ secrets.SFTP_USERNAME }}
+          pass: ${{ secrets.SFTP_PASSWORD }}
+          # Uploads your specific folder to the matching path on the server
+          localDir: "./world/customnpcs/scripts/ecmascript"
+          remoteDir: "/world/customnpcs/scripts/ecmascript"
+          options: "--delete --exclude .git/"Copied!   
