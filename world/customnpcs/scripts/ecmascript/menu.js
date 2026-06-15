@@ -302,7 +302,7 @@ function openTeamPCTutorialGui(event) {
 
     var lines = [
         "§e§l1. §fRight-click the §elobby block §fat the police station or criminal den",
-        "§7  (opposite furniture store §a2498 42 903§f), or type §e!teampc §7in chat.",
+        "§7  (opposite furniture store §a2498 42 903§f), or type §e.teampc §7in chat.",
         "",
         "§e§l2. §fChoose a team. You earn §e100c/day §fto your contribution share.",
         "§7  Contribute more anytime to boost your payout share when you win.",
