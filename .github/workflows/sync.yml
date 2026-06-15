@@ -25,4 +25,4 @@ jobs:
           # Ensures only newer files are uploaded
           onlyNewer: true
 
-          options: "--exclude .git/"  
+          options: "--delete --exclude .git/" 
