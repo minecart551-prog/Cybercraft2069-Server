@@ -96,7 +96,7 @@ function timer(event) {
             if (g.bombAvailableAtLobby) {
                 phaseMsg = "§cGo to lobby block at 2498, 42, 903 to get the bomb!"
             } else if (checkBombRefresh()) {
-                phaseMsg = "§cReturn to lobby at /n2498, 42, 903 to get bomb!"
+                phaseMsg = "§cReturn to lobby at \n2498, 42, 903 to get bomb!"
             } else if (bombDeadline >= 0) {
                 phaseMsg = "§cPlant bomb! §e(refresh: " + bombDeadline + "s)"
             } else {
