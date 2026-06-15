@@ -94,9 +94,9 @@ function timer(event) {
         timerStr = ""
         if (p.team === TEAM_CRIMINAL) {
             if (g.bombAvailableAtLobby) {
-                phaseMsg = "§cGo to lobby block at 2498, 42, 903 to get the bomb!"
+                phaseMsg = "§cGet Bomb at 2498, 42, 903"
             } else if (checkBombRefresh()) {
-                phaseMsg = "§cReturn to lobby at \n2498, 42, 903 to get bomb!"
+                phaseMsg = "§cGet Bomb at 2498, 42, 903"
             } else if (bombDeadline >= 0) {
                 phaseMsg = "§cPlant bomb! §e(refresh: " + bombDeadline + "s)"
             } else {
