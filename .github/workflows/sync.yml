@@ -20,4 +20,4 @@ jobs:
           # Uploads your specific folder to the matching path on the server
           localDir: "./world/customnpcs/scripts/ecmascript"
           remoteDir: "/world/customnpcs/scripts/ecmascript"
-          options: "--delete --exclude .git/"
+          options: "--exclude .git/"   
