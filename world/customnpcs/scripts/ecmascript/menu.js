@@ -185,12 +185,12 @@ function chat(event) {
     var player = event.player; var message = event.message
     if (!message) return
 
-    if (message.indexOf("!menu") !== -1) {
+    if (message.indexOf(".menu") !== -1) {
         event.setCanceled(true)
         openMenuGui(event)
         return
     }
-    if (message.indexOf("!teampc") !== -1) {
+    if (message.indexOf(".teampc") !== -1) {
         event.setCanceled(true)
         openTeamPCGui(event)
         return
