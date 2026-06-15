@@ -8,7 +8,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # CRITICAL: fetch-depth: 0 is required to get git history for timestamp restoration
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Sync Files via SFTP
         uses: pressidium/lftp-mirror-action@v1
@@ -17,7 +20,9 @@ jobs:
           port: ${{ secrets.SFTP_PORT }}
           user: ${{ secrets.SFTP_USERNAME }}
           pass: ${{ secrets.SFTP_PASSWORD }}
-          # Uploads your specific folder to the matching path on the server
           localDir: "./world/customnpcs/scripts/ecmascript"
           remoteDir: "/world/customnpcs/scripts/ecmascript"
-          options: "--exclude .git/"   
+          # Ensures only newer files are uploaded
+          onlyNewer: true
+
+          options: "--exclude .git/"  
