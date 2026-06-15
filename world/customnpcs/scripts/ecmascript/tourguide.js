@@ -1,4 +1,4 @@
-// === Tour Guide NPC Script - Shared Group Tour === s
+// === Tour Guide NPC Script - Shared Group Tour === 
 
 var currentTourStep = 0;
 var isMoving = false;
