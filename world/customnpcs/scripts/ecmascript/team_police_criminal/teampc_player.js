@@ -4,7 +4,7 @@
 // Attach to all players. Handles HUD, chat command !teampc, bomb enforcement,
 // and game round management.
 // Requires bombteam_config.js loaded FIRST.
-// ============================================================================
+
 
 var playerTimerId = 69421
 var dailyContribTimerId = 69422
