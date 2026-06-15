@@ -51,66 +51,48 @@ function died(event) {
     var npc = event.npc;
     var npcData = npc.getStoreddata();
     
-    // Check if this bounty belongs to a contract
     if (!npcData.has("owner")) {
-        return; // Not a contract bounty
+        return;
     }
     
     var ownerName = npcData.get("owner");
     var wdata = npc.getWorld().getStoreddata();
-    
     var contracts = getContracts(wdata);
     
-    // Get the killer
     var killer = event.source;
     var killerName = null;
     if (killer && killer.getName) {
         killerName = killer.getName();
     }
     
-    // Check if killer is the contract owner
     var isOwnerKill = (killerName === ownerName);
     
-    // Decrease remaining count only if owner killed it OR if killed by non-player (environment, etc.)
     if (contracts[ownerName]) {
         var contractData = contracts[ownerName];
         
-        // Only decrease if:
-        // 1. The owner killed it (isOwnerKill = true), OR
-        // 2. No player killed it (killerName = null, meaning environment/other)
-        if (isOwnerKill || killerName === null) {
-            // Safety check: only decrease if remaining is greater than 0
-            if (contractData.remaining > 0) {
-                contractData.remaining = contractData.remaining - 1;
-            } else {
-                contractData.remaining = 0;
-            }
-            
-            saveContracts(wdata, contracts);
-            
-            // Notify owner if online
-            var players = npc.getWorld().getAllPlayers();
-            for (var i = 0; i < players.length; i++) {
-                if (players[i].getName() === ownerName) {
-                    var owner = players[i];
-                    
-                    if (contractData.remaining <= 0) {
-                        owner.message("§aContract complete! Return for a new one.");
-                    } else {
-                        owner.message("§a" + contractData.remaining + " targets remaining.");
-                    }
-                    break;
-                }
-            }
+        // Always decrease remaining, regardless of who killed it
+        if (contractData.remaining > 0) {
+            contractData.remaining = contractData.remaining - 1;
         } else {
-            // Someone else killed the bounty - notify owner if online
-            var players = npc.getWorld().getAllPlayers();
-            for (var i = 0; i < players.length; i++) {
-                if (players[i].getName() === ownerName) {
-                    var owner = players[i];
-                    owner.message("§c⚠ Someone else killed one of your targets!");
-                    break;
+            contractData.remaining = 0;
+        }
+        
+        saveContracts(wdata, contracts);
+        
+        var players = npc.getWorld().getAllPlayers();
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].getName() === ownerName) {
+                var owner = players[i];
+                
+                if (!isOwnerKill) {
+                    // Notify it was stolen, but still counts down
+                    owner.message("§c⚠ Someone else killed one of your targets! (" + contractData.remaining + " remaining)");
+                } else if (contractData.remaining <= 0) {
+                    owner.message("§aContract complete! Return for a new one.");
+                } else {
+                    owner.message("§a" + contractData.remaining + " targets remaining.");
                 }
+                break;
             }
         }
     }
