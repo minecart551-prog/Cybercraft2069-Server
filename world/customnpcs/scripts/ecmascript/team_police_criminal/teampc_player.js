@@ -91,7 +91,7 @@ function timer(event) {
     var timerStr = ""
     var phaseMsg = ""
     if (g.phase === PHASE_ACTIVE) {
-        timerStr = "§aRound Active"
+        timerStr = ""
         if (p.team === TEAM_CRIMINAL) {
             if (g.bombAvailableAtLobby) {
                 phaseMsg = "§cGo to lobby block at 2498, 42, 903 to get the bomb!"
@@ -102,7 +102,7 @@ function timer(event) {
             } else {
                 phaseMsg = "§cPlant the bomb!"
             }
-        } else if (p.team === TEAM_POLICE) phaseMsg = "§bProtect bomb sites!"
+        } else if (p.team === TEAM_POLICE) phaseMsg = ""
         else phaseMsg = "§7Game in progress"
     } else if (g.phase === PHASE_BOMB_PLANTED) {
         var e = (SYS.currentTimeMillis() - g.bombPlantTime) / 1000
