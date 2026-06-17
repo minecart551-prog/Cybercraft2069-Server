@@ -3818,6 +3818,7 @@ var CONFIG_SHOP_ITEMS = [
     // Tab 7 - Decor & Misc
 [
 // ── Yuushya Misc ──
+{ id: "armourers_workshop:mannequin", count: 1, price: 100, nbt: {}, lore: [] },
 { id: "immersive_paintings:painting", count: 1, price: 100, nbt: {}, lore: [] },
 { id: "immersive_paintings:glow_painting", count: 1, price: 150, nbt: {}, lore: [] },
 { id: "yuushya:decoration_bookshelf", count: 1, price: 30, nbt: {}, lore: [] },
