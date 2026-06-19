@@ -12,7 +12,7 @@
 
 // ----------------- CONFIGURATION -----------------
 
-var MAX_CLONES        = 3;
+var MAX_CLONES        = 5;
 var OWNED_SEARCH_RANGE    = 50;    // XZ range to count a player's existing clones
 var OWNED_Y_TOLERANCE     = 3;      // Max Y difference to count a clone as "nearby"
 var SPAWN_MIN_RADIUS      = 0;
