@@ -57,7 +57,7 @@ var pendingSpawnerPos   = null;
 
 function init(e) {
     var npc = e.npc;
-    npc.getDisplay().setName("§eClone Dealer");
+    npc.getDisplay().setName("§eMercinary Spawner");
     npc.getAi().setRetaliateType(0);
 }
 
