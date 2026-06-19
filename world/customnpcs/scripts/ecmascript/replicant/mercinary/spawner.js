@@ -5,7 +5,7 @@
 // ----------------- CONFIGURATION -----------------
 
 var MAX_CLONES            = 5;
-var OWNED_SEARCH_RANGE    = 50;
+var OWNED_SEARCH_RANGE    = 200;
 var OWNED_Y_TOLERANCE     = 3;
 var SPAWN_MIN_RADIUS      = 0;
 var SPAWN_MAX_RADIUS      = 0;
