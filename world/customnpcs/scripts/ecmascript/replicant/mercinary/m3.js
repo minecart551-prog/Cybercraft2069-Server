@@ -13,17 +13,7 @@ var SCAN_RANGE = 25;
 var safeListCache = {}; // npcUUID -> array of names
 
 function init(e) {
-    var npc      = e.npc;
-    var tempData = npc.world.getTempdata();
-    var pendingKey = "clonespawner_pending_safelist";
-
-    // Pick up the safe list the spawner left for us, save it to our own
-    // persistent stored data, then clear the handoff slot.
-    if (tempData.has(pendingKey)) {
-        npc.getStoreddata().putString("safelist", tempData.get(pendingKey));
-        tempData.remove(pendingKey);
-    }
-
+    var npc = e.npc;
     npc.getAi().setRetaliateType(0);
 }
 
