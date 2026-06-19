@@ -39,7 +39,7 @@ function getSafeList(npc) {
     try {
         var stored = npc.getStoreddata();
         if (stored.hasKey("safelist")) {
-            return JSON.parse(stored.getString("safelist"));
+            return JSON.parse(stored.get("safelist"));
         }
     } catch (err) {}
     return [];
