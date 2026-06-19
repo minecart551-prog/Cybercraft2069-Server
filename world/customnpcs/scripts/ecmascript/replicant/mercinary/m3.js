@@ -7,15 +7,12 @@
 // for players, ignores anyone on that list, and attacks everyone else.
 // ===============================================================
 
-var FOV           = 100;
-var SCAN_RANGE    = 25;
-var GIVE_UP_RANGE = 40;
-var MELEE_RANGE   = 2.5;
+var FOV        = 100;
+var SCAN_RANGE = 25;
 
 var SAFE_LIST_PREFIX = "clonespawner_safelist_";
 
-var safeListCache  = {}; // npcUUID -> array of names
-var chasingTargets = {}; // npcUUID -> player entity (keyed per-NPC so multiple clones don't share state)
+var safeListCache = {}; // npcUUID -> array of names
 
 function init(e) {
     var npc = e.npc;
@@ -24,58 +21,21 @@ function init(e) {
 }
 
 function tick(e) {
-    var npc   = e.npc;
-    var npcId = npc.getUUID();
+    var npc      = e.npc;
+    var npcId    = npc.getUUID();
     var safeList = getSafeList(npc, npcId);
 
-    var target = chasingTargets[npcId];
-
-    if (!target) {
-        var nearby = npc.world.getNearbyEntities(npc.getPos(), SCAN_RANGE, 1); // 1 = players
-        for (var i = 0; i < nearby.length; i++) {
-            var player = nearby[i];
-            if (isSafe(player, safeList)) continue;
-            if (CheckFOV(npc, player, FOV) && npc.canSeeEntity(player)) {
-                chasingTargets[npcId] = player;
-                target = player;
-                break;
-            }
-        }
-    }
-
-    if (target) {
-        if (!target.isAlive() || isSafe(target, safeList)) {
-            delete chasingTargets[npcId];
-            return;
-        }
-
-        var pos = target.getPos();
-        npc.navigateTo(pos.getX(), pos.getY(), pos.getZ(), 10);
-
-        var dist = npc.getPos().distanceTo(pos);
-        if (dist > GIVE_UP_RANGE) {
-            delete chasingTargets[npcId];
-            return;
-        }
-        if (dist < MELEE_RANGE) {
-            npc.setAttackTarget(target);
+    var nearby = npc.world.getNearbyEntities(npc.getPos(), SCAN_RANGE, 1); // 1 = players
+    for (var i = 0; i < nearby.length; i++) {
+        var player = nearby[i];
+        if (isSafe(player, safeList)) continue;
+        if (CheckFOV(npc, player, FOV) && npc.canSeeEntity(player)) {
+            npc.setAttackTarget(player);
+            break;
         }
     }
 }
 
-// Optional cleanup: removes the stored safe list once this clone dies,
-// if your CustomNPCs version exposes a death/onKilled callback under
-// this name. If it doesn't match your API, just delete this function -
-// it's a nice-to-have, not required for the rest of the script to work.
-function onDeath(e) {
-    try {
-        var npc = e.npc;
-        var npcId = npc.getUUID();
-        npc.world.getTempdata().remove(SAFE_LIST_PREFIX + npcId);
-        delete safeListCache[npcId];
-        delete chasingTargets[npcId];
-    } catch (err) {}
-}
 
 // ----------------- HELPERS -----------------
 
