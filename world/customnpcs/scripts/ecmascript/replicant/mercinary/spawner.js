@@ -78,7 +78,7 @@ function openSpawnerGui(e) {
     var player = e.player;
     var api    = e.API;
     var npc    = e.npc;
-    var world  = npc.world;
+    var world  = npc.getWorld();
 
     var owned  = countOwnedClones(player, world);
     var rows   = Math.ceil(CLONE_TYPES.length / COLS);
@@ -112,7 +112,7 @@ function customGuiButton(e) {
 
     var player = e.player;
     var npc    = e.npc;
-    var world  = npc.world;
+    var world  = npc.getWorld();
     var bid    = e.buttonId;
 
     if (bid < BTN_CLONE_BASE || bid >= BTN_CLONE_BASE + CLONE_TYPES.length) return;
