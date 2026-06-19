@@ -33,18 +33,6 @@ function tick(e) {
     }
 }
 
-// Optional cleanup: removes the stored safe list once this clone dies,
-// if your CustomNPCs version exposes a death/onKilled callback under
-// this name. If it doesn't match your API, just delete this function -
-// it's a nice-to-have, not required for the rest of the script to work.
-function onDeath(e) {
-    try {
-        var npc   = e.npc;
-        var npcId = npc.getUUID();
-        npc.getStoreddata().removeKey("safelist");
-        delete safeListCache[npcId];
-    } catch (err) {}
-}
 
 // ----------------- HELPERS -----------------
 
