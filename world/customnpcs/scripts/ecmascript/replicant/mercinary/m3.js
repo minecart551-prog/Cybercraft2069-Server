@@ -12,6 +12,7 @@ var SCAN_RANGE = 25;
 function init(e) {
     var npc = e.npc;
     npc.getAi().setRetaliateType(0);
+    npc.getStats().setRespawnType(3);
 }
 
 function tick(e) {
