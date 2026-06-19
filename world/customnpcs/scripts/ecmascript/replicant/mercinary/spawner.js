@@ -9,6 +9,11 @@ var OWNED_SEARCH_RANGE    = 100;
 var OWNED_Y_TOLERANCE     = 3;
 var SPAWN_MIN_RADIUS      = 0;
 var SPAWN_MAX_RADIUS      = 0;
+var COIN_DENOMINATIONS = [
+    { id: "coins:emerald_coin", value: 10000 },
+    { id: "coins:coal_coin",    value: 100   },
+    { id: "coins:stone_coin",   value: 1     }
+];
 
 var CLONE_TYPES = [
     { tab: 5, name: "M3", displayName: "§bM3", price: 50 }
@@ -43,11 +48,9 @@ var pendingSy           = 0;
 var pendingSz           = 0;
 var pendingTemplateName = "";
 
-// FIX (bug 2): store the spawner's own position when the GUI opens so
-// findNearbyClones can use it even after pendingNpc is cleared.
-var pendingSpawnerX     = 0;
-var pendingSpawnerY     = 0;
-var pendingSpawnerZ     = 0;
+// FIX (bug 2): store the spawner pos object in interact() so findNearbyClones
+// can use it even after pendingNpc is cleared — world.createPos does not exist.
+var pendingSpawnerPos   = null;
 
 // ----------------- ENTRY POINTS -----------------
 
@@ -63,12 +66,9 @@ function interact(e) {
     pendingNpc   = e.npc;
     pendingWorld = e.npc.getWorld();
 
-    // FIX (bug 2): snapshot the spawner position here so findNearbyClones
-    // always has valid coordinates regardless of pendingNpc state.
-    var pos          = e.npc.getPos();
-    pendingSpawnerX  = pos.getX();
-    pendingSpawnerY  = pos.getY();
-    pendingSpawnerZ  = pos.getZ();
+    // FIX (bug 2): snapshot the pos object here so findNearbyClones can use
+    // it even after pendingNpc is cleared.
+    pendingSpawnerPos = e.npc.getPos();
 
     openSpawnerGui(e);
 }
@@ -159,9 +159,9 @@ function customGuiButton(e) {
     // ---- Spawn the clone near the dealer NPC ----
     var angle = Math.random() * Math.PI * 2;
     var dist  = SPAWN_MIN_RADIUS + Math.random() * (SPAWN_MAX_RADIUS - SPAWN_MIN_RADIUS);
-    var sx    = Math.floor(pendingSpawnerX + Math.cos(angle) * dist);
-    var sz    = Math.floor(pendingSpawnerZ + Math.sin(angle) * dist);
-    var sy    = pendingSpawnerY;
+    var sx    = Math.floor(pendingSpawnerPos.getX() + Math.cos(angle) * dist);
+    var sz    = Math.floor(pendingSpawnerPos.getZ() + Math.sin(angle) * dist);
+    var sy    = pendingSpawnerPos.getY();
 
     try {
         pendingWorld.spawnClone(sx, sy, sz, cloneType.tab, cloneType.name);
@@ -205,9 +205,7 @@ function customGuiClosed(e) {
     pendingSy           = 0;
     pendingSz           = 0;
     pendingTemplateName = "";
-    pendingSpawnerX     = 0;
-    pendingSpawnerY     = 0;
-    pendingSpawnerZ     = 0;
+    pendingSpawnerPos   = null;
 }
 
 // ----------------- HELPERS -----------------
@@ -238,12 +236,10 @@ function countOwnedClones(player, world) {
     return count;
 }
 
-// FIX (bug 2): search from the snapshotted spawner position (pendingSpawnerX/Y/Z)
-// instead of calling pendingNpc.getPos(), which would crash if pendingNpc was
-// already cleared or is undefined at call time.
+// FIX (bug 2): search from pendingSpawnerPos captured in interact() —
+// world.createPos does not exist in CustomNPCs; we reuse the real pos object.
 function findNearbyClones(world, sx, sy, templateName) {
-    var searchPos = world.createPos(pendingSpawnerX, pendingSpawnerY, pendingSpawnerZ);
-    var nearby    = world.getNearbyEntities(searchPos, SPAWN_MAX_RADIUS + 5, 2);
+    var nearby    = world.getNearbyEntities(pendingSpawnerPos, SPAWN_MAX_RADIUS + 5, 2);
     var matches   = [];
 
     for (var i = 0; i < nearby.length; i++) {
