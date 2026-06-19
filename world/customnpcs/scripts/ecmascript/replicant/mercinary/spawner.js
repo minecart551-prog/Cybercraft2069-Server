@@ -217,7 +217,8 @@ function countOwnedClones(player, world) {
 }
 
 function findNearbyClones(world, sx, sy, sz, templateName) {
-    var nearby  = world.getNearbyEntitiesAt(sx, sy, sz, SPAWN_MAX_RADIUS + 2, 2);
+    var pos     = pendingNpc.getPos(); 
+    var nearby  = world.getNearbyEntities(pos, SPAWN_MAX_RADIUS + 5, 2);
     var matches = [];
     for (var i = 0; i < nearby.length; i++) {
         var npc = nearby[i];
