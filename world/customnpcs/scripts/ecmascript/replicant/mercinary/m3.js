@@ -47,11 +47,6 @@ function tick(e) {
         }
     }
 
-    // DEBUG: show safelist in the NPC's title so you can see what it reads
-    try {
-        if (safeList === null) safeList = getSafeList(npc);
-        npc.getDisplay().setTitle("§7Safe: " + (safeList.length > 0 ? safeList.join(", ") : "§cEMPTY"));
-    } catch (err) {}
 }
 
 // ----------------- HELPERS -----------------

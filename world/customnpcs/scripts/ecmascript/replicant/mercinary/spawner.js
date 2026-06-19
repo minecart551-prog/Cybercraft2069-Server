@@ -105,7 +105,7 @@ function openSpawnerGui(e) {
     }
 
     var footerY = LIST_Y + rows * ROW_H + 10;
-    gui.addLabel(LBL_EXCLUDE, "§7Names to exclude (comma separated):", 15, footerY, width - 30, 10);
+    gui.addLabel(LBL_EXCLUDE, "§eNames to exclude (comma separated, at least 1 required):", 15, footerY, width - 30, 10);
     gui.addTextField(TF_EXCLUDE_NAMES, 15, footerY + 12, width - 30, 14).setText(savedExcludeText);
 
     player.showCustomGui(gui);
@@ -165,8 +165,12 @@ function customGuiButton(e) {
         }
     } catch (err) {}
 
-    // Owner is always safe
-    excludeNames.push(player.getName());
+    // Require at least one name in the safelist — without it the clone has no
+    // safe list and would attack everyone, including the player who spawned it.
+    if (excludeNames.length === 0) {
+        player.message("§cYou must specify at least one name to exclude (your own name)!");
+        return;
+    }
 
     // Store the safelist on the spawner NPC's own stored data BEFORE spawning.
     // The clone reads from the spawner directly (not itself), avoiding timing
