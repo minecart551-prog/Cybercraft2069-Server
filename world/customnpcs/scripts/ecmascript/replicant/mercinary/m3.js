@@ -16,7 +16,7 @@ function init(e) {
     npc.getStats().setRespawnType(3);
     npc.getStats().setMaxHealth(200);
     npc.getStats().getRanged().setStrength(12);
-    npc.getInventory().setDropItem(0, reward, 1);
+    npc.getInventory().setDropItem(1, reward, 100);
     npc.getInventory().setExp(16,16);
 }
 
