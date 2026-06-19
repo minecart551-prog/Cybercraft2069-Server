@@ -49,8 +49,7 @@ var LIST_Y = 70;
 
 function init(e) {
     var npc = e.npc;
-    npc.getDisplay().setName("§eClone Dealer");
-    npc.getAi().setRetaliateType(0);
+    npc.getDisplay().setName("§eSpawner");
 }
 
 function interact(e) {
