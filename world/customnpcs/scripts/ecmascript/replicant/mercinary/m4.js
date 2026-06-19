@@ -20,6 +20,7 @@ function init(e) {
     npc.getStats().setRespawnType(3);
     npc.getStats().getRanged().setStrength(20);
     npc.getStats().getRanged().setAccuracy(70);
+    npc.getAi().setWanderingRange(50);
   //  npc.getStats().getRanged().setSpeed(10);
     npc.getInventory().setDropItem(1, item, 100);
          npc.getInventory().setExp(30,30);
