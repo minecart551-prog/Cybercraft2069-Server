@@ -128,23 +128,7 @@ function customGuiButton(e) {
     var index     = bid - BTN_CLONE_BASE;
     var cloneType = CLONE_TYPES[index];
 
-    // ---- Cap check ----
-    // FIX (bug 1): countOwnedClones now searches by template name from CLONE_TYPES
-    // instead of a player-name prefix, so it correctly counts all active clones
-    // regardless of what the spawned NPC is named.
-    var owned = countOwnedClones(player, pendingWorld);
-    if (owned >= MAX_CLONES) {
-        player.message("§cThe maximum number of clones (" + MAX_CLONES + ") are already active!");
-        return;
-    }
-
-    // ---- Payment check ----
-    if (!removeCoins(player, cloneType.price)) {
-        player.message("§cYou need " + fmt(cloneType.price) + " to hire a " + cloneType.displayName + "§c!");
-        return;
-    }
-
-    // ---- Read exclusion list from the text field ----
+    // ---- Read exclusion list from the text field (MUST come before payment) ----
     var excludeNames = [];
     try {
         var tf = e.gui.getComponent(TF_EXCLUDE_NAMES);
@@ -169,6 +153,22 @@ function customGuiButton(e) {
     // safe list and would attack everyone, including the player who spawned it.
     if (excludeNames.length === 0) {
         player.message("§cYou must specify at least one name to exclude (your own name)!");
+        return;
+    }
+
+    // ---- Cap check ----
+    // FIX (bug 1): countOwnedClones now searches by template name from CLONE_TYPES
+    // instead of a player-name prefix, so it correctly counts all active clones
+    // regardless of what the spawned NPC is named.
+    var owned = countOwnedClones(player, pendingWorld);
+    if (owned >= MAX_CLONES) {
+        player.message("§cThe maximum number of clones (" + MAX_CLONES + ") are already active!");
+        return;
+    }
+
+    // ---- Payment check ----
+    if (!removeCoins(player, cloneType.price)) {
+        player.message("§cYou need " + fmt(cloneType.price) + " to hire a " + cloneType.displayName + "§c!");
         return;
     }
 

@@ -27,8 +27,8 @@ function tick(e) {
         var player = nearby[i];
         if (!CheckFOV(npc, player, FOV) || !npc.canSeeEntity(player)) continue;
         if (safeList === null) safeList = getSafeList(npc);
-        if (safeList.length === 0) break; // no safelist yet, don't attack anyone
-        if (isSafe(player, safeList)) continue;
+        // Empty safelist = attack everyone (no one is safe)
+        if (safeList.length > 0 && isSafe(player, safeList)) continue;
         npc.setAttackTarget(player);
         break;
     }
