@@ -16,7 +16,8 @@ var COIN_DENOMINATIONS = [
 ];
 
 var CLONE_TYPES = [
-    { tab: 5, name: "M3", displayName: "§bM3", price: 50 }
+    { tab: 5, name: "M3", displayName: "§bM3", price: 230 },
+    { tab: 5, name: "M4", displayName: "§dM4", price: 1400 }
 ];
 
 // ----------------- GUI LAYOUT -----------------
