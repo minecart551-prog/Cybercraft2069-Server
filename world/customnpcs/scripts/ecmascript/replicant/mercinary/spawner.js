@@ -157,6 +157,11 @@ function customGuiButton(e) {
                     if (nm !== "") excludeNames.push(nm);
                 }
             }
+            // Persist the text field value immediately so it survives GUI close/reopen
+            savedExcludeText = tf.getText();
+            if (pendingNpc) {
+                pendingNpc.getStoreddata().putString("excludeText", savedExcludeText);
+            }
         }
     } catch (err) {}
 
@@ -204,16 +209,19 @@ function customGuiClosed(e) {
         clones[i].getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames));
     }
 
-    // Save the exclude text to both the script var and NPC stored data
+    // Save the exclude text to NPC stored data.
+    // Try reading from the text field first; if the GUI is already being torn
+    // down and getComponent returns null, fall back to savedExcludeText which
+    // was already persisted in customGuiButton (if a button was clicked).
     try {
         var tf = e.gui.getComponent(TF_EXCLUDE_NAMES);
         if (tf) {
             savedExcludeText = tf.getText();
-            if (pendingNpc) {
-                pendingNpc.getStoreddata().putString("excludeText", savedExcludeText);
-            }
         }
     } catch (err) {}
+    if (pendingNpc) {
+        pendingNpc.getStoreddata().putString("excludeText", savedExcludeText);
+    }
 
     // Clear all pending state
     pendingNpc          = null;
