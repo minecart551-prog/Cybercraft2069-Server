@@ -10,13 +10,20 @@
 var FOV        = 100;
 var SCAN_RANGE = 25;
 
-var SAFE_LIST_PREFIX = "clonespawner_safelist_";
-
 var safeListCache = {}; // npcUUID -> array of names
 
 function init(e) {
-    var npc = e.npc;
-    npc.getAi().setAvoidsWater(true);
+    var npc      = e.npc;
+    var tempData = npc.world.getTempdata();
+    var pendingKey = "clonespawner_pending_safelist";
+
+    // Pick up the safe list the spawner left for us, save it to our own
+    // persistent stored data, then clear the handoff slot.
+    if (tempData.has(pendingKey)) {
+        npc.getStoreddata().putString("safelist", tempData.get(pendingKey));
+        tempData.remove(pendingKey);
+    }
+
     npc.getAi().setRetaliateType(0);
 }
 
@@ -36,6 +43,18 @@ function tick(e) {
     }
 }
 
+// Optional cleanup: removes the stored safe list once this clone dies,
+// if your CustomNPCs version exposes a death/onKilled callback under
+// this name. If it doesn't match your API, just delete this function -
+// it's a nice-to-have, not required for the rest of the script to work.
+function onDeath(e) {
+    try {
+        var npc   = e.npc;
+        var npcId = npc.getUUID();
+        npc.getStoreddata().removeKey("safelist");
+        delete safeListCache[npcId];
+    } catch (err) {}
+}
 
 // ----------------- HELPERS -----------------
 
@@ -44,10 +63,9 @@ function getSafeList(npc, npcId) {
 
     var list = [];
     try {
-        var tempData = npc.world.getTempdata();
-        var key = SAFE_LIST_PREFIX + npcId;
-        if (tempData.has(key)) {
-            list = JSON.parse(tempData.get(key));
+        var stored = npc.getStoreddata();
+        if (stored.hasKey("safelist")) {
+            list = JSON.parse(stored.getString("safelist"));
         }
     } catch (err) {}
 
