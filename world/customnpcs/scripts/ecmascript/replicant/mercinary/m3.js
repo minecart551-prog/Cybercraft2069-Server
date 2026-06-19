@@ -6,11 +6,8 @@
 // the spawner stored for this specific NPC, scans its field of view
 // for players, ignores anyone on that list, and attacks everyone else.
 // ===============================================================
-
 var FOV        = 100;
 var SCAN_RANGE = 25;
-
-var safeListCache = {}; // npcUUID -> array of names
 
 function init(e) {
     var npc = e.npc;
@@ -18,43 +15,40 @@ function init(e) {
 }
 
 function tick(e) {
-    var npc      = e.npc;
-    var npcId    = npc.getUUID();
-    var safeList = getSafeList(npc, npcId);
-
+    var npc    = e.npc;
     var nearby = npc.world.getNearbyEntities(npc.getPos(), SCAN_RANGE, 1); // 1 = players
+    // safeList is read lazily — only once a player passes the FOV+LOS check,
+    // so we avoid the stored data read on ticks where nobody is in view.
+    var safeList = null;
     for (var i = 0; i < nearby.length; i++) {
         var player = nearby[i];
+        if (!CheckFOV(npc, player, FOV) || !npc.canSeeEntity(player)) continue;
+        if (safeList === null) safeList = getSafeList(npc);
         if (isSafe(player, safeList)) continue;
-        if (CheckFOV(npc, player, FOV) && npc.canSeeEntity(player)) {
-            npc.setAttackTarget(player);
-            break;
-        }
+        npc.setAttackTarget(player);
+        break;
     }
 }
 
-
 // ----------------- HELPERS -----------------
 
-function getSafeList(npc, npcId) {
-    if (safeListCache[npcId]) return safeListCache[npcId];
-
-    var list = [];
+// Read directly from stored data every tick — no cache.
+// Caching caused the clone to lock onto an empty safelist from before
+// the spawner had a chance to write the player's name into stored data.
+function getSafeList(npc) {
     try {
         var stored = npc.getStoreddata();
         if (stored.hasKey("safelist")) {
-            list = JSON.parse(stored.getString("safelist"));
+            return JSON.parse(stored.getString("safelist"));
         }
     } catch (err) {}
-
-    safeListCache[npcId] = list;
-    return list;
+    return [];
 }
 
 function isSafe(player, safeList) {
-    var name = player.getName();
+    var name = player.getName().toLowerCase();
     for (var i = 0; i < safeList.length; i++) {
-        if (safeList[i].toLowerCase() === name.toLowerCase()) return true;
+        if (safeList[i].toLowerCase() === name) return true;
     }
     return false;
 }
