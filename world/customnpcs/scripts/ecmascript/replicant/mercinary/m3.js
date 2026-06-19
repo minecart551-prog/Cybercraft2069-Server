@@ -17,7 +17,7 @@ var safeListCache = {}; // npcUUID -> array of names
 function init(e) {
     var npc = e.npc;
     npc.getAi().setAvoidsWater(true);
-    npc.getAi().setRetaliateType(1);
+    npc.getAi().setRetaliateType(0);
 }
 
 function tick(e) {
