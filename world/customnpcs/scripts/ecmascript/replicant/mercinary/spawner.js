@@ -163,7 +163,7 @@ function customGuiButton(e) {
     // Write safelist to newly spawned clones
     var clones = findNearbyClones(pendingWorld, sx, sy, sz, cloneType.name);
     for (var c = 0; c < clones.length; c++) {
-        clones[c].getStoreddata().putString("safelist", JSON.stringify(excludeNames));
+        clones[c].getStoreddata().put("safelist", JSON.stringify(excludeNames));
     }
 
     // Store remaining pending state for customGuiClosed
@@ -183,7 +183,7 @@ function customGuiClosed(e) {
     // Re-scan to catch any clones that loaded after the button click
     var clones = findNearbyClones(pendingWorld, pendingSx, pendingSy, pendingSz, pendingTemplateName);
     for (var i = 0; i < clones.length; i++) {
-        clones[i].getStoreddata().putString("safelist", JSON.stringify(pendingExcludeNames));
+        clones[i].getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames));
     }
 
     // Clear all pending state
