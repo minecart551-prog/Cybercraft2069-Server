@@ -11,6 +11,7 @@ var SCAN_RANGE = 25;
 
 function init(e) {
     var npc = e.npc;
+    world = npc.getWorld();
     var reward = world.createItem("minecraft:silence_armor_trim_smithing_template", 1);
     npc.getAi().setRetaliateType(0);
     npc.getStats().setRespawnType(3);
