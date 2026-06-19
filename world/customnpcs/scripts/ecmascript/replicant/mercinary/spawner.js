@@ -47,6 +47,7 @@ var pendingSx           = 0;
 var pendingSy           = 0;
 var pendingSz           = 0;
 var pendingTemplateName = "";
+var savedExcludeText    = "";   // persists the exclude field across GUI opens
 
 // FIX (bug 2): store the spawner pos object in interact() so findNearbyClones
 // can use it even after pendingNpc is cleared — world.createPos does not exist.
@@ -69,6 +70,12 @@ function interact(e) {
     // FIX (bug 2): snapshot the pos object here so findNearbyClones can use
     // it even after pendingNpc is cleared.
     pendingSpawnerPos = e.npc.getPos();
+
+    // Load persisted exclude text from NPC stored data
+    try {
+        var stored = e.npc.getStoreddata().getString("excludeText");
+        if (stored) { savedExcludeText = stored; }
+    } catch (err) {}
 
     openSpawnerGui(e);
 }
@@ -99,7 +106,7 @@ function openSpawnerGui(e) {
 
     var footerY = LIST_Y + rows * ROW_H + 10;
     gui.addLabel(LBL_EXCLUDE, "§7Names to exclude (comma separated):", 15, footerY, width - 30, 10);
-    gui.addTextField(TF_EXCLUDE_NAMES, 15, footerY + 12, width - 30, 14).setText("");
+    gui.addTextField(TF_EXCLUDE_NAMES, 15, footerY + 12, width - 30, 14).setText(savedExcludeText);
 
     player.showCustomGui(gui);
 }
@@ -196,6 +203,17 @@ function customGuiClosed(e) {
     for (var i = 0; i < clones.length; i++) {
         clones[i].getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames));
     }
+
+    // Save the exclude text to both the script var and NPC stored data
+    try {
+        var tf = e.gui.getComponent(TF_EXCLUDE_NAMES);
+        if (tf) {
+            savedExcludeText = tf.getText();
+            if (pendingNpc) {
+                pendingNpc.getStoreddata().putString("excludeText", savedExcludeText);
+            }
+        }
+    } catch (err) {}
 
     // Clear all pending state
     pendingNpc          = null;
