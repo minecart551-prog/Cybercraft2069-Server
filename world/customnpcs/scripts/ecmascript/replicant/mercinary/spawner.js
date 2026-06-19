@@ -23,9 +23,8 @@ var CURRENCY_ITEM         = "coins:stone_coin"; // Item used to pay for clones
 // changes needed). "name" must match the saved NPC clone's name/tab
 // exactly, the same way it's used with world.spawnClone elsewhere.
 var CLONE_TYPES = [
-    { tab: 1, name: "Bodyguard",  displayName: "§bBodyguard",   price: 50  },
-    { tab: 1, name: "Mercenary",  displayName: "§cMercenary",   price: 120 },
-    { tab: 2, name: "EliteGuard", displayName: "§6Elite Guard", price: 300 }
+    { tab: 1, name: "M3",  displayName: "§bM3",   price: 50  },
+
 ];
 
 var SAFE_LIST_PREFIX = "clonespawner_safelist_";
