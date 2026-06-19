@@ -160,7 +160,7 @@ function customGuiButton(e) {
             // Persist the text field value immediately so it survives GUI close/reopen
             savedExcludeText = tf.getText();
             if (pendingNpc) {
-                pendingNpc.getStoreddata().putString("excludeText", savedExcludeText);
+                pendingNpc.getStoreddata().put("excludeText", savedExcludeText);
             }
         }
     } catch (err) {}
@@ -220,7 +220,7 @@ function customGuiClosed(e) {
         }
     } catch (err) {}
     if (pendingNpc) {
-        pendingNpc.getStoreddata().putString("excludeText", savedExcludeText);
+        pendingNpc.getStoreddata().put("excludeText", savedExcludeText);
     }
 
     // Clear all pending state
