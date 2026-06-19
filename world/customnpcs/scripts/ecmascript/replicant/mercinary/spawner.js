@@ -221,26 +221,41 @@ function customGuiClosed(e) {
     if (e.gui.getID() !== GUI_SPAWNER) return;
     if (!pendingWorld) return;
 
-    // Re-scan to catch any clones that loaded after the button click
-    var clones = findNearbyClones(pendingWorld, pendingSx, pendingSy, pendingTemplateName);
-    for (var i = 0; i < clones.length; i++) {
-        clones[i].getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames));
-    }
-    // Refresh the safelist on the spawner NPC in case it changed since GUI opened
-    if (pendingNpc && pendingExcludeNames.length > 0) {
-        pendingNpc.getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames));
-    }
-
-    // Save the exclude text to NPC stored data.
-    // Try reading from the text field first; if the GUI is already being torn
-    // down and getComponent returns null, fall back to savedExcludeText which
-    // was already persisted in customGuiButton (if a button was clicked).
+    // Read the current text field value and build the exclude list
+    var excludeNames = [];
     try {
         var tf = e.gui.getComponent(TF_EXCLUDE_NAMES);
         if (tf) {
-            savedExcludeText = tf.getText();
+            var raw = tf.getText();
+            savedExcludeText = raw;
+            if (raw && raw.trim() !== "") {
+                var parts = raw.split(",");
+                for (var p = 0; p < parts.length; p++) {
+                    var nm = parts[p].trim();
+                    if (nm !== "") excludeNames.push(nm);
+                }
+            }
         }
     } catch (err) {}
+
+    // If we have names from the text field, broadcast to ALL clones
+    if (excludeNames.length > 0) {
+        // The player might not be available here, so find a player near the spawner
+        // to use for the broadcast function. Fall back to the player from pending state.
+        if (pendingNpc) {
+            pendingNpc.getStoreddata().put("safelist", JSON.stringify(excludeNames));
+        }
+        // Broadcast to all clones within range of the spawner
+        updateAllCloneSafelists(pendingWorld, null, excludeNames);
+    }
+
+    // Re-scan to catch any clones that loaded after the button click
+    var clones = findNearbyClones(pendingWorld, pendingSx, pendingSy, pendingTemplateName);
+    for (var i = 0; i < clones.length; i++) {
+        clones[i].getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames.length > 0 ? pendingExcludeNames : excludeNames));
+    }
+
+    // Save the exclude text to NPC stored data
     if (pendingNpc) {
         pendingNpc.getStoreddata().put("excludeText", savedExcludeText);
     }
