@@ -17,22 +17,40 @@ function init(e) {
 function tick(e) {
     var npc    = e.npc;
     var nearby = npc.world.getNearbyEntities(npc.getPos(), SCAN_RANGE, 1); // 1 = players
-    // safeList is read lazily — only once a player passes the FOV+LOS check,
-    // so we avoid the stored data read on ticks where nobody is in view.
+
+    // Read the safelist fresh every tick. If it's empty (because the spawner
+    // GUI hasn't closed yet), don't attack anyone — wait for the data to arrive.
+    // The spawner writes the safelist to the clone in customGuiClosed().
     var safeList = null;
+
     for (var i = 0; i < nearby.length; i++) {
         var player = nearby[i];
         if (!CheckFOV(npc, player, FOV) || !npc.canSeeEntity(player)) continue;
         if (safeList === null) safeList = getSafeList(npc);
+        if (safeList.length === 0) break; // no safelist yet, don't attack anyone
         if (isSafe(player, safeList)) continue;
         npc.setAttackTarget(player);
         break;
     }
 
+    // Re-check if our current attack target is now on the safelist (player
+    // may have updated the list after the clone started attacking).
+    var target = npc.getAttackTarget();
+    if (target && safeList !== null && safeList.length > 0) {
+        if (isSafe(target, safeList)) {
+            npc.setAttackTarget(null);
+        }
+    } else if (target && safeList === null) {
+        safeList = getSafeList(npc);
+        if (safeList.length > 0 && isSafe(target, safeList)) {
+            npc.setAttackTarget(null);
+        }
+    }
+
     // DEBUG: show safelist in the NPC's title so you can see what it reads
     try {
-        var list = getSafeList(npc);
-        npc.getDisplay().setTitle("§7Safe: " + (list.length > 0 ? list.join(", ") : "§cEMPTY"));
+        if (safeList === null) safeList = getSafeList(npc);
+        npc.getDisplay().setTitle("§7Safe: " + (safeList.length > 0 ? safeList.join(", ") : "§cEMPTY"));
     } catch (err) {}
 }
 
@@ -41,8 +59,9 @@ function tick(e) {
 function getSafeList(npc) {
     try {
         var stored = npc.getStoreddata();
-        if (stored.hasKey("safelist")) {
-            return JSON.parse(stored.getString("safelist"));
+        var raw = stored.get("safelist");
+        if (raw !== null && raw !== undefined) {
+            return JSON.parse(String(raw));
         }
     } catch (err) {}
     return [];

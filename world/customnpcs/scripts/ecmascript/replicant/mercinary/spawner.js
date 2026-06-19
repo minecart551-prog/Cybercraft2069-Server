@@ -168,6 +168,13 @@ function customGuiButton(e) {
     // Owner is always safe
     excludeNames.push(player.getName());
 
+    // Store the safelist on the spawner NPC's own stored data BEFORE spawning.
+    // The clone reads from the spawner directly (not itself), avoiding timing
+    // issues where the clone isn't in the entity list right after spawnClone().
+    if (pendingNpc) {
+        pendingNpc.getStoreddata().put("safelist", JSON.stringify(excludeNames));
+    }
+
     // ---- Spawn the clone near the dealer NPC ----
     var angle = Math.random() * Math.PI * 2;
     var dist  = SPAWN_MIN_RADIUS + Math.random() * (SPAWN_MAX_RADIUS - SPAWN_MIN_RADIUS);
@@ -175,12 +182,20 @@ function customGuiButton(e) {
     var sz    = Math.floor(pendingSpawnerPos.getZ() + Math.sin(angle) * dist);
     var sy    = pendingSpawnerPos.getY();
 
+    var spawnedClone = null;
     try {
-        pendingWorld.spawnClone(sx, sy, sz, cloneType.tab, cloneType.name);
+        spawnedClone = pendingWorld.spawnClone(sx, sy, sz, cloneType.tab, cloneType.name);
     } catch (err) {
         player.message("§cSomething went wrong spawning your clone - refunding payment.");
         giveCoins(player, cloneType.price);
         return;
+    }
+
+    // Write safelist directly to the spawned entity if spawnClone returned it
+    if (spawnedClone) {
+        try {
+            spawnedClone.getStoreddata().put("safelist", JSON.stringify(excludeNames));
+        } catch (err) {}
     }
 
     // Broadcast the updated safelist to ALL existing clones owned by this player
@@ -210,6 +225,10 @@ function customGuiClosed(e) {
     var clones = findNearbyClones(pendingWorld, pendingSx, pendingSy, pendingTemplateName);
     for (var i = 0; i < clones.length; i++) {
         clones[i].getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames));
+    }
+    // Refresh the safelist on the spawner NPC in case it changed since GUI opened
+    if (pendingNpc && pendingExcludeNames.length > 0) {
+        pendingNpc.getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames));
     }
 
     // Save the exclude text to NPC stored data.
