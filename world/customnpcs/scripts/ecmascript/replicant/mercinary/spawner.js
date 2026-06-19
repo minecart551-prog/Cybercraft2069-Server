@@ -1,37 +1,22 @@
 // ===============================================================
 // Clone Spawner - vendor NPC that sells "protector" clones
 // ===============================================================
-// Attach this script to a CustomNPCs NPC (e.g. a "Clone Dealer").
-// Players talk to it, pick a clone type from the GUI, pay the
-// price, type in names to exclude, and a clone is spawned that
-// will defend them against anyone NOT on that safe list.
-//
-// Pair this with clone_defender.js, which must be assigned to
-// EVERY clone NPC template listed in CLONE_TYPES below.
-// ===============================================================
 
 // ----------------- CONFIGURATION -----------------
 
-var MAX_CLONES        = 5;
-var OWNED_SEARCH_RANGE    = 50;    // XZ range to count a player's existing clones
-var OWNED_Y_TOLERANCE     = 3;      // Max Y difference to count a clone as "nearby"
+var MAX_CLONES            = 5;
+var OWNED_SEARCH_RANGE    = 50;
+var OWNED_Y_TOLERANCE     = 3;
 var SPAWN_MIN_RADIUS      = 0;
 var SPAWN_MAX_RADIUS      = 0;
-// Coin denominations - item id -> cent value.
-// Must match whatever the coins mod uses on your server.
 var COIN_DENOMINATIONS = [
-    { id: "coins:emerald_coin",    value: 10000  },
+    { id: "coins:emerald_coin", value: 10000 },
     { id: "coins:coal_coin",    value: 100   },
-    { id: "coins:stone_coin",   value: 1    }
+    { id: "coins:stone_coin",   value: 1     }
 ];
 
-// Add as many clone types here as you like - the GUI builds itself
-// automatically from this list (more entries = more rows, no other
-// changes needed). "name" must match the saved NPC clone's name/tab
-// exactly, the same way it's used with world.spawnClone elsewhere.
 var CLONE_TYPES = [
-    { tab: 5, name: "M3",  displayName: "§bM3",   price: 50  },
-
+    { tab: 5, name: "M3", displayName: "§bM3", price: 50 }
 ];
 
 // ----------------- GUI LAYOUT -----------------
@@ -42,7 +27,7 @@ var LBL_COUNT        = 2;
 var LBL_CURRENCY     = 3;
 var LBL_EXCLUDE      = 4;
 var TF_EXCLUDE_NAMES = 10;
-var BTN_CLONE_BASE   = 100; // BTN_CLONE_BASE + index per clone type
+var BTN_CLONE_BASE   = 100;
 
 var COLS   = 2;
 var ROW_H  = 22;
@@ -51,8 +36,9 @@ var LIST_X = 15;
 var LIST_Y = 70;
 
 // ----------------- PENDING STATE -----------------
-// Holds data between button click (spawn) and GUI close (safelist write).
-// Cleared on close regardless of outcome.
+// FIX: store npc and world here when the GUI opens (in interact/openSpawnerGui)
+// so customGuiButton and customGuiClosed can access them — e.npc is undefined
+// in GUI callback events in CustomNPCs.
 
 var pendingNpc          = null;
 var pendingWorld        = null;
@@ -71,32 +57,34 @@ function init(e) {
 }
 
 function interact(e) {
+    // Store npc and world NOW, while e.npc is valid, mirroring how the
+    // contract script always accesses event.npc inside interact().
+    pendingNpc   = e.npc;
+    pendingWorld = e.npc.getWorld();
     openSpawnerGui(e);
 }
 
 function openSpawnerGui(e) {
     var player = e.player;
     var api    = e.API;
-    var npc    = e.npc;
-    var world  = npc.getWorld();
 
-    var owned  = countOwnedClones(player, world);
+    var owned  = countOwnedClones(player, pendingWorld);
     var rows   = Math.ceil(CLONE_TYPES.length / COLS);
     var width  = LIST_X * 2 + COLS * COL_W;
     var height = LIST_Y + rows * ROW_H + 90;
 
     var gui = api.createCustomGui(GUI_SPAWNER, width, height, false, player);
 
-    gui.addLabel(LBL_TITLE, "§6§lClone Dealer", width / 2 - 40, 12, 120, 14);
-    gui.addLabel(LBL_COUNT, "§7Active clones: " + owned + " / " + MAX_CLONES, 15, 30, width - 30, 10);
-    gui.addLabel(LBL_CURRENCY, "§6Wallet: §e" + fmt(countCoins(player)), 15, 44, width - 30, 10);
+    gui.addLabel(LBL_TITLE,    "§6§lClone Dealer",                             width / 2 - 40, 12, 120, 14);
+    gui.addLabel(LBL_COUNT,    "§7Active clones: " + owned + " / " + MAX_CLONES, 15, 30, width - 30, 10);
+    gui.addLabel(LBL_CURRENCY, "§6Wallet: §e" + fmt(countCoins(player)),        15, 44, width - 30, 10);
 
     for (var i = 0; i < CLONE_TYPES.length; i++) {
         var c   = CLONE_TYPES[i];
-        var row  = Math.floor(i / COLS);
-        var col  = i % COLS;
-        var x    = LIST_X + col * COL_W;
-        var y    = LIST_Y + row * ROW_H;
+        var row = Math.floor(i / COLS);
+        var col = i % COLS;
+        var x   = LIST_X + col * COL_W;
+        var y   = LIST_Y + row * ROW_H;
         gui.addButton(BTN_CLONE_BASE + i, c.displayName + " §7(" + fmt(c.price) + ")", x, y, COL_W - 10, 18);
     }
 
@@ -111,9 +99,13 @@ function customGuiButton(e) {
     if (e.gui.getID() !== GUI_SPAWNER) return;
 
     var player = e.player;
-    var npc    = e.npc;
-    var world  = npc.getWorld();
     var bid    = e.buttonId;
+
+    // Use pendingNpc/pendingWorld set during interact() — e.npc is undefined here
+    if (!pendingNpc || !pendingWorld) {
+        player.message("§cError: NPC reference lost. Please close and reopen the shop.");
+        return;
+    }
 
     if (bid < BTN_CLONE_BASE || bid >= BTN_CLONE_BASE + CLONE_TYPES.length) return;
 
@@ -121,7 +113,7 @@ function customGuiButton(e) {
     var cloneType = CLONE_TYPES[index];
 
     // ---- Cap check ----
-    var owned = countOwnedClones(player, world);
+    var owned = countOwnedClones(player, pendingWorld);
     if (owned >= MAX_CLONES) {
         player.message("§cThe maximum number of clones (" + MAX_CLONES + ") are already active!");
         return;
@@ -149,11 +141,11 @@ function customGuiButton(e) {
         }
     } catch (err) {}
 
-    // The owner is always safe, regardless of what they typed
+    // Owner is always safe
     excludeNames.push(player.getName());
 
     // ---- Spawn the clone near the dealer NPC ----
-    var pos   = npc.getPos();
+    var pos   = pendingNpc.getPos();
     var angle = Math.random() * Math.PI * 2;
     var dist  = SPAWN_MIN_RADIUS + Math.random() * (SPAWN_MAX_RADIUS - SPAWN_MIN_RADIUS);
     var sx    = Math.floor(pos.getX() + Math.cos(angle) * dist);
@@ -161,23 +153,20 @@ function customGuiButton(e) {
     var sy    = pos.getY();
 
     try {
-        world.spawnClone(sx, sy, sz, cloneType.tab, cloneType.name);
+        pendingWorld.spawnClone(sx, sy, sz, cloneType.tab, cloneType.name);
     } catch (err) {
         player.message("§cSomething went wrong spawning your clone - refunding payment.");
         giveCoins(player, cloneType.price);
         return;
     }
 
-    // ---- Locate all matching clones at the spawn position and store
-    //      the reference list — safelist is written to all of them on GUI close. ----
-    var clones = findNearbyClones(world, sx, sy, sz, cloneType.name);
+    // Write safelist to newly spawned clones
+    var clones = findNearbyClones(pendingWorld, sx, sy, sz, cloneType.name);
     for (var c = 0; c < clones.length; c++) {
         clones[c].getStoreddata().putString("safelist", JSON.stringify(excludeNames));
     }
 
-    // Store state for customGuiClosed to re-apply on close
-    pendingNpc          = npc;
-    pendingWorld        = world;
+    // Store remaining pending state for customGuiClosed
     pendingExcludeNames = excludeNames;
     pendingSx           = sx;
     pendingSy           = sy;
@@ -209,13 +198,10 @@ function customGuiClosed(e) {
 
 // ----------------- HELPERS -----------------
 
-// Counts a player's active clones by scanning nearby NPCs whose name
-// matches any clone template name, within OWNED_SEARCH_RANGE on XZ
-// and OWNED_Y_TOLERANCE blocks on Y. No data is stored anywhere.
 function countOwnedClones(player, world) {
     var prefix  = player.getName() + "'s ";
     var playerY = player.getY();
-    var nearby  = world.getNearbyEntities(player.getPos(), OWNED_SEARCH_RANGE, 2); // 2 = NPCs
+    var nearby  = world.getNearbyEntities(player.getPos(), OWNED_SEARCH_RANGE, 2);
     var count   = 0;
 
     for (var i = 0; i < nearby.length; i++) {
@@ -230,9 +216,8 @@ function countOwnedClones(player, world) {
     return count;
 }
 
-// Returns ALL nearby NPCs matching templateName within range and Y tolerance.
 function findNearbyClones(world, sx, sy, sz, templateName) {
-    var nearby  = world.getNearbyEntitiesAt(sx, sy, sz, SPAWN_MAX_RADIUS + 2, 2); // 2 = NPCs
+    var nearby  = world.getNearbyEntitiesAt(sx, sy, sz, SPAWN_MAX_RADIUS + 2, 2);
     var matches = [];
     for (var i = 0; i < nearby.length; i++) {
         var npc = nearby[i];
@@ -243,9 +228,8 @@ function findNearbyClones(world, sx, sy, sz, templateName) {
     return matches;
 }
 
-// ----------------- CURRENCY (matches lobby block system) -----------------
+// ----------------- CURRENCY -----------------
 
-// Returns total cents across all coin denominations in the player's inventory.
 function countCoins(player) {
     var inv   = player.getInventory();
     var size  = inv.getSize();
@@ -263,14 +247,11 @@ function countCoins(player) {
     return total;
 }
 
-// Removes coins worth `cents` from the player's inventory, preferring
-// larger denominations first. Returns false if the player can't afford it.
 function removeCoins(player, cents) {
     if (countCoins(player) < cents) return false;
     var inv       = player.getInventory();
     var size      = inv.getSize();
     var remaining = cents;
-    // Iterate denominations largest -> smallest
     for (var d = 0; d < COIN_DENOMINATIONS.length && remaining > 0; d++) {
         var denom = COIN_DENOMINATIONS[d];
         for (var i = 0; i < size && remaining > 0; i++) {
@@ -292,7 +273,6 @@ function removeCoins(player, cents) {
     return true;
 }
 
-// Gives coins to the player, using the largest denominations that fit evenly.
 function giveCoins(player, cents) {
     var remaining = cents;
     for (var d = 0; d < COIN_DENOMINATIONS.length && remaining > 0; d++) {
@@ -304,7 +284,6 @@ function giveCoins(player, cents) {
     }
 }
 
-// Formats a cent value to a dollar string, matching the lobby display style.
 function fmt(cents) {
     var dollars = Math.floor(cents / 100);
     var c       = cents % 100;
