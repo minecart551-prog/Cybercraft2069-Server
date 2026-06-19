@@ -5,15 +5,10 @@
 // ----------------- CONFIGURATION -----------------
 
 var MAX_CLONES            = 5;
-var OWNED_SEARCH_RANGE    = 200;
+var OWNED_SEARCH_RANGE    = 100;
 var OWNED_Y_TOLERANCE     = 3;
 var SPAWN_MIN_RADIUS      = 0;
 var SPAWN_MAX_RADIUS      = 0;
-var COIN_DENOMINATIONS = [
-    { id: "coins:emerald_coin", value: 10000 },
-    { id: "coins:coal_coin",    value: 100   },
-    { id: "coins:stone_coin",   value: 1     }
-];
 
 var CLONE_TYPES = [
     { tab: 5, name: "M3", displayName: "§bM3", price: 50 }
@@ -36,7 +31,7 @@ var LIST_X = 15;
 var LIST_Y = 70;
 
 // ----------------- PENDING STATE -----------------
-// FIX: store npc and world here when the GUI opens (in interact/openSpawnerGui)
+// Store npc and world here when the GUI opens (in interact/openSpawnerGui)
 // so customGuiButton and customGuiClosed can access them — e.npc is undefined
 // in GUI callback events in CustomNPCs.
 
@@ -47,6 +42,12 @@ var pendingSx           = 0;
 var pendingSy           = 0;
 var pendingSz           = 0;
 var pendingTemplateName = "";
+
+// FIX (bug 2): store the spawner's own position when the GUI opens so
+// findNearbyClones can use it even after pendingNpc is cleared.
+var pendingSpawnerX     = 0;
+var pendingSpawnerY     = 0;
+var pendingSpawnerZ     = 0;
 
 // ----------------- ENTRY POINTS -----------------
 
@@ -61,6 +62,14 @@ function interact(e) {
     // contract script always accesses event.npc inside interact().
     pendingNpc   = e.npc;
     pendingWorld = e.npc.getWorld();
+
+    // FIX (bug 2): snapshot the spawner position here so findNearbyClones
+    // always has valid coordinates regardless of pendingNpc state.
+    var pos          = e.npc.getPos();
+    pendingSpawnerX  = pos.getX();
+    pendingSpawnerY  = pos.getY();
+    pendingSpawnerZ  = pos.getZ();
+
     openSpawnerGui(e);
 }
 
@@ -75,9 +84,9 @@ function openSpawnerGui(e) {
 
     var gui = api.createCustomGui(GUI_SPAWNER, width, height, false, player);
 
-    gui.addLabel(LBL_TITLE,    "§6§lClone Dealer",                             width / 2 - 40, 12, 120, 14);
+    gui.addLabel(LBL_TITLE,    "§6§lClone Dealer",                              width / 2 - 40, 12, 120, 14);
     gui.addLabel(LBL_COUNT,    "§7Active clones: " + owned + " / " + MAX_CLONES, 15, 30, width - 30, 10);
-    gui.addLabel(LBL_CURRENCY, "§6Wallet: §e" + fmt(countCoins(player)),        15, 44, width - 30, 10);
+    gui.addLabel(LBL_CURRENCY, "§6Wallet: §e" + fmt(countCoins(player)),         15, 44, width - 30, 10);
 
     for (var i = 0; i < CLONE_TYPES.length; i++) {
         var c   = CLONE_TYPES[i];
@@ -113,6 +122,9 @@ function customGuiButton(e) {
     var cloneType = CLONE_TYPES[index];
 
     // ---- Cap check ----
+    // FIX (bug 1): countOwnedClones now searches by template name from CLONE_TYPES
+    // instead of a player-name prefix, so it correctly counts all active clones
+    // regardless of what the spawned NPC is named.
     var owned = countOwnedClones(player, pendingWorld);
     if (owned >= MAX_CLONES) {
         player.message("§cThe maximum number of clones (" + MAX_CLONES + ") are already active!");
@@ -145,12 +157,11 @@ function customGuiButton(e) {
     excludeNames.push(player.getName());
 
     // ---- Spawn the clone near the dealer NPC ----
-    var pos   = pendingNpc.getPos();
     var angle = Math.random() * Math.PI * 2;
     var dist  = SPAWN_MIN_RADIUS + Math.random() * (SPAWN_MAX_RADIUS - SPAWN_MIN_RADIUS);
-    var sx    = Math.floor(pos.getX() + Math.cos(angle) * dist);
-    var sz    = Math.floor(pos.getZ() + Math.sin(angle) * dist);
-    var sy    = pos.getY();
+    var sx    = Math.floor(pendingSpawnerX + Math.cos(angle) * dist);
+    var sz    = Math.floor(pendingSpawnerZ + Math.sin(angle) * dist);
+    var sy    = pendingSpawnerY;
 
     try {
         pendingWorld.spawnClone(sx, sy, sz, cloneType.tab, cloneType.name);
@@ -161,7 +172,7 @@ function customGuiButton(e) {
     }
 
     // Write safelist to newly spawned clones
-    var clones = findNearbyClones(pendingWorld, sx, sy, sz, cloneType.name);
+    var clones = findNearbyClones(pendingWorld, sx, sy, cloneType.name);
     for (var c = 0; c < clones.length; c++) {
         clones[c].getStoreddata().put("safelist", JSON.stringify(excludeNames));
     }
@@ -181,7 +192,7 @@ function customGuiClosed(e) {
     if (!pendingWorld) return;
 
     // Re-scan to catch any clones that loaded after the button click
-    var clones = findNearbyClones(pendingWorld, pendingSx, pendingSy, pendingSz, pendingTemplateName);
+    var clones = findNearbyClones(pendingWorld, pendingSx, pendingSy, pendingTemplateName);
     for (var i = 0; i < clones.length; i++) {
         clones[i].getStoreddata().put("safelist", JSON.stringify(pendingExcludeNames));
     }
@@ -194,21 +205,32 @@ function customGuiClosed(e) {
     pendingSy           = 0;
     pendingSz           = 0;
     pendingTemplateName = "";
+    pendingSpawnerX     = 0;
+    pendingSpawnerY     = 0;
+    pendingSpawnerZ     = 0;
 }
 
 // ----------------- HELPERS -----------------
 
+// FIX (bug 1): count clones by matching any name from CLONE_TYPES within
+// search range of the player, rather than looking for a "PlayerName's " prefix
+// that was never actually applied to spawned clones.
 function countOwnedClones(player, world) {
-    var prefix  = player.getName() + "'s ";
     var playerY = player.getY();
     var nearby  = world.getNearbyEntities(player.getPos(), OWNED_SEARCH_RANGE, 2);
     var count   = 0;
+
+    // Build a lookup set of all valid clone template names
+    var cloneNames = {};
+    for (var t = 0; t < CLONE_TYPES.length; t++) {
+        cloneNames[CLONE_TYPES[t].name] = true;
+    }
 
     for (var i = 0; i < nearby.length; i++) {
         var npc = nearby[i];
         var nm  = npc.getName();
         if (!nm) continue;
-        if (nm.indexOf(prefix) !== 0) continue;
+        if (!cloneNames[nm]) continue;  // not a clone type we sell
         if (Math.abs(npc.getY() - playerY) > OWNED_Y_TOLERANCE) continue;
         count++;
     }
@@ -216,73 +238,128 @@ function countOwnedClones(player, world) {
     return count;
 }
 
-function findNearbyClones(world, sx, sy, sz, templateName) {
-    var pos     = pendingNpc.getPos(); 
-    var nearby  = world.getNearbyEntities(pos, SPAWN_MAX_RADIUS + 5, 2);
-    var matches = [];
+// FIX (bug 2): search from the snapshotted spawner position (pendingSpawnerX/Y/Z)
+// instead of calling pendingNpc.getPos(), which would crash if pendingNpc was
+// already cleared or is undefined at call time.
+function findNearbyClones(world, sx, sy, templateName) {
+    var searchPos = world.createPos(pendingSpawnerX, pendingSpawnerY, pendingSpawnerZ);
+    var nearby    = world.getNearbyEntities(searchPos, SPAWN_MAX_RADIUS + 5, 2);
+    var matches   = [];
+
     for (var i = 0; i < nearby.length; i++) {
         var npc = nearby[i];
         if (npc.getName() !== templateName) continue;
         if (Math.abs(npc.getY() - sy) > OWNED_Y_TOLERANCE) continue;
         matches.push(npc);
     }
+
     return matches;
 }
 
 // ----------------- CURRENCY -----------------
 
+// Conversion rates — must match COIN_DENOMINATIONS values above:
+//   1 coal   = 100  stone
+//   1 emerald = 100 coal = 10,000 stone
+var STONE_TO_COAL    = 100;
+var COAL_TO_EMERALD  = 100;
+
 function countCoins(player) {
-    var inv   = player.getInventory();
-    var size  = inv.getSize();
-    var total = 0;
-    for (var i = 0; i < size; i++) {
-        var item = inv.getSlot(i);
-        if (!item) continue;
-        for (var d = 0; d < COIN_DENOMINATIONS.length; d++) {
-            if (item.getName() === COIN_DENOMINATIONS[d].id) {
-                total += item.getStackSize() * COIN_DENOMINATIONS[d].value;
-                break;
-            }
+    var stoneTotal   = 0;
+    var coalTotal    = 0;
+    var emeraldTotal = 0;
+    var inv = player.getInventory();
+    for (var i = 0; i < inv.getSize(); i++) {
+        var stack = inv.getSlot(i);
+        if (stack && !stack.isEmpty()) {
+            var name = stack.getName();
+            if      (name === "coins:stone_coin")   stoneTotal   += stack.getStackSize();
+            else if (name === "coins:coal_coin")    coalTotal    += stack.getStackSize();
+            else if (name === "coins:emerald_coin") emeraldTotal += stack.getStackSize();
         }
     }
-    return total;
+    return stoneTotal + (coalTotal * STONE_TO_COAL) + (emeraldTotal * STONE_TO_COAL * COAL_TO_EMERALD);
 }
 
-function removeCoins(player, cents) {
-    if (countCoins(player) < cents) return false;
-    var inv       = player.getInventory();
-    var size      = inv.getSize();
-    var remaining = cents;
-    for (var d = 0; d < COIN_DENOMINATIONS.length && remaining > 0; d++) {
-        var denom = COIN_DENOMINATIONS[d];
-        for (var i = 0; i < size && remaining > 0; i++) {
-            var item = inv.getSlot(i);
-            if (!item || item.getName() !== denom.id) continue;
-            var canTake  = Math.floor(remaining / denom.value);
-            var inStack  = item.getStackSize();
-            var toRemove = Math.min(canTake, inStack);
-            if (toRemove <= 0) continue;
-            remaining -= toRemove * denom.value;
-            if (toRemove >= inStack) {
-                inv.setSlot(i, null);
-            } else {
-                item.setStackSize(inStack - toRemove);
-                inv.setSlot(i, item);
+// Drain stone first, then coal, then emerald.
+// When breaking a larger coin, give exact change back in smaller denominations.
+function removeCoins(player, amount) {
+    if (countCoins(player) < amount) return false;
+    var remaining = amount;
+    var inv = player.getInventory();
+
+    // --- stone coins ---
+    for (var i = 0; i < inv.getSize() && remaining > 0; i++) {
+        var stack = inv.getSlot(i);
+        if (!stack || stack.isEmpty() || stack.getName() !== "coins:stone_coin") continue;
+        var stackAmount = stack.getStackSize();
+        if (stackAmount <= remaining) {
+            inv.setSlot(i, null);
+            remaining -= stackAmount;
+        } else {
+            stack.setStackSize(stackAmount - remaining);
+            remaining = 0;
+        }
+    }
+
+    // --- coal coins ---
+    for (var i = 0; i < inv.getSize() && remaining > 0; i++) {
+        var stack = inv.getSlot(i);
+        if (!stack || stack.isEmpty() || stack.getName() !== "coins:coal_coin") continue;
+        var stackAmount = stack.getStackSize();
+        var stoneValue  = stackAmount * STONE_TO_COAL;
+        if (stoneValue <= remaining) {
+            inv.setSlot(i, null);
+            remaining -= stoneValue;
+        } else {
+            var coalsNeeded = Math.ceil(remaining / STONE_TO_COAL);
+            stack.setStackSize(stackAmount - coalsNeeded);
+            var overpaid = (coalsNeeded * STONE_TO_COAL) - remaining;
+            remaining = 0;
+            if (overpaid > 0) {
+                try { player.giveItem(player.world.createItem("coins:stone_coin", overpaid)); } catch (e) {}
             }
         }
     }
+
+    // --- emerald coins ---
+    for (var i = 0; i < inv.getSize() && remaining > 0; i++) {
+        var stack = inv.getSlot(i);
+        if (!stack || stack.isEmpty() || stack.getName() !== "coins:emerald_coin") continue;
+        var stackAmount = stack.getStackSize();
+        var stoneValue  = stackAmount * STONE_TO_COAL * COAL_TO_EMERALD;
+        if (stoneValue <= remaining) {
+            inv.setSlot(i, null);
+            remaining -= stoneValue;
+        } else {
+            var emeraldsNeeded = Math.ceil(remaining / (STONE_TO_COAL * COAL_TO_EMERALD));
+            stack.setStackSize(stackAmount - emeraldsNeeded);
+            var overpaid    = (emeraldsNeeded * STONE_TO_COAL * COAL_TO_EMERALD) - remaining;
+            remaining = 0;
+            var changeCoal  = Math.floor(overpaid / STONE_TO_COAL);
+            var changeStone = overpaid % STONE_TO_COAL;
+            if (changeCoal  > 0) {
+                try { player.giveItem(player.world.createItem("coins:coal_coin",  changeCoal));  } catch (e) {}
+            }
+            if (changeStone > 0) {
+                try { player.giveItem(player.world.createItem("coins:stone_coin", changeStone)); } catch (e) {}
+            }
+        }
+    }
+
     return true;
 }
 
 function giveCoins(player, cents) {
-    var remaining = cents;
-    for (var d = 0; d < COIN_DENOMINATIONS.length && remaining > 0; d++) {
-        var denom = COIN_DENOMINATIONS[d];
-        var count = Math.floor(remaining / denom.value);
-        if (count <= 0) continue;
-        remaining -= count * denom.value;
-        try { player.giveItem(player.world.createItem(denom.id, count)); } catch (e) {}
-    }
+    var remaining   = cents;
+    var emeralds    = Math.floor(remaining / (STONE_TO_COAL * COAL_TO_EMERALD));
+    remaining      -= emeralds * STONE_TO_COAL * COAL_TO_EMERALD;
+    var coals       = Math.floor(remaining / STONE_TO_COAL);
+    remaining      -= coals * STONE_TO_COAL;
+    var stones      = remaining;
+    if (emeralds > 0) try { player.giveItem(player.world.createItem("coins:emerald_coin", emeralds)); } catch (e) {}
+    if (coals    > 0) try { player.giveItem(player.world.createItem("coins:coal_coin",    coals));    } catch (e) {}
+    if (stones   > 0) try { player.giveItem(player.world.createItem("coins:stone_coin",   stones));   } catch (e) {}
 }
 
 function fmt(cents) {
