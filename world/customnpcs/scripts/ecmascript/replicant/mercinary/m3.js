@@ -32,9 +32,6 @@ function tick(e) {
 
 // ----------------- HELPERS -----------------
 
-// Read directly from stored data every tick — no cache.
-// Caching caused the clone to lock onto an empty safelist from before
-// the spawner had a chance to write the player's name into stored data.
 function getSafeList(npc) {
     try {
         var stored = npc.getStoreddata();

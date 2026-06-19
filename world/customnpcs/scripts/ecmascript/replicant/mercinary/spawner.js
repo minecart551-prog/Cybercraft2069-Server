@@ -183,7 +183,10 @@ function customGuiButton(e) {
         return;
     }
 
-    // Write safelist to newly spawned clones
+    // Broadcast the updated safelist to ALL existing clones owned by this player
+    updateAllCloneSafelists(pendingWorld, player, excludeNames);
+
+    // Also try to write safelist directly to any clones already in the world
     var clones = findNearbyClones(pendingWorld, sx, sy, cloneType.name);
     for (var c = 0; c < clones.length; c++) {
         clones[c].getStoreddata().put("safelist", JSON.stringify(excludeNames));
@@ -236,12 +239,34 @@ function customGuiClosed(e) {
 
 // ----------------- HELPERS -----------------
 
+// Update the safelist on ALL existing clones within range of the spawner NPC.
+// This ensures old clones get the updated list when the player changes it.
+function updateAllCloneSafelists(world, player, safeList) {
+    if (!pendingSpawnerPos) return;
+    var spawnerY = pendingSpawnerPos.getY();
+    var allNpcs = world.getNearbyEntities(pendingSpawnerPos, OWNED_SEARCH_RANGE, 2);
+    var listStr = JSON.stringify(safeList);
+
+    // Build a lookup set of all valid clone template names
+    var cloneNames = {};
+    for (var t = 0; t < CLONE_TYPES.length; t++) {
+        cloneNames[CLONE_TYPES[t].name] = true;
+    }
+
+    for (var i = 0; i < allNpcs.length; i++) {
+        var n = allNpcs[i];
+        if (!cloneNames[n.getName()]) continue;
+        if (Math.abs(n.getY() - spawnerY) > OWNED_Y_TOLERANCE) continue;
+        n.getStoreddata().put("safelist", listStr);
+    }
+}
+
 // FIX (bug 1): count clones by matching any name from CLONE_TYPES within
-// search range of the player, rather than looking for a "PlayerName's " prefix
-// that was never actually applied to spawned clones.
+// search range of the spawner NPC, using the spawner's Y level with tolerance.
 function countOwnedClones(player, world) {
-    var playerY = player.getY();
-    var nearby  = world.getNearbyEntities(player.getPos(), OWNED_SEARCH_RANGE, 2);
+    if (!pendingSpawnerPos) return 0;
+    var spawnerY = pendingSpawnerPos.getY();
+    var nearby  = world.getNearbyEntities(pendingSpawnerPos, OWNED_SEARCH_RANGE, 2);
     var count   = 0;
 
     // Build a lookup set of all valid clone template names
@@ -255,7 +280,7 @@ function countOwnedClones(player, world) {
         var nm  = npc.getName();
         if (!nm) continue;
         if (!cloneNames[nm]) continue;  // not a clone type we sell
-        if (Math.abs(npc.getY() - playerY) > OWNED_Y_TOLERANCE) continue;
+        if (Math.abs(npc.getY() - spawnerY) > OWNED_Y_TOLERANCE) continue;
         count++;
     }
 
@@ -265,13 +290,15 @@ function countOwnedClones(player, world) {
 // FIX (bug 2): search from pendingSpawnerPos captured in interact() —
 // world.createPos does not exist in CustomNPCs; we reuse the real pos object.
 function findNearbyClones(world, sx, sy, templateName) {
+    if (!pendingSpawnerPos) return [];
+    var spawnerY = pendingSpawnerPos.getY();
     var nearby    = world.getNearbyEntities(pendingSpawnerPos, SPAWN_MAX_RADIUS + 5, 2);
     var matches   = [];
 
     for (var i = 0; i < nearby.length; i++) {
         var npc = nearby[i];
         if (npc.getName() !== templateName) continue;
-        if (Math.abs(npc.getY() - sy) > OWNED_Y_TOLERANCE) continue;
+        if (Math.abs(npc.getY() - spawnerY) > OWNED_Y_TOLERANCE) continue;
         matches.push(npc);
     }
 
