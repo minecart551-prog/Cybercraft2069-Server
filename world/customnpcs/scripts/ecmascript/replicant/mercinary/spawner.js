@@ -73,8 +73,8 @@ function interact(e) {
 
     // Load persisted exclude text from NPC stored data
     try {
-        var stored = e.npc.getStoreddata().getString("excludeText");
-        if (stored) { savedExcludeText = stored; }
+        var stored = e.npc.getStoreddata().get("excludeText");
+        if (stored) { savedExcludeText = String(stored); }
     } catch (err) {}
 
     openSpawnerGui(e);
