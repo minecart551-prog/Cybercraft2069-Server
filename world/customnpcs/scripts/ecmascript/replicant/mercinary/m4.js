@@ -15,7 +15,7 @@ function init(e) {
     var npc = e.npc;
     var item = npc.world.createItem(rewardItem, rewardCount);
     var display = npc.getDisplay();
-    
+    npc.setFaction(27);
     npc.getStats().setMaxHealth(400);
     npc.getStats().setRespawnType(3);
     npc.getStats().getRanged().setStrength(20);
