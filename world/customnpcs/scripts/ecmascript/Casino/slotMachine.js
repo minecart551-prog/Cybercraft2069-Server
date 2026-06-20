@@ -228,12 +228,12 @@ function interact(event) {
     }
 
     // Custom bet field (just below the bet buttons)
-    guiRef.addLabel(nextCid(), "§7Custom($)", 50, BTN_Y + BTN_HEIGHT + 2, 50, 8);
-    guiRef.addTextField(TF_CUSTOM_BET, 95, BTN_Y + BTN_HEIGHT, 50, 14).setText("");
-    guiRef.addButton(ID_CUSTOM_BET, "§aSpin", 148, BTN_Y + BTN_HEIGHT, 28, 14);
+    guiRef.addLabel(nextCid(), "§7Custom($)", 30, BTN_Y + BTN_HEIGHT + 12, 50, 8);
+    guiRef.addTextField(TF_CUSTOM_BET, 75, BTN_Y + BTN_HEIGHT + 10, 50, 14).setText("");
+    guiRef.addButton(ID_CUSTOM_BET, "§aSpin", 128, BTN_Y + BTN_HEIGHT + 10, 28, 14);
 
     guiRef.addLabel(ID_MSG,      "§7Place your bet to spin!", MSG_X,   MSG_Y,   MSG_SCALE,   MSG_SCALE);
-    guiRef.addLabel(ID_COINS,    "§7Coins: §f" + countPlayerCoins(player) + "¢", COINS_X, COINS_Y, COINS_SCALE, COINS_SCALE);
+    guiRef.addLabel(ID_COINS,    "§7Wallet: §f$" + fmtWallet(player), COINS_X, COINS_Y, COINS_SCALE, COINS_SCALE);
     guiRef.addLabel(ID_SPIN_LBL, "§7" + getPayoutHint(), HINT_X, HINT_Y, HINT_SCALE, HINT_SCALE);
 
     // showCustomGui sends the full GUI to the client on its own.
@@ -468,10 +468,16 @@ function updateCoinsLabel(player) {
     updateCoinsLabelOnGui(guiRef, player);
 }
 
+function fmtWallet(player) {
+    var cents = countPlayerCoins(player);
+    var dollars = (cents / 100).toFixed(2);
+    return dollars;
+}
+
 function updateCoinsLabelOnGui(gui, player) {
     if (!gui || !player) return;
     try { gui.removeComponent(ID_COINS); } catch(e) {}
-    try { gui.addLabel(ID_COINS, "§7Coins: §f" + countPlayerCoins(player) + "¢", COINS_X, COINS_Y, COINS_SCALE, COINS_SCALE); } catch(e) {}
+    try { gui.addLabel(ID_COINS, "§7Wallet: §f$" + fmtWallet(player), COINS_X, COINS_Y, COINS_SCALE, COINS_SCALE); } catch(e) {}
 }
 
 // ── Slot clicked (reels are display-only) ────────────────────
