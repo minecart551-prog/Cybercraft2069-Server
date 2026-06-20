@@ -300,7 +300,8 @@ function nextActivePlayer(fromIdx) {
     if (!game || game.players.length === 0) return -1
     for (var i = 1; i <= game.players.length; i++) {
         var idx = (fromIdx + i) % game.players.length
-        if (!game.players[idx].folded) return idx
+        // Skip folded players AND players who are all-in (chips = 0) since they can't act
+        if (!game.players[idx].folded && game.players[idx].chips > 0) return idx
     }
     return -1
 }
