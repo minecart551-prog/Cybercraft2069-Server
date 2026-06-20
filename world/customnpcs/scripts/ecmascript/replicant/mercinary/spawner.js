@@ -63,18 +63,52 @@ function init(e) {
 }
 
 function interact(e) {
+    var player = e.player;
+    var npc    = e.npc;
+    var world  = npc.getWorld();
+
+    // Load the safelist from the spawner NPC's stored data
+    var safelist = [];
+    try {
+        var stored = npc.getStoreddata().get("safelist");
+        if (stored) { safelist = JSON.parse(String(stored)); }
+    } catch (err) {}
+
+    // If the player is NOT on the safelist, they can only open the GUI if
+    // there are no clones active nearby (all must be cleared first).
+    if (!isPlayerOnSafelist(player, safelist)) {
+        var pos = npc.getPos();
+        var nearbyClones = world.getNearbyEntities(pos, OWNED_SEARCH_RANGE, 2);
+        var spawnerY = pos.getY();
+        var cloneNames = {};
+        for (var t = 0; t < CLONE_TYPES.length; t++) {
+            cloneNames[CLONE_TYPES[t].name] = true;
+        }
+        var activeCount = 0;
+        for (var i = 0; i < nearbyClones.length; i++) {
+            var n = nearbyClones[i];
+            if (!cloneNames[n.getName()]) continue;
+            if (Math.abs(n.getY() - spawnerY) > OWNED_Y_TOLERANCE) continue;
+            activeCount++;
+        }
+        if (activeCount > 0) {
+            player.message("§cYou are not on the safe list! All active clones must be cleared first before you can use this spawner.");
+            return;
+        }
+    }
+
     // Store npc and world NOW, while e.npc is valid, mirroring how the
     // contract script always accesses event.npc inside interact().
-    pendingNpc   = e.npc;
-    pendingWorld = e.npc.getWorld();
+    pendingNpc   = npc;
+    pendingWorld = world;
 
     // FIX (bug 2): snapshot the pos object here so findNearbyClones can use
     // it even after pendingNpc is cleared.
-    pendingSpawnerPos = e.npc.getPos();
+    pendingSpawnerPos = npc.getPos();
 
     // Load persisted exclude text from NPC stored data
     try {
-        var stored = e.npc.getStoreddata().get("excludeText");
+        var stored = npc.getStoreddata().get("excludeText");
         if (stored) { savedExcludeText = String(stored); }
     } catch (err) {}
 
@@ -277,6 +311,14 @@ function customGuiClosed(e) {
 }
 
 // ----------------- HELPERS -----------------
+
+function isPlayerOnSafelist(player, safelist) {
+    var name = player.getName().toLowerCase();
+    for (var i = 0; i < safelist.length; i++) {
+        if (safelist[i].toLowerCase() === name) return true;
+    }
+    return false;
+}
 
 // Update the safelist on ALL existing clones within range of the spawner NPC.
 // This ensures old clones get the updated list when the player changes it.
