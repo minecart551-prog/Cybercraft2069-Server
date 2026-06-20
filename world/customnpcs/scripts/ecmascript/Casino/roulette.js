@@ -6,8 +6,8 @@ var SYS = Java.type("java.lang.System")
 var MAX_PLAYERS          = 5
 var SPIN_DURATION_MS     = 4000
 var MIN_BET              = 1
-var MAX_BET              = 10000   // per single bet: 1 emerald = $100
-var MAX_TOTAL_BET        = 10000   // total across ALL placed bets: 1 emerald = $100
+var MAX_BET              = 100000   // per single bet: 10 emeralds = $1000
+var MAX_TOTAL_BET        = 100000   // total across ALL placed bets: 10 emeralds = $1000
 
 var STONE_TO_COAL   = 100
 var COAL_TO_EMERALD = 100

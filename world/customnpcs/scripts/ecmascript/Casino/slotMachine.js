@@ -88,13 +88,18 @@ var COAL_TO_EMERALD = 100;
 // ║              INTERNAL — do not edit below               ║
 // ╚══════════════════════════════════════════════════════════╝
 
-var ID_BET_0    = 10;
-var ID_BET_1    = 11;
-var ID_BET_2    = 12;
-var ID_TITLE    = 20;
-var ID_MSG      = 21;
-var ID_COINS    = 22;
-var ID_SPIN_LBL = 23;
+var cid = 9000;
+function nextCid() { return cid++; }
+
+var ID_BET_0       = 10;
+var ID_BET_1       = 11;
+var ID_BET_2       = 12;
+var ID_TITLE       = 20;
+var ID_MSG         = 21;
+var ID_COINS       = 22;
+var ID_SPIN_LBL    = 23;
+var ID_CUSTOM_BET  = 24;
+var TF_CUSTOM_BET  = 25;
 
 // ── The player who is currently spinning (locked in at bet-time) ──
 var spinningPlayer = null;
@@ -222,6 +227,11 @@ function interact(event) {
         guiRef.addButton(btnIds[b], btnLabels[b], btnStartX + b * (BTN_WIDTH + BTN_GAP), BTN_Y, BTN_WIDTH, BTN_HEIGHT);
     }
 
+    // Custom bet field (just below the bet buttons)
+    guiRef.addLabel(nextCid(), "§7Custom($)", 50, BTN_Y + BTN_HEIGHT + 2, 50, 8);
+    guiRef.addTextField(TF_CUSTOM_BET, 95, BTN_Y + BTN_HEIGHT, 50, 14).setText("");
+    guiRef.addButton(ID_CUSTOM_BET, "§aSpin", 148, BTN_Y + BTN_HEIGHT, 28, 14);
+
     guiRef.addLabel(ID_MSG,      "§7Place your bet to spin!", MSG_X,   MSG_Y,   MSG_SCALE,   MSG_SCALE);
     guiRef.addLabel(ID_COINS,    "§7Coins: §f" + countPlayerCoins(player) + "¢", COINS_X, COINS_Y, COINS_SCALE, COINS_SCALE);
     guiRef.addLabel(ID_SPIN_LBL, "§7" + getPayoutHint(), HINT_X, HINT_Y, HINT_SCALE, HINT_SCALE);
@@ -253,13 +263,34 @@ function customGuiButton(event) {
         return;
     }
 
+    var betAmount = 0;
+
+    // Check if this is a preset bet button
     var betIndex = -1;
     if      (btnId === ID_BET_0) betIndex = 0;
     else if (btnId === ID_BET_1) betIndex = 1;
     else if (btnId === ID_BET_2) betIndex = 2;
-    if (betIndex === -1) return;
 
-    var betAmount   = BET_OPTIONS[betIndex];
+    if (betIndex >= 0) {
+        betAmount = BET_OPTIONS[betIndex];
+    } else if (btnId === ID_CUSTOM_BET) {
+        // Handle custom bet from text field
+        try {
+            var textField = event.gui.getComponent(TF_CUSTOM_BET);
+            if (!textField) { player.message("§cCould not read custom bet field!"); return; }
+            var raw = textField.getText();
+            if (!raw || raw === "") { player.message("§cEnter a bet amount!"); return; }
+            var cleaned = raw.replace("$", "").trim();
+            var parsed = parseFloat(cleaned);
+            if (isNaN(parsed) || parsed <= 0) { player.message("§cInvalid amount!"); return; }
+            betAmount = Math.round(parsed * 100);
+            if (betAmount < 1) { player.message("§cMinimum bet is 1¢!"); return; }
+            if (betAmount > 50000) { player.message("§cMaximum bet is $500.00 (5 emeralds)!"); return; }
+        } catch (err) { player.message("§cError: " + err); return; }
+    } else {
+        return;
+    }
+
     var playerCoins = countPlayerCoins(player);
     if (playerCoins < betAmount) {
         player.message("§cNot enough coins! Need §e" + betAmount + "¢§c, have §e" + playerCoins + "¢");

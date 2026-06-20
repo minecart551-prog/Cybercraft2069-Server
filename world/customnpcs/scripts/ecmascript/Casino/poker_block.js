@@ -719,7 +719,7 @@ function doCustomBuyIn(event) {
         if (isNaN(parsed) || parsed <= 0) { player.message("§c[Poker] Invalid amount!"); return }
         var cents = Math.round(parsed * 100)
         if (cents < SMALL_BLIND) { player.message("§c[Poker] Min buy-in is " + fmt(SMALL_BLIND) + "!"); return }
-        if (cents > 50000) { player.message("§c[Poker] Max buy-in is $500.00!"); return }
+        if (cents > 100000) { player.message("§c[Poker] Max buy-in is $1,000!"); return }
         doBuyIn(event, cents)
     } catch (err) { player.message("§c[Poker] Error: " + err) }
 }

@@ -668,7 +668,7 @@ function doCustomBet(event) {
         // Convert dollars to cents, ensure no sub-cent decimals
         var cents = Math.round(parsed * 100)
         if (cents < 1) { player.message("§c[Blackjack] Minimum bet is 1¢!"); return }
-        if (cents > 10000) { player.message("§c[Blackjack] Maximum bet is $100.00!"); return } // $100 max
+        if (cents > 100000) { player.message("§c[Blackjack] Maximum bet is $1,000.00 (10 emeralds)!"); return }
 
         var amount = cents
         var bal    = countCoins(player)
