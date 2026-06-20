@@ -2,7 +2,7 @@
 // Clone Spawner - vendor NPC that sells "protector" clones
 // ===============================================================
 
-// ----------------- CONFIGURATION -----------------
+// ----------------- CONFIGURATION (defaults - overridden by NPC stored data) -----------------
 
 var MAX_CLONES            = 5;
 var OWNED_SEARCH_RANGE    = 100;
@@ -23,12 +23,20 @@ var CLONE_TYPES = [
 // ----------------- GUI LAYOUT -----------------
 
 var GUI_SPAWNER      = 9001;
+var GUI_ADMIN        = 9002;
 var LBL_TITLE        = 1;
 var LBL_COUNT        = 2;
 var LBL_CURRENCY     = 3;
 var LBL_EXCLUDE      = 4;
 var TF_EXCLUDE_NAMES = 10;
 var BTN_CLONE_BASE   = 100;
+
+// Admin GUI component IDs
+var ADM_TF_MAX_CLONES     = 1000;
+var ADM_TF_SCAN_RANGE     = 1001;
+var ADM_TF_Y_TOLERANCE    = 1002;
+var ADM_BTN_SAVE          = 1003;
+var ADM_LBL_TITLE         = 1004;
 
 var COLS   = 2;
 var ROW_H  = 22;
@@ -62,10 +70,36 @@ function init(e) {
     npc.getAi().setRetaliateType(0);
 }
 
+function loadConfig(npc) {
+    if (!npc) return;
+    try {
+        var sd = npc.getStoreddata();
+        var max = sd.get("maxClones");
+        if (max !== null && max !== undefined) MAX_CLONES = parseInt(String(max));
+        var range = sd.get("scanRange");
+        if (range !== null && range !== undefined) OWNED_SEARCH_RANGE = parseInt(String(range));
+        var tol = sd.get("yTolerance");
+        if (tol !== null && tol !== undefined) OWNED_Y_TOLERANCE = parseInt(String(tol));
+    } catch (err) {}
+}
+
 function interact(e) {
     var player = e.player;
     var npc    = e.npc;
     var world  = npc.getWorld();
+
+    // Load admin settings from NPC stored data
+    loadConfig(npc);
+
+    // --- ADMIN MODE: If holding bedrock -> open admin GUI ---
+    var handItem = player.getMainhandItem();
+    if (handItem && !handItem.isEmpty() && handItem.getName() === "minecraft:bedrock") {
+        pendingNpc   = npc;
+        pendingWorld = world;
+        pendingSpawnerPos = npc.getPos();
+        openAdminGui(player, e.API, npc);
+        return;
+    }
 
     // Load the safelist from the spawner NPC's stored data
     var safelist = [];
@@ -115,6 +149,28 @@ function interact(e) {
     openSpawnerGui(e);
 }
 
+function openAdminGui(player, api, npc) {
+    var width  = 260;
+    var height = 180;
+
+    var gui = api.createCustomGui(GUI_ADMIN, width, height, false, player);
+
+    gui.addLabel(ADM_LBL_TITLE, "§6§lAdmin - Spawner Settings", width / 2 - 70, 10, 160, 14);
+
+    gui.addLabel(100, "§7Max Clones:", 15, 35, 120, 10);
+    gui.addTextField(ADM_TF_MAX_CLONES, 140, 32, 100, 14).setText(String(MAX_CLONES));
+
+    gui.addLabel(101, "§7Scan Range:", 15, 60, 120, 10);
+    gui.addTextField(ADM_TF_SCAN_RANGE, 140, 57, 100, 14).setText(String(OWNED_SEARCH_RANGE));
+
+    gui.addLabel(102, "§7Y Tolerance:", 15, 85, 120, 10);
+    gui.addTextField(ADM_TF_Y_TOLERANCE, 140, 82, 100, 14).setText(String(OWNED_Y_TOLERANCE));
+
+    gui.addButton(ADM_BTN_SAVE, "§a§lSave", width / 2 - 40, 120, 80, 20);
+
+    player.showCustomGui(gui);
+}
+
 function openSpawnerGui(e) {
     var player = e.player;
     var api    = e.API;
@@ -147,6 +203,10 @@ function openSpawnerGui(e) {
 }
 
 function customGuiButton(e) {
+    if (e.gui.getID() === GUI_ADMIN) {
+        handleAdminGuiButton(e);
+        return;
+    }
     if (e.gui.getID() !== GUI_SPAWNER) return;
 
     var player = e.player;
@@ -254,6 +314,36 @@ function customGuiButton(e) {
     pendingTemplateName = cloneType.name;
 
     player.message("§aHired a " + cloneType.displayName + "§a! Close this menu to confirm your safe list.");
+}
+
+function handleAdminGuiButton(e) {
+    if (e.buttonId !== ADM_BTN_SAVE) return;
+    var player = e.player;
+    var gui = e.gui;
+
+    try {
+        var maxClones = parseInt(gui.getComponent(ADM_TF_MAX_CLONES).getText());
+        var scanRange = parseInt(gui.getComponent(ADM_TF_SCAN_RANGE).getText());
+        var yTol      = parseInt(gui.getComponent(ADM_TF_Y_TOLERANCE).getText());
+
+        if (isNaN(maxClones) || maxClones < 1) { player.message("§cMax Clones must be a number >= 1"); return; }
+        if (isNaN(scanRange) || scanRange < 1) { player.message("§cScan Range must be a number >= 1"); return; }
+        if (isNaN(yTol) || yTol < 0) { player.message("§cY Tolerance must be a number >= 0"); return; }
+
+        MAX_CLONES         = maxClones;
+        OWNED_SEARCH_RANGE = scanRange;
+        OWNED_Y_TOLERANCE  = yTol;
+
+        if (pendingNpc) {
+            pendingNpc.getStoreddata().put("maxClones", String(MAX_CLONES));
+            pendingNpc.getStoreddata().put("scanRange", String(OWNED_SEARCH_RANGE));
+            pendingNpc.getStoreddata().put("yTolerance", String(OWNED_Y_TOLERANCE));
+        }
+
+        player.message("§aSettings saved! Max Clones: " + MAX_CLONES + ", Scan Range: " + OWNED_SEARCH_RANGE + ", Y Tolerance: " + OWNED_Y_TOLERANCE);
+    } catch (err) {
+        player.message("§cError saving settings: " + err);
+    }
 }
 
 function customGuiClosed(e) {
