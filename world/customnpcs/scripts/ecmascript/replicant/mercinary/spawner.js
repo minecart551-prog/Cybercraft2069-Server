@@ -223,7 +223,7 @@ function customGuiButton(e) {
 
     var spawnedClone = null;
     try {
-        spawnedClone = pendingWorld.spawnClone(sx, sy, sz, cloneType.tab, cloneType.name);
+        spawnedClone = pendingWorld.spawnClone(sx, sy+1, sz, cloneType.tab, cloneType.name);
     } catch (err) {
         player.message("§cSomething went wrong spawning your clone - refunding payment.");
         giveCoins(player, cloneType.price);
