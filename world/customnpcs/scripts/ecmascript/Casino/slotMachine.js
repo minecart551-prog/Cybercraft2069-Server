@@ -228,9 +228,9 @@ function interact(event) {
     }
 
     // Custom bet field (just below the bet buttons)
-    guiRef.addLabel(nextCid(), "§7Custom($)", 30, BTN_Y + BTN_HEIGHT + 12, 50, 8);
-    guiRef.addTextField(TF_CUSTOM_BET, 75, BTN_Y + BTN_HEIGHT + 10, 50, 14).setText("");
-    guiRef.addButton(ID_CUSTOM_BET, "§aSpin", 128, BTN_Y + BTN_HEIGHT + 10, 28, 14);
+    guiRef.addLabel(nextCid(), "§7Custom($)", 20, BTN_Y + BTN_HEIGHT + 12, 50, 8);
+    guiRef.addTextField(TF_CUSTOM_BET, 65, BTN_Y + BTN_HEIGHT + 10, 50, 14).setText("");
+    guiRef.addButton(ID_CUSTOM_BET, "§aSpin", 118, BTN_Y + BTN_HEIGHT + 10, 28, 14);
 
     guiRef.addLabel(ID_MSG,      "§7Place your bet to spin!", MSG_X,   MSG_Y,   MSG_SCALE,   MSG_SCALE);
     guiRef.addLabel(ID_COINS,    "§7Wallet: §f$" + fmtWallet(player), COINS_X, COINS_Y, COINS_SCALE, COINS_SCALE);
