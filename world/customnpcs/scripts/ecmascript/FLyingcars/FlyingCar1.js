@@ -73,7 +73,7 @@ function init(event) {
         // Check if owner is in the lost car list
         var world = npc.getWorld();
         if (isPlayerInLostCarList(world, carData.owner)) {
-            npc.setPosition(2435, 159, 874);
+            npc.setPosition(2436, 159, 828);
         }
     }
 }
