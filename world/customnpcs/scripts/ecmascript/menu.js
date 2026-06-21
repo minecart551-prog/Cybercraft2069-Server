@@ -226,7 +226,7 @@ function openMenuGui(event) {
         "\u00a7a\u2022 \u00a7fAdded \u00a7aVanilla zone\u00a7f, its as big as city, you can go directly to the East for use teleport button at boatdock\n" +
         "\u00a7a\u2022 \u00a7fJoining Police and Criminal team is now \u00a7afree\u00a7f\u2014 earn \u00a7e$1.00\u00a7f per Minecraft day to your team contribution share.\n" +
         "\u00a7a\u2022 \u00a7fBomb sites keep inventory on when die except for bullets\n" +
-        "\u00a7a\u2022 \u00a7fAdded gangs to alley ways\n"
+        "\u00a7a\u2022 \u00a7fAdded gangs to alley ways\n",
         15, 50, 390, 90)
 
     // ── Divider ──────────────────────────────────────────────────────────────
