@@ -67,7 +67,8 @@ var pendingSpawnerPos   = null;
 function init(e) {
     var npc = e.npc;
     npc.getDisplay().setName("§eMercinary Spawner");
-    npc.getAi().setRetaliateType(0);
+    npc.getAi().setRetaliateType(3);
+    npc.getStats().setMaxHealth(999);  
 }
 
 function loadConfig(npc) {
