@@ -296,6 +296,7 @@ function meleeAttack(e) {
         var uuid = target.getUUID();
         if (playerSugar[uuid]) {
             target.setPosition(TeleportDestination[0], TeleportDestination[1], TeleportDestination[2]);
+            npc.executeCommand('kill @e[type=minecraft:item,nbt={Item:{id:"minecraft:sugar"}}]');
             var inv = target.getInventory();
             var size = inv.getSize();
             for (var slot = 0; slot < size; slot++) {
