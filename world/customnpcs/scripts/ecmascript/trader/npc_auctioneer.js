@@ -72,7 +72,10 @@ var COIN_COAL = "coins:coal_coin"
 var COIN_EMERALD = "coins:emerald_coin"
 // Price input: "4.03" means $4.03 = 403¢ = 4 coal + 3 stone
 // All internal amounts are stored in cents (¢)
-
+// Items blocked from being listed on the auction house
+var BLOCKED_ITEMS = [
+    "minecraft:sugar"
+]
 // ============================================================================
 // GUI IDS
 // ============================================================================
@@ -1344,7 +1347,13 @@ function doCreateListing(event, price, days) {
         player.message("§c[Auction] You must hold an item in your main hand!")
         return
     }
-
+var heldName = held.getName()
+for (var bi = 0; bi < BLOCKED_ITEMS.length; bi++) {
+    if (heldName === BLOCKED_ITEMS[bi]) {
+        player.message("§c[Auction] That item cannot be listed on this market!")
+        return
+    }
+}    
     // Price is already in cents (parsed by parsePriceInput in the button handler)
     price = parseInt(price)
     days = parseInt(days)
