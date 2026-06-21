@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "MaxDurability": 130,
+  "DurabilityPerShot": 0.13,
+  "FireOnZero": false
+
+}

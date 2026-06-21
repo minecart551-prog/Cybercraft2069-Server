@@ -1,0 +1,47 @@
+{
+  "bucket": "tide:snook_bucket",
+  "conditions": [
+    {
+      "type": "tide:saltwater",
+      "biomes": [
+         "#minecraft:is_cold_ocean",
+         "#minecraft:is_lukewarm_ocean"
+      ] 
+    },
+    {
+      "type": "tide:saltwater"
+    },
+    {
+      "type": "tide:dimension",
+      "dimensions": [
+        "minecraft:overworld"
+      ]
+    },
+    {
+      "type": "tide:fluid",
+      "fluid": "water"
+    },
+    {
+      "type": "tide:above",
+      "y": -63
+    }
+  ],
+  "display_data": {
+    "entity": "tide:snook",
+    "x": -0.05
+  },
+  "fish": "tide:snook",
+  "journal_profile": {
+    "description": "journal.description.tide.snook",
+    "group": "saltwater",
+    "location": "journal.info.location.coast"
+  },
+  "selection_weight": 42.0,
+  "size": {
+    "record_high_cm": 125.0,
+    "typical_high_cm": 68.0,
+    "typical_low_cm": 38.0
+  },
+  "speed": 1.1,
+  "strength": 0.45
+}

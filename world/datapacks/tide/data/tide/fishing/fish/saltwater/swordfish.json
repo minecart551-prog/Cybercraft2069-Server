@@ -1,0 +1,50 @@
+{
+  "behavior": "darts",
+  "bucket": "tide:swordfish_bucket",
+  "conditions": [
+    {
+      "type": "tide:saltwater",
+      "biomes": [
+         "#minecraft:is_cold_ocean",
+         "#minecraft:is_lukewarm_ocean"
+      ] 
+    },
+    {
+      "type": "tide:dimension",
+      "dimensions": [
+        "minecraft:overworld"
+      ]
+    },
+    {
+      "type": "tide:fluid",
+      "fluid": "water"
+    },
+    {
+      "type": "tide:above",
+      "y": -63
+    }
+  ],
+  "display_data": {
+    "entity": "tide:swordfish",
+    "shape": "3x1",
+    "x": -0.06,
+    "y": -0.15
+  },
+  "fish": "tide:swordfish",
+  "journal_profile": {
+    "alt_sprite": "tide:textures/item/swordfish_full.png",
+    "alt_sprite_size": 48,
+    "description": "journal.description.tide.swordfish",
+    "group": "saltwater",
+    "location": "journal.info.location.saltwater",
+    "rarity": "rare"
+  },
+  "selection_weight": 8.0,
+  "size": {
+    "record_high_cm": 455.0,
+    "typical_high_cm": 290.0,
+    "typical_low_cm": 180.0
+  },
+  "speed": 1.4,
+  "strength": 0.8
+}

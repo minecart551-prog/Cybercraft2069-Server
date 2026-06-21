@@ -1,0 +1,43 @@
+{
+  "bucket": "tide:red_snapper_bucket",
+  "conditions": [
+    {
+      "type": "tide:saltwater",
+      "biomes": [
+         "#minecraft:is_cold_ocean",
+         "#minecraft:is_lukewarm_ocean"
+      ] 
+    },
+    {
+      "type": "tide:dimension",
+      "dimensions": [
+        "minecraft:overworld"
+      ]
+    },
+    {
+      "type": "tide:fluid",
+      "fluid": "water"
+    },
+    {
+      "type": "tide:above",
+      "y": -63
+    }
+  ],
+  "display_data": {
+    "entity": "tide:red_snapper",
+    "x": -0.05
+  },
+  "fish": "tide:red_snapper",
+  "journal_profile": {
+    "description": "journal.description.tide.red_snapper",
+    "group": "saltwater",
+    "location": "journal.info.location.saltwater"
+  },
+  "selection_weight": 50.0,
+  "size": {
+    "record_high_cm": 115.0,
+    "typical_high_cm": 60.0,
+    "typical_low_cm": 30.0
+  },
+  "strength": 0.4
+}

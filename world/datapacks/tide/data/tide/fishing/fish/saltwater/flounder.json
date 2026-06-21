@@ -1,0 +1,45 @@
+{
+  "bucket": "tide:flounder_bucket",
+  "conditions": [
+    {
+      "type": "tide:saltwater",
+      "biomes": [
+         "#minecraft:is_cold_ocean",
+         "#minecraft:is_lukewarm_ocean"
+      ] 
+    },
+    {
+      "type": "tide:dimension",
+      "dimensions": [
+        "minecraft:overworld"
+      ]
+    },
+    {
+      "type": "tide:fluid",
+      "fluid": "water"
+    },
+    {
+      "type": "tide:above",
+      "y": -63
+    }
+  ],
+  "display_data": {
+    "entity": "tide:flounder",
+    "x": 0.05,
+    "z": 0.02
+  },
+  "fish": "tide:flounder",
+  "journal_profile": {
+    "description": "journal.description.tide.flounder",
+    "group": "saltwater",
+    "location": "journal.info.location.saltwater"
+  },
+  "selection_weight": 35.0,
+  "size": {
+    "record_high_cm": 75.0,
+    "typical_high_cm": 55.0,
+    "typical_low_cm": 40.0
+  },
+  "speed": 0.8,
+  "strength": 0.45
+}

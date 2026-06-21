@@ -1,0 +1,45 @@
+{
+  "behavior": "jitter",
+  "bucket": "tide:anchovy_bucket",
+  "conditions": [
+    {
+      "type": "tide:saltwater",
+      "biomes": [
+         "#minecraft:is_cold_ocean",
+         "#minecraft:is_lukewarm_ocean"
+      ] 
+    },
+    {
+      "type": "tide:dimension",
+      "dimensions": [
+        "minecraft:overworld"
+      ]
+    },
+    {
+      "type": "tide:fluid",
+      "fluid": "water"
+    },
+    {
+      "type": "tide:above",
+      "y": -63
+    }
+  ],
+  "display_data": {
+    "entity": "tide:anchovy",
+    "x": -0.11,
+    "y": 0.06
+  },
+  "fish": "tide:anchovy",
+  "journal_profile": {
+    "description": "journal.description.tide.anchovy",
+    "group": "saltwater",
+    "location": "journal.info.location.saltwater"
+  },
+  "selection_weight": 35.0,
+  "size": {
+    "record_high_cm": 20.0,
+    "typical_high_cm": 12.0,
+    "typical_low_cm": 6.0
+  },
+  "speed": 1.5
+}

@@ -1,0 +1,44 @@
+{
+  "behavior": "darts",
+  "bucket": "tide:mackerel_bucket",
+  "conditions": [
+    {
+      "type": "tide:saltwater",
+      "biomes": [
+         "#minecraft:is_cold_ocean",
+         "#minecraft:is_lukewarm_ocean"
+      ] 
+    },
+    {
+      "type": "tide:dimension",
+      "dimensions": [
+        "minecraft:overworld"
+      ]
+    },
+    {
+      "type": "tide:fluid",
+      "fluid": "water"
+    },
+    {
+      "type": "tide:above",
+      "y": -63
+    }
+  ],
+  "display_data": {
+    "entity": "tide:mackerel",
+    "x": -0.05
+  },
+  "fish": "tide:mackerel",
+  "journal_profile": {
+    "description": "journal.description.tide.mackerel",
+    "group": "saltwater",
+    "location": "journal.info.location.saltwater"
+  },
+  "selection_weight": 55.0,
+  "size": {
+    "record_high_cm": 65.0,
+    "typical_high_cm": 45.0,
+    "typical_low_cm": 30.0
+  },
+  "strength": 0.5
+}

@@ -1,0 +1,33 @@
+ ServerEvents.recipes(event => {
+event.remove({ mod: 'coins' }),
+event.remove({ mod: 'waterframes' }),
+event.remove({ mod: 'tacz' }),
+event.remove({ mod: 'automobility' }),
+event.remove({ mod: 'decocraft' }),
+event.remove({ mod: 'cyber_armorer' }),
+event.remove({ mod: 'armourers_workshop' }),
+event.remove({ id: 'tide:dragonfin_boots' }),    
+event.remove({ id: 'minecraft:ender_chest' }),    
+event.remove({ id: 'yuushya:bismuth_crystal' }),    
+event.remove({ id: 'minecraft:shulker_shell' }),
+event.remove({ id: 'minecraft:oak_chest_boat' }),
+event.remove({ id: 'minecraft:spruce_chest_boat' }),
+event.remove({ id: 'minecraft:birch_chest_boat' }),
+event.remove({ id: 'minecraft:jungle_chest_boat' }),
+event.remove({ id: 'minecraft:acacia_chest_boat' }),
+event.remove({ id: 'minecraft:dark_oak_chest_boat' }),
+event.remove({ id: 'minecraft:mangrove_chest_boat' }),
+event.remove({ id: 'minecraft:cherry_chest_boat' }),
+event.remove({ id: 'minecraft:bamboo_chest_raft' }),
+event.remove({ id: 'minecraft:oak_boat' }),
+event.remove({ id: 'minecraft:spruce_boat' }),
+event.remove({ id: 'minecraft:birch_boat' }),
+event.remove({ id: 'minecraft:jungle_boat' }),
+event.remove({ id: 'minecraft:acacia_boat' }),
+event.remove({ id: 'minecraft:dark_oak_boat' }),
+event.remove({ id: 'minecraft:mangrove_boat' }),
+event.remove({ id: 'minecraft:cherry_boat' }),
+event.remove({ id: 'minecraft:bamboo_raft' })
+ }
+
+)
