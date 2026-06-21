@@ -109,13 +109,17 @@ TUTORIAL_TOPICS[TU_TOPICS.SMUGGLING] = {
     label: "\u00a7e\ud83d\udc8a Smuggling",
     title: "\u00a7e\u00a7l\ud83d\udc8a Sugar Smuggling",
     lines: [
-        "\u00a7c\u26a0 \u00a7fHigh-risk, \u00a7ahigh-reward\u00a7f sugar runs",
-        "\u00a7a\ud83c\udf6c \u00a7fGet \u00a7e1 free sugarcane/day\u00a7f from the Dealer",
-        "\u00a7f  Grow more in your apartment or land",
-        "\u00a7e\ud83d\udcb0 \u00a7fPayout \u00a7emultiplies\u00a7f by amount carried",
-        "\u00a7c\ud83d\udea8 \u00a7fLCPD \u00a7cchases & arrests\u00a7f on sight",
-        "\u00a7f  if you carry sugar in their FOV",
-        "\u00a7a\ud83d\udca1 \u00a7fStack more sugar before running!"
+"\u00a7c\u26a0 \u00a7fHigh-risk, \u00a7ahigh-reward\u00a7f sugar runs",
+"\u00a7e\ud83c\udf69 \u00a7fFind sugarcane farms at these coords:",
+"\u00a7f   \u00a7e2287 -53 1333 \u00a77| \u00a7e2281 -53 1201",
+"\u00a7c\u2694 \u00a7fTake out \u00a7cMercenaries\u00a7f guarding the farm",
+"\u00a7f  then add your name to their spawner safelist",
+"\u00a7b\ud83e\udd16 \u00a7fSpawn your own \u00a7bMercenaries\u00a7f to protect it",
+"\u00a7a\ud83d\udce6 \u00a7fBring canes to dealer at \u00a7e2600 41 925\u00a7f,",
+"\u00a7f  convert to sugar then hand the stack over",
+"\u00a7e\ud83d\udcb0 \u00a7fPayout \u00a7emultiplies\u00a7f by amount you carry",
+"\u00a7c\ud83d\udea8 \u00a7fLCPD \u00a7cchases & arrests\u00a7f if in their FOV",
+"\u00a7a\ud83d\udca1 \u00a7fStack more sugar before running!"
     ]
 }
 TUTORIAL_TOPICS[TU_TOPICS.BOUNTY] = {
