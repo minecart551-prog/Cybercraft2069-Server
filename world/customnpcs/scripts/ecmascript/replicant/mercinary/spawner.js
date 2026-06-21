@@ -196,7 +196,7 @@ function openSpawnerGui(e) {
     }
 
     var footerY = LIST_Y + rows * ROW_H + 10;
-    gui.addLabel(LBL_EXCLUDE, "§eNames to exclude (comma separated, at least 1 required):", 15, footerY, width - 30, 10);
+    gui.addLabel(LBL_EXCLUDE, "§eTargets exclusion (comma separated, at least 1 name required):", 15, footerY, width - 30, 10);
     gui.addTextField(TF_EXCLUDE_NAMES, 15, footerY + 12, width - 30, 14).setText(savedExcludeText);
 
     player.showCustomGui(gui);
