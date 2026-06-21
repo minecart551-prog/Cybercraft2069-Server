@@ -116,6 +116,15 @@ ServerEvents.tick(function(event) {
         return;
       }
 
+      // Re-check restricted zones at fire time (player may have moved during countdown)
+      var fromDim = player.level.dimension.toString();
+      var zoneBlocked = findRestrictedZone(fromDim, player.getX(), player.getY(), player.getZ(), home.dim, home.x, home.y, home.z);
+      if (zoneBlocked) {
+        player.tell("§cTeleportation cancelled! Restricted zone: §e" + zoneBlocked + "§c.");
+        delete homeQueue[uuid];
+        return;
+      }
+
       player.teleportTo(home.dim, home.x, home.y, home.z, 0, 0);
       incrementUses(player);
 
@@ -150,14 +159,26 @@ ServerEvents.commandRegistry(function(event) {
         var player = ctx.source.player;
         if (!player) return 0;
 
+        var dim = player.level.dimension.toString();
+        var x = player.getX();
+        var y = player.getY();
+        var z = player.getZ();
+
+        // Block setting home inside a restricted zone
+        var zoneBlocked = findRestrictedZone(dim, x, y, z, dim, x, y, z);
+        if (zoneBlocked) {
+          player.tell("§cCannot set home — you are in a restricted zone: §e" + zoneBlocked + "§c.");
+          return 0;
+        }
+
         saveHome(player);
 
         player.tell(
           "§a✔ Home set at §e" +
-          Math.round(player.getX()) + ", " +
-          Math.round(player.getY()) + ", " +
-          Math.round(player.getZ()) +
-          "§a in §e" + player.level.dimension + "§a!"
+          Math.round(x) + ", " +
+          Math.round(y) + ", " +
+          Math.round(z) +
+          "§a in §e" + dim + "§a!"
         );
         return 1;
       })
@@ -185,6 +206,14 @@ ServerEvents.commandRegistry(function(event) {
         var home = loadHome(player);
         if (!home) {
           player.tell("§cYou haven't set a home yet! Use §e/sethome §cfirst.");
+          return 0;
+        }
+
+        // Block teleporting to a home that is inside a restricted zone
+        var fromDim = player.level.dimension.toString();
+        var zoneBlocked = findRestrictedZone(fromDim, player.getX(), player.getY(), player.getZ(), home.dim, home.x, home.y, home.z);
+        if (zoneBlocked) {
+          player.tell("§cCannot teleport home — restricted zone: §e" + zoneBlocked + "§c.");
           return 0;
         }
 
