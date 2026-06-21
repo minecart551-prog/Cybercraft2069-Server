@@ -111,7 +111,10 @@ TUTORIAL_TOPICS[TU_TOPICS.SMUGGLING] = {
     lines: [
 "\u00a7c\u26a0 \u00a7fHigh-risk, \u00a7ahigh-reward\u00a7f sugar runs",
 "\u00a7e\ud83c\udf69 \u00a7fFind sugarcane farms at these coords:",
-"\u00a7f   \u00a7e2287 -53 1333 \u00a77| \u00a7e2281 -53 1201",
+"\u00a7f   \u00a7e2287 -53 1333",
+"\u00a77| \u00a7e2281 -53 1201",      
+"\u00a77| \u00a7e1957 -50 -192",            
+"\u00a77| \u00a7e950 -40 -277",               
 "\u00a7c\u2694 \u00a7fTake out \u00a7cMercenaries\u00a7f guarding the farm",
 "\u00a7f  then add your name to their spawner safelist",
 "\u00a7b\ud83e\udd16 \u00a7fSpawn your own \u00a7bMercenaries\u00a7f to protect it",
