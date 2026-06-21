@@ -120,7 +120,7 @@ TUTORIAL_TOPICS[TU_TOPICS.SMUGGLING] = {
 "\u00a7f  then add your name to their spawner safelist",
 "\u00a7b\ud83e\udd16 \u00a7fSpawn your own \u00a7bMercenaries\u00a7f to protect it",
 "\u00a7a\ud83d\udce6 \u00a7fBring canes to dealer at \u00a7e2600 41 925\u00a7f,",
-"\u00a7f  convert to sugar then hand the stack over",
+"\u00a7f  convert to sugar then hand the stack over for delivery coordinates",
 "\u00a7e\ud83d\udcb0 \u00a7fPayout \u00a7emultiplies\u00a7f by amount you carry",
 "\u00a7c\ud83d\udea8 \u00a7fLCPD \u00a7cchases & arrests\u00a7f if in their FOV",
 "\u00a7a\ud83d\udca1 \u00a7fStack more sugar before running!"
