@@ -50,7 +50,7 @@ var tourStops = [
     { msg: "§aThe Neonites are the first level enemy you will deal with, after that are the drones you see around here, the same enemy type will defend each other so watch out for nearby enemies", coords: [2546, 42, 831] },
     { msg: "§aHere is the Elevator down to the §eMetro §awhere you can go to different parts of the city, on street level you can also go to §eDesert Tunnel §afor mining", coords: [2560, 42, 848] },
     { msg: "§aOver here we have a furniture store", coords: [2550, 42, 887] },
-    { msg: "§aOver here is the sugar dealer, he will give you one sugarcane per day, you can grow more in your apartment or faction claim. The job is the same as delivery but times the ammount of sugar you can carry, LCPD will chase and arrest you if youre in their FOV", path: [[2549, 42, 920],[2578, 42, 936],[2602, 42, 930]] },
+    { msg: "§aOver here is the sugar dealer, the coordinates of sugarcane farms is in .menu tutorial, you can take over and spawn mercinaries to protect these farms. The job is the same as delivery but times the ammount of sugar you can carry, LCPD will chase and arrest you if youre in their FOV", path: [[2549, 42, 920],[2578, 42, 936],[2602, 42, 930]] },
     { msg: "§aThe there are currently 4 places you can fish with different fish rarities: Spawn park -> Fishinghub = Boat dock -> Far sea (green water area in the east)", coords: [2602, 42, 930]},
     { msg: "§aThat's the end of our tour, follow the markers on the map if you get lost, there are more things to explore so feel free to ask other players and on discord if you have any questions! Thanks for joining us, Have fun exploring!", coords: [2602, 42, 930]},
     { msg: "§aend", coords: [2602, 42, 930], teleport: true }
