@@ -222,7 +222,7 @@ function openMenuGui(event) {
     // ── News Section — edit the label below to update news ───────────────────
     gui.addLabel(3, "\u00a7e\u00a7l\u27a4 LATEST NEWS", 15, 35, 200, 12)
     gui.addLabel(4,
-        "\u00a7a\u2022 \u00a7fAdded new sugar farm system with mercinaries to protect your farms, see Tutorial for more info\n"         
+        "\u00a7a\u2022 \u00a7fAdded new sugar farm system with mercinaries to protect your farms, see Tutorial for more info\n" +        
         "\u00a7a\u2022 \u00a7fAdded \u00a7aVanilla zone\u00a7f, its as big as city, you can go directly to the East for use teleport button at boatdock\n" +
         "\u00a7a\u2022 \u00a7fJoining Police and Criminal team is now \u00a7afree\u00a7f\u2014 earn \u00a7e$1.00\u00a7f per Minecraft day to your team contribution share.\n" +
         "\u00a7a\u2022 \u00a7fBomb sites keep inventory on when die except for bullets\n" +
