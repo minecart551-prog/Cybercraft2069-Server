@@ -320,7 +320,7 @@ function openTeamPCTutorialGui(event) {
         "§7  site block (coords listed there), hold the bomb & click §ePlant§7.",
         "§e§l3b. §bPolice: §fLocate the bomb site and defuse it §ebefore 6 mins§f are up.",
         "",
-        "§7  Bombsites are no inventory dropping except for bullets",
+        "§7  Bombsites are no inventory dropping when dying except for bullets",
         "§e§l4. §fWinners split the losing team's §ewhole fund pool",
         "§7  proportional to each player's contribution:",
         "§7  Payout = §ayour contribution back §7+ §ayour % share of losing fund§7.",
