@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Sync Files via SFTP
+      - name: Sync CNPC via SFTP
         uses: pressidium/lftp-mirror-action@v1
         with:
           host: ${{ secrets.SFTP_HOST }}
@@ -25,4 +25,28 @@ jobs:
           # Ensures only newer files are uploaded
           onlyNewer: true
 
+          options: "--delete --exclude .git/" 
+          
+      - name: Sync KubeJS via SFTP
+        uses: pressidium/lftp-mirror-action@v1
+        with:
+          host: ${{ secrets.SFTP_HOST }}
+          port: ${{ secrets.SFTP_PORT }}
+          user: ${{ secrets.SFTP_USERNAME }}
+          pass: ${{ secrets.SFTP_PASSWORD }}
+          localDir: "./kubejs"
+          remoteDir: "/kubejs"
+          onlyNewer: true
+          options: "--delete --exclude .git/"
+
+      - name: Sync datapack via SFTP
+        uses: pressidium/lftp-mirror-action@v1
+        with:
+          host: ${{ secrets.SFTP_HOST }}
+          port: ${{ secrets.SFTP_PORT }}
+          user: ${{ secrets.SFTP_USERNAME }}
+          pass: ${{ secrets.SFTP_PASSWORD }}
+          localDir: "./world/datapacks"
+          remoteDir: "/world/datapacks"
+          onlyNewer: true
           options: "--delete --exclude .git/" 
