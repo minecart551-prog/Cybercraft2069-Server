@@ -126,6 +126,9 @@ var CONFIG_SHOP_ITEMS = [
 { id: "minecraft:chainmail_boots", count: 1, price: 50, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 3.0, "Operation": 0, "Slot": "feet", "UUID": "[I;1624854239,-1370865197,-1979221776,1862783941]", "AttributeName": "generic.armor", "Name": "generic.armor"}, {"Amount": 3.0, "Operation": 0, "Slot": "feet", "UUID": "[I;996174618,-1532542096,-1324170079,1457612765]", "AttributeName": "generic.armor_toughness", "Name": "generic.armor_toughness"}]}, lore: [] },
 { id: "minecraft:iron_boots", count: 1, price: 800, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 11.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;-741852963,159357258,-258147963,753951456]", "AttributeName": "generic.armor", "Slot": "feet"}]}, lore: [] },
 { id: "minecraft:diamond_boots", count: 1, price: 3000, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 18.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;-847362915,244918375,-519283746,736491820]", "AttributeName": "generic.armor", "Slot": "feet"}]}, lore: [] },
+    null,null,null,null,null,
+{ id: "ride:dragonfin_boots", count: 1, price: 10000},
+    
 ],
     // Tab 3 — Scope
 [
