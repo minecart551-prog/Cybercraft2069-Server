@@ -69,7 +69,7 @@ TUTORIAL_TOPICS[TU_TOPICS.REPLICANTS] = {
         "\u00a7c\u26a1 \u00a7fEach type has its own \u00a7cdifficulty",
         "\u00a7e\ud83d\udee1 \u00a7fReplicants defend same-faction bots \u2014",
         "\u00a7f  take \u00a7ecover\u00a7f & watch for nearby enemies",
-        "\u00a7a\u2605 \u00a7fCheck \u00a7ereward ammount\u00a7f at Harald on market level",
+        "\u00a7a\u2605 \u00a7fCheck \u00a7ereward ammount\u00a7f at \u00a7dThughunter \u00a7fon market level",
         "\u00a7a\ud83d\udca1 \u00a7fStart with \u00a7aNeonites\u00a7f (weakest first!)"
     ]
 }
