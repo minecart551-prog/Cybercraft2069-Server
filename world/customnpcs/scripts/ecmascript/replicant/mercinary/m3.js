@@ -15,6 +15,7 @@ function init(e) {
     npc.getAi().setRetaliateType(0);
     npc.getAi().setAvoidsWater(true);    
     npc.getStats().setRespawnType(3);
+    npc.setFaction(27);
     npc.getStats().setMaxHealth(200);
     npc.getStats().getRanged().setStrength(12);
     npc.getInventory().setDropItem(1, item, 100);
