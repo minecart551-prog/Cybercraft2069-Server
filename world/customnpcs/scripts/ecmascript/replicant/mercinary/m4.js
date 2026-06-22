@@ -16,6 +16,7 @@ function init(e) {
     var item = npc.world.createItem(rewardItem, rewardCount);
     var display = npc.getDisplay();
     npc.setFaction(27);
+    npc.getAi().setAvoidsWater(true);    
     npc.getStats().setMaxHealth(400);
     npc.getStats().setRespawnType(3);
     npc.getStats().getRanged().setStrength(20);
