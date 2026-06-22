@@ -13,6 +13,7 @@ function init(e) {
     var npc = e.npc;
     var item = npc.world.createItem("minecraft:silence_armor_trim_smithing_template", 1);
     npc.getAi().setRetaliateType(0);
+    npc.getAi().setAvoidsWater(true);    
     npc.getStats().setRespawnType(3);
     npc.getStats().setMaxHealth(200);
     npc.getStats().getRanged().setStrength(12);
