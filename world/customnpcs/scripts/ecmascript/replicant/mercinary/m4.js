@@ -18,6 +18,7 @@ function init(e) {
     npc.setFaction(27);
     npc.getAi().setAvoidsWater(true);    
     npc.getStats().setMaxHealth(400);
+    npc.getStats().setHealthRegen(1);   
     npc.getStats().setRespawnType(3);
     npc.getStats().getRanged().setStrength(20);
     npc.getStats().getRanged().setAccuracy(70);
