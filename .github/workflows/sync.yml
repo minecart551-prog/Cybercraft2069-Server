@@ -50,3 +50,15 @@ jobs:
           remoteDir: "/world/datapacks"
           onlyNewer: true
           options: "--delete --exclude .git/" 
+          
+      - name: Sync Tacz via SFTP
+        uses: pressidium/lftp-mirror-action@v1
+        with:
+          host: ${{ secrets.SFTP_HOST }}
+          port: ${{ secrets.SFTP_PORT }}
+          user: ${{ secrets.SFTP_USERNAME }}
+          pass: ${{ secrets.SFTP_PASSWORD }}
+          localDir: "./tacz/cyber_armorer/data/"
+          remoteDir: "/tacz/cyber_armorer/data/"
+          onlyNewer: true
+          options: "--delete --exclude .git/" 
