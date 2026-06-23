@@ -1,0 +1,136 @@
+
+<style>
+h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+.wrap{padding:1rem 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 10px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+td{padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+tr:last-child td{border-bottom:none}
+.price{font-weight:500;font-size:15px}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--border-radius-md);margin-left:4px}
+.badge-blue{background:var(--color-background-info);color:var(--color-text-info)}
+.badge-amber{background:var(--color-background-warning);color:var(--color-text-warning)}
+.badge-green{background:var(--color-background-success);color:var(--color-text-success)}
+.badge-grey{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.badge-red{background:var(--color-background-error);color:var(--color-text-error)}
+.score-bar{display:inline-block;height:6px;border-radius:3px;vertical-align:middle;margin-right:6px}
+.recoil-hi{color:var(--color-text-danger)}
+.recoil-lo{color:var(--color-text-success)}
+.reload-fast{color:var(--color-text-success)}
+.reload-slow{color:var(--color-text-danger)}
+.perfect{color:var(--color-text-success);font-weight:500}
+.na{color:var(--color-text-tertiary);font-style:italic}
+.aoe{color:var(--color-text-warning);font-size:11px}
+</style>
+<h2 class="sr-only">Full gun pricing table v21: copperhead_psalm gets explosion DPS and AoE bonus.</h2>
+<div class="wrap">
+<table>
+<thead>
+<tr>
+<th>Gun</th>
+<th>DPS</th>
+<th>Ammo</th>
+<th>HS</th>
+<th>Aim acc</th>
+<th>Recoil</th>
+<th>Reload</th>
+<th>Score</th>
+<th>Price</th>
+</tr>
+</thead>
+<tbody id="rows"></tbody>
+</table>
+<p style="font-size:11px;color:var(--color-text-tertiary);margin-top:12px;">
+  Regular guns — DPS 30% · Ammo 12% · Headshot 18% · Aim accuracy 10% · Recoil 20% · Reload 5%<br>
+  Smart guns — DPS 48% · Ammo 12% · Headshot n/a · Aim 0 · Recoil 0 · Reload 5%<br>
+  copperhead_psalm: DPS includes +5 explosion damage per bullet · +15 flat AoE bonus score
+</p>
+</div>
+<script>
+const EPSILON = 0.001;
+const AOE_BONUS = 15;
+
+const guns = [
+  {name:"unity_cheetah",           dps:20*400/60,          ammo:11, hs:1.75, aim:0.1,  pitch:0.35, yaw:0.15, reload:2.92, smart:false, note:"baseline", aoe:false},
+  {name:"unity",                   dps:18*360/60,          ammo:11, hs:1.25, aim:0.3,  pitch:0.35, yaw:0.15, reload:2.92, smart:false, note:"",         aoe:false},
+  {name:"unity_her_majesty",       dps:13.3*300/60,        ammo:9,  hs:4.0,  aim:0.1,  pitch:0.30, yaw:0.12, reload:2.92, smart:false, note:"sniper",   aoe:false},
+  {name:"overture",                dps:26.6*150/60,        ammo:6,  hs:1.5,  aim:0.1,  pitch:1.50, yaw:0.30, reload:4.70, smart:false, note:"",         aoe:false},
+  {name:"overture_amnesty",        dps:26.6*300/60,        ammo:6,  hs:2.0,  aim:0.1,  pitch:1.50, yaw:0.30, reload:4.41, smart:false, note:"",         aoe:false},
+  {name:"overture_archangel",      dps:27.5*114/60,        ammo:6,  hs:2.0,  aim:0.1,  pitch:1.50, yaw:0.30, reload:4.06, smart:false, note:"auto",     aoe:false},
+  {name:"overture_crash",          dps:26.6*126/60,        ammo:6,  hs:2.0,  aim:0.1,  pitch:1.00, yaw:0.20, reload:4.70, smart:false, note:"auto",     aoe:false},
+  {name:"overture_reliable",       dps:26.6*150/60,        ammo:6,  hs:2.25, aim:0.1,  pitch:1.50, yaw:0.30, reload:4.95, smart:false, note:"",         aoe:false},
+  {name:"overture_rosco",          dps:28.3*150/60,        ammo:6,  hs:1.5,  aim:0.1,  pitch:1.50, yaw:0.30, reload:4.70, smart:false, note:"",         aoe:false},
+  {name:"3516",                    dps:36.6*198/60,        ammo:10, hs:1.75, aim:0.1,  pitch:1.50, yaw:0.30, reload:4.04, smart:false, note:"",         aoe:false},
+  {name:"yukimura",                dps:11.7*420/60,        ammo:30, hs:1.15, aim:0.25, pitch:0.30, yaw:0.10, reload:4.67, smart:true,  note:"smart",    aoe:false},
+  {name:"yukimura_genjiroh",       dps:13.3*480/60,        ammo:40, hs:1.25, aim:0.25, pitch:0.30, yaw:0.10, reload:4.67, smart:true,  note:"smart",    aoe:false},
+  {name:"yukimura_skippy",         dps:12.5*480/60,        ammo:30, hs:1.25, aim:0.25, pitch:0.30, yaw:0.10, reload:4.67, smart:true,  note:"smart",    aoe:false},
+  {name:"g58_dian",                dps:10.8*650/60,        ammo:45, hs:1.15, aim:0.25, pitch:0.40, yaw:0.13, reload:4.13, smart:true,  note:"smart",    aoe:false},
+  {name:"g58_dian_yinglong",       dps:11.7*700/60,        ammo:45, hs:1.25, aim:0.15, pitch:0.30, yaw:0.10, reload:4.13, smart:true,  note:"smart",    aoe:false},
+  {name:"saratoga",                dps:10.8*900/60,        ammo:40, hs:1.5,  aim:0.02, pitch:0.30, yaw:0.12, reload:4.55, smart:false, note:"auto",     aoe:false},
+  {name:"saratoga_fenrir",         dps:11.7*900/60,        ammo:40, hs:1.5,  aim:0.02, pitch:0.30, yaw:0.12, reload:4.55, smart:false, note:"auto",     aoe:false},
+  {name:"saratoga_problem_solver", dps:10.5*1200/60,       ammo:90, hs:1.5,  aim:0.02, pitch:2.00, yaw:1.00, reload:3.63, smart:false, note:"auto",     aoe:false},
+  {name:"copperhead",              dps:8*660/60,           ammo:30, hs:1.5,  aim:0.1,  pitch:0.40, yaw:0.25, reload:4.42, smart:false, note:"rifle",    aoe:false},
+  {name:"copperhead_psalm",        dps:(8.3+5)*660/60,     ammo:50, hs:1.5,  aim:0.1,  pitch:0.40, yaw:0.25, reload:3.67, smart:false, note:"rifle",    aoe:true},
+  {name:"ajax",                    dps:20*450/60,          ammo:30, hs:1.65, aim:0.1,  pitch:0.55, yaw:0.25, reload:4.68, smart:false, note:"rifle",    aoe:false},
+  {name:"ajax_moron_labe",         dps:20*560/60,          ammo:30, hs:1.65, aim:0.1,  pitch:0.50, yaw:0.20, reload:4.68, smart:false, note:"rifle",    aoe:false},
+  {name:"ajax_pit_bull",           dps:20*500/60,          ammo:20, hs:1.65, aim:0.1,  pitch:0.60, yaw:0.27, reload:4.68, smart:false, note:"rifle",    aoe:false},
+];
+
+function recoilScore(g) { return g.smart ? 5/EPSILON : 5/(g.pitch+g.yaw); }
+function reloadScore(g) { return 1/g.reload; }
+function aimScore(g)    { return g.smart ? 1/EPSILON : 1/g.aim; }
+
+function score(g){
+  let s;
+  if(g.smart){
+    s = g.dps * 0.48 + g.ammo * 0.12 + reloadScore(g) * 0.05;
+  } else {
+    s = g.dps * 0.30 + g.ammo * 0.12 + g.hs * 10 * 0.18 + aimScore(g) * 0.10 + recoilScore(g) * 0.20 + reloadScore(g) * 0.05;
+  }
+  if(g.aoe) s += AOE_BONUS;
+  return s;
+}
+
+const refScore = score(guns[0]);
+const tbody = document.getElementById('rows');
+const sorted = [...guns].sort((a,b)=>score(b)-score(a));
+
+sorted.forEach(g=>{
+  const s = score(g);
+  const price = Math.round(s/refScore * 100 / 5) * 5;
+  const dps = g.dps.toFixed(1);
+  const barW = Math.round(Math.min(s/refScore*25, 100));
+  const barColor = s >= refScore*3 ? '#c0392b' : s >= refScore*2 ? '#e67e22' : s >= refScore*1.3 ? '#8e44ad' : s >= refScore ? '#3266ad' : s >= refScore*0.75 ? '#ba7517' : '#888780';
+  const isRef = g.name === 'unity_cheetah';
+  const rc = (g.pitch+g.yaw).toFixed(2);
+  const rcClass = g.pitch >= 1.0 ? 'recoil-hi' : 'recoil-lo';
+  const reloadClass = g.reload <= 3.5 ? 'reload-fast' : g.reload >= 4.5 ? 'reload-slow' : '';
+
+  let badge = '';
+  if(g.note==='baseline') badge='<span class="badge badge-blue">baseline</span>';
+  else if(g.note==='smart') badge='<span class="badge badge-amber">smart</span>';
+  else if(g.note==='sniper') badge='<span class="badge badge-green">hs spec</span>';
+  else if(g.note==='auto') badge='<span class="badge badge-grey">auto</span>';
+  else if(g.note==='rifle') badge='<span class="badge badge-red">rifle</span>';
+
+  const rcCell  = g.smart ? '<span class="perfect">0</span>'   : `<span class="${rcClass}">${rc}</span>`;
+  const aimCell = g.smart ? '<span class="perfect">0</span>'   : g.aim;
+  const hsCell  = g.smart ? '<span class="na">baked in</span>' : `${g.hs}×`;
+  const dpsCell = g.aoe ? `${dps} <span class="aoe">+AoE</span>` : dps;
+
+  const row = document.createElement('tr');
+  if(isRef) row.style.background='var(--color-background-secondary)';
+  row.innerHTML=`
+    <td style="font-weight:${isRef?'500':'400'}">${g.name}${badge}</td>
+    <td>${dpsCell}</td>
+    <td>${g.ammo}</td>
+    <td>${hsCell}</td>
+    <td>${aimCell}</td>
+    <td>${rcCell}</td>
+    <td class="${reloadClass}">${g.reload}s</td>
+    <td><span class="score-bar" style="width:${barW}px;background:${barColor}"></span>${s.toFixed(1)}</td>
+    <td class="price">$${price}</td>
+  `;
+  tbody.appendChild(row);
+});
+</script>
