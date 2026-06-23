@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.copperhead_psalm.name",
+  "display": "cyber_armorer:copperhead_psalm_display",
+  "data": "cyber_armorer:copperhead_psalm_data",
+  "tooltip": "tooltip.cyber_armorer.copperhead_psalm",
+  "type": "rifle",
+  "sort": 154
+}

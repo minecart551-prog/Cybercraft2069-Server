@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.mantis_blade.name",
+  "display": "cyber_armorer:mantis_blade_display",
+  "data": "cyber_armorer:mantis_blade_data",
+  "tooltip": "tooltip.cyber_armorer.mantis_blade",
+  "type": "rpg",
+  "sort": 150
+}

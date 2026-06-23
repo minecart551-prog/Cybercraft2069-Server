@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.overture_crash.name",
+  "display": "cyber_armorer:overture_crash_display",
+  "data": "cyber_armorer:overture_crash_data",
+  "tooltip": "tooltip.cyber_armorer.overture_crash",
+  "type": "pistol",
+  "sort": 159
+}

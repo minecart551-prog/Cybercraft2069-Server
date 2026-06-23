@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.copperhead.name",
+  "display": "cyber_armorer:copperhead_display",
+  "data": "cyber_armorer:copperhead_data",
+  "tooltip": "tooltip.cyber_armorer.copperhead",
+  "type": "rifle",
+  "sort": 153
+}

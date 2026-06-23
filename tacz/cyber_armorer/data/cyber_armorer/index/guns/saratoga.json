@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.saratoga.name",
+  "display": "cyber_armorer:saratoga_display",
+  "data": "cyber_armorer:saratoga_data",
+  "tooltip": "tooltip.cyber_armorer.saratoga",
+  "type": "smg",
+  "sort": 152
+}

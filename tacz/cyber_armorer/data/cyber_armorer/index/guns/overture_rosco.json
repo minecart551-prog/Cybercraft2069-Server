@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.overture_rosco.name",
+  "display": "cyber_armorer:overture_rosco_display",
+  "data": "cyber_armorer:overture_rosco_data",
+  "tooltip": "tooltip.cyber_armorer.overture_rosco",
+  "type": "pistol",
+  "sort": 161
+}

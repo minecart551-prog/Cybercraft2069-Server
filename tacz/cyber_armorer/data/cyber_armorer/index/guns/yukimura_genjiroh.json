@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.yukimura_genjiroh.name",
+  "display": "cyber_armorer:yukimura_genjiroh_display",
+  "data": "cyber_armorer:yukimura_genjiroh_data",
+  "tooltip": "tooltip.cyber_armorer.yukimura_genjiroh",
+  "type": "pistol",
+  "sort": 155
+}

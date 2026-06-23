@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.ajax_moron_labe.name",
+  "display": "cyber_armorer:ajax_moron_labe_display",
+  "data": "cyber_armorer:ajax_moron_labe_data",
+  "tooltip": "tooltip.cyber_armorer.ajax_moron_labe",
+  "type": "rifle",
+  "sort": 151
+}

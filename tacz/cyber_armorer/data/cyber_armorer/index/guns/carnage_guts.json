@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.carnage_guts.name",
+  "display": "cyber_armorer:carnage_guts_display",
+  "data": "cyber_armorer:carnage_guts_data",
+  "tooltip": "tooltip.cyber_armorer.carnage_guts",
+  "type": "shotgun",
+  "sort": 152
+}

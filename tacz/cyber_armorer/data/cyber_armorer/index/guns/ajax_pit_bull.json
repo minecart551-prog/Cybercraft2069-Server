@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.ajax_pit_bull.name",
+  "display": "cyber_armorer:ajax_pit_bull_display",
+  "data": "cyber_armorer:ajax_pit_bull_data",
+  "tooltip": "tooltip.cyber_armorer.ajax_pit_bull",
+  "type": "rifle",
+  "sort": 152
+}

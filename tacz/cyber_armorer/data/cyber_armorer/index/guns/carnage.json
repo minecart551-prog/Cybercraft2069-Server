@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.carnage.name",
+  "display": "cyber_armorer:carnage_display",
+  "data": "cyber_armorer:carnage_data",
+  "tooltip": "tooltip.cyber_armorer.carnage",
+  "type": "shotgun",
+  "sort": 150
+}

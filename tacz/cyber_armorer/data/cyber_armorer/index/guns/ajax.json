@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.ajax.name",
+  "display": "cyber_armorer:ajax_display",
+  "data": "cyber_armorer:ajax_data",
+  "tooltip": "tooltip.cyber_armorer.ajax",
+  "type": "rifle",
+  "sort": 150
+}

@@ -1,0 +1,45 @@
+{
+  "type": "tacz:gun_smith_table_crafting",
+  "materials": [
+    {
+      "item": {
+        "type": "forge:partial_nbt",
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "cyber_armorer:m2038"
+        }
+      },
+      "count": 1
+    },
+    {
+      "item": {
+        "type": "forge:partial_nbt",
+        "item": "tacz:ammo",
+        "nbt": {
+          "AmmoId": "cyber_armorer:material_4"
+        }
+      },
+      "count": 2
+    },
+    {
+      "item": {
+        "type": "forge:partial_nbt",
+        "item": "tacz:ammo",
+        "nbt": {
+          "AmmoId": "cyber_armorer:material_3"
+        }
+      },
+      "count": 4
+    },
+    {
+      "item": {
+        "item": "minecraft:beetroot"
+       },
+      "count": 8
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "cyber_armorer:m2038_bloody_maria"
+  }
+}

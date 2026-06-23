@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.mantis_blade_maxtac.name",
+  "display": "cyber_armorer:mantis_blade_maxtac_display",
+  "data": "cyber_armorer:mantis_blade_maxtac_data",
+  "tooltip": "tooltip.cyber_armorer.mantis_blade_maxtac",
+  "type": "rpg",
+  "sort": 151
+}

@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.yukimura.name",
+  "display": "cyber_armorer:yukimura_display",
+  "data": "cyber_armorer:yukimura_data",
+  "tooltip": "tooltip.cyber_armorer.yukimura",
+  "type": "pistol",
+  "sort": 153
+}

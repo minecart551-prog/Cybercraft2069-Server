@@ -1,0 +1,108 @@
+{
+  "script": "cyber_armorer:carnage_logic",
+  "ammo": "cyber_armorer:bullet_buckshot",
+  "rpm": 90,
+  "bullet": {
+    "life": 0.6,
+    "bullet_amount": 20,
+    "damage": 60,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.1,
+      "head_shot_multiplier": 1.5,
+      "damage_adjust": [
+        {"distance": 12, "damage": 60},
+        {"distance": 24, "damage": 50},
+        {"distance": "infinite", "damage": 30}
+      ]
+    },
+    "speed": 130,
+    "gravity": 0.15,
+    "knockback": 0.15,
+    "friction": 0.05,
+    "ignite": false,
+    "pierce": 1
+  },
+  "ammo_amount": 5,
+  "extended_mag_ammo_amount": [
+    5,
+    5,
+    5
+  ],
+  "bolt": "manual_action",
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 3,
+      "tactical": 2.3
+    },
+    "cooldown": {
+      "empty": 3.65,
+      "tactical": 2.95
+    }
+  },
+  "draw_time": 0.96,
+  "put_away_time": 0.59,
+  "bolt_action_time": 1,
+  "aim_time": 0.35,
+  "sprint_time": 0.21,
+  "weight": 4.8,
+  "script_param": {
+    "bolt_time": 1,
+    "bolt_feed_time": 0.58,
+    "intro_empty": 3,
+    "intro": 0.5,
+    "loop": 1,
+    "ending": 0.5,
+    "intro_empty_feed": 2.46,
+    "loop_feed": 0.54
+  },
+  "movement_speed": {
+    "base": 0.0,
+    "aim": 0.0,
+    "reload": 0.0
+  },
+  "crawl_recoil_multiplier": 0.5,
+  "fire_mode": [
+    "semi"
+  ],
+  "allow_attachment_types": [
+  ],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [45, 45]},
+      {"time": 0.1, "value": [36, 36]},
+      {"time": 0.25, "value": [22, 22]},
+      {"time": 0.5, "value": [11, 11]},
+      {"time": 0.7, "value": [-0.22, -0.22]},
+      {"time": 0.85, "value": [0.13, 0.13]},
+      {"time": 1, "value": [0, 0]},
+      {"time": 1.25, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-1.5, 1.5]},
+      {"time": 0.1, "value": [-1.5, 1.5]},
+      {"time": 0.2, "value": [0.45, 0.45]},
+      {"time": 0.4, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 4,
+    "move": 4,
+    "sneak": 4,
+    "lie": 4,
+    "aim": 4
+  },
+  "melee": {
+    "distance": 1,
+    "cooldown": 0.7,
+    "default": {
+      "animation_type": "melee_stock",
+      "distance": 3,
+      "range_angle": 45,
+      "damage": 6,
+      "knockback": 0.6,
+      "prep": 0.1
+    }
+  }
+}

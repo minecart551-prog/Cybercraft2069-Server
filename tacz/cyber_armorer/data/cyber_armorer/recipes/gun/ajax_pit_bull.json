@@ -1,0 +1,35 @@
+{
+  "type": "tacz:gun_smith_table_crafting",
+  "materials": [
+    {
+      "item": {
+        "type": "forge:partial_nbt",
+        "item": "tacz:modern_kinetic_gun",
+        "nbt": {
+          "GunId": "cyber_armorer:ajax"
+        }
+      },
+      "count": 1
+    },
+    {
+      "item": {
+        "type": "forge:partial_nbt",
+        "item": "tacz:ammo",
+        "nbt": {
+          "AmmoId": "cyber_armorer:material_3"
+        }
+      },
+      "count": 8
+    },
+    {
+      "item": {
+        "tag": "forge:dyes/red"
+       },
+      "count": 4
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "cyber_armorer:ajax_pit_bull"
+  }
+}

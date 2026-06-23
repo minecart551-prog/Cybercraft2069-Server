@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.g58_dian.name",
+  "display": "cyber_armorer:g58_dian_display",
+  "data": "cyber_armorer:g58_dian_data",
+  "tooltip": "tooltip.cyber_armorer.g58_dian",
+  "type": "smg",
+  "sort": 150
+}

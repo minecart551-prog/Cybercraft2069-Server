@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.grad_overwatch.name",
+  "display": "cyber_armorer:grad_overwatch_display",
+  "data": "cyber_armorer:grad_overwatch_data",
+  "tooltip": "tooltip.cyber_armorer.grad_overwatch",
+  "type": "sniper",
+  "sort": 151
+}

@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.grad_borzaya.name",
+  "display": "cyber_armorer:grad_borzaya_display",
+  "data": "cyber_armorer:grad_borzaya_data",
+  "tooltip": "tooltip.cyber_armorer.grad_borzaya",
+  "type": "sniper",
+  "sort": 153
+}

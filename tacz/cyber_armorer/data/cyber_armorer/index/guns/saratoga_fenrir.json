@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.saratoga_fenrir.name",
+  "display": "cyber_armorer:saratoga_fenrir_display",
+  "data": "cyber_armorer:saratoga_fenrir_data",
+  "tooltip": "tooltip.cyber_armorer.saratoga_fenrir",
+  "type": "smg",
+  "sort": 153
+}

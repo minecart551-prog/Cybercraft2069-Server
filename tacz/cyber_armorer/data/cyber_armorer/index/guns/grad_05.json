@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.grad_05.name",
+  "display": "cyber_armorer:grad_05_display",
+  "data": "cyber_armorer:grad_05_data",
+  "tooltip": "tooltip.cyber_armorer.grad_05",
+  "type": "sniper",
+  "sort": 152
+}

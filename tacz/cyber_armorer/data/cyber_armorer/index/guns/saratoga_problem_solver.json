@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.saratoga_problem_solver.name",
+  "display": "cyber_armorer:saratoga_problem_solver_display",
+  "data": "cyber_armorer:saratoga_problem_solver_data",
+  "tooltip": "tooltip.cyber_armorer.saratoga_problem_solver",
+  "type": "smg",
+  "sort": 154
+}

@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.overture_archangel.name",
+  "display": "cyber_armorer:overture_archangel_display",
+  "data": "cyber_armorer:overture_archangel_data",
+  "tooltip": "tooltip.cyber_armorer.overture_archangel",
+  "type": "pistol",
+  "sort": 160
+}

@@ -1,0 +1,104 @@
+{
+  "script": "cyber_armorer:grad_logic",
+  "ammo": "cyber_armorer:bullet_sniper",
+  "ammo_amount": 3,
+  "extended_mag_ammo_amount": [
+    3,
+    3,
+    3
+  ],
+  "bolt": "manual_action",
+  "rpm": 96,
+  "bullet": {
+    "life": 0.9,
+    "bullet_amount": 1,
+    "damage": 70,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0.50,
+      "head_shot_multiplier": 3,
+      "damage_adjust": [
+        {"distance": 83, "damage": 70},
+        {"distance": 166, "damage": 60},
+        {"distance": "infinite", "damage": 45}
+      ]
+    },
+    "speed": 420,
+    "gravity": 0.15,
+    "knockback": 0,
+    "friction": 0.015,
+    "ignite": false,
+    "pierce": 2
+  },
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 4.75,
+      "tactical": 2.42
+    },
+    "cooldown": {
+      "empty": 5.5,
+      "tactical": 3.2
+    }
+  },
+  "script_param": {
+    "reload_feed": 2.42,
+    "reload_cooldown": 3.2,
+    "empty_feed": 4.75,
+    "empty_cooldown": 5.5
+  },
+  "draw_time": 1.25,
+  "put_away_time": 0.875,
+  "aim_time": 0.3,
+  "sprint_time": 0.2,
+  "bolt_action_time": 1.875,
+  "weight": 5.85,
+  "movement_speed": {
+    "base": 0,
+    "aim": 0,
+    "reload": 0
+  },
+  "crawl_recoil_multiplier": 0.25,
+  "fire_mode": [
+    "semi"
+  ],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [5, 5]},
+      {"time": 0.32, "value": [5, 5]},
+      {"time": 0.57, "value": [-0.6, -0.6]},
+      {"time": 0.82, "value": [0.3, 0.3]},
+      {"time": 1.17, "value": [0, 0]},
+      {"time": 1.47, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [-0.75, 0.75]},
+      {"time": 0.32, "value": [-0.75, 0.75]},
+      {"time": 0.57, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 2.5,
+    "move": 3,
+    "sneak": 2,
+    "lie": 1.5,
+    "aim": 0
+  },
+  "melee": {
+    "distance": 1,
+    "cooldown": 0.7,
+    "default": {
+      "animation_type": "melee_stock",
+      "distance": 3,
+      "range_angle": 45,
+      "damage": 6,
+      "knockback": 0.6,
+      "prep": 0.1
+    }
+  },
+  "allow_attachment_types": [
+  ],
+  "builtin_attachments": {
+    "scope": "cyber_armorer:optic_02_sparky"
+  }
+}

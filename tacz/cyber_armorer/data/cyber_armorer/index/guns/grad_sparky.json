@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.grad_sparky.name",
+  "display": "cyber_armorer:grad_sparky_display",
+  "data": "cyber_armorer:grad_sparky_data",
+  "tooltip": "tooltip.cyber_armorer.grad_sparky",
+  "type": "sniper",
+  "sort": 154
+}

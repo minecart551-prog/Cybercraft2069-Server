@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.unity_her_majesty.name",
+  "display": "cyber_armorer:unity_her_majesty_display",
+  "data": "cyber_armorer:unity_her_majesty_data",
+  "tooltip": "tooltip.cyber_armorer.unity_her_majesty",
+  "type": "pistol",
+  "sort": 151
+}

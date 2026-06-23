@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.g58_dian_yinglong.name",
+  "display": "cyber_armorer:g58_dian_yinglong_display",
+  "data": "cyber_armorer:g58_dian_yinglong_data",
+  "tooltip": "tooltip.cyber_armorer.g58_dian_yinglong",
+  "type": "smg",
+  "sort": 151
+}

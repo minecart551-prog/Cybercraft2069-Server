@@ -1,0 +1,76 @@
+{
+  "script": "cyber_armorer:mantis_blade_logic",
+  "ammo": "cyber_armorer:melee",
+  "rpm": 100,
+  "bullet": {
+    "life": 0.1,
+    "bullet_amount": 7,
+    "damage": 21,
+    "tracer_count_interval": 0,
+    "extra_damage": {
+      "armor_ignore": 0,
+      "head_shot_multiplier": 1,
+      "damage_adjust": [
+        {"distance": 10, "damage": 21},
+        {"distance": "infinite", "damage": 0}
+      ]
+    },
+    "speed": 60,
+    "gravity": 0,
+    "knockback": 0,
+    "friction": 0,
+    "pierce": 2
+  },
+  "ammo_amount": 1,
+  "extended_mag_ammo_amount": [
+    1,
+    1,
+    1
+  ],
+  "bolt": "open_bolt",
+  "reload": {
+    "type": "magazine",
+    "feed": {
+      "empty": 0,
+      "tactical": 0
+    },
+    "cooldown": {
+      "empty": 0,
+      "tactical": 0
+    }
+  },
+  "draw_time": 0.75,
+  "put_away_time": 0.5,
+  "aim_time": 0,
+  "sprint_time": 0,
+  "weight": -6,
+  "movement_speed": {
+    "base": 0.0,
+    "aim": 0.0,
+    "reload": 0.0
+  },
+  "crawl_recoil_multiplier": 0.5,
+  "fire_mode": [
+    "semi"
+  ],
+  "allow_attachment_types": [
+    "muzzle"
+  ],
+  "recoil": {
+    "pitch": [
+      {"time": 0, "value": [0, 0]},
+      {"time": 1, "value": [0, 0]}
+    ],
+    "yaw": [
+      {"time": 0, "value": [0, 0]},
+      {"time": 1, "value": [0, 0]}
+    ]
+  },
+  "inaccuracy": {
+    "stand": 0,
+    "move": 0,
+    "sneak": 0,
+    "lie": 0,
+    "aim": 0
+  }
+}

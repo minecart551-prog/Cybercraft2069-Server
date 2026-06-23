@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.yukimura_skippy.name",
+  "display": "cyber_armorer:yukimura_skippy_display",
+  "data": "cyber_armorer:yukimura_skippy_data",
+  "tooltip": "tooltip.cyber_armorer.yukimura_skippy",
+  "type": "pistol",
+  "sort": 154
+}

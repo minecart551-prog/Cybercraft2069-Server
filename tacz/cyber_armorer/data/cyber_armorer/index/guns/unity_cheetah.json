@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.unity_cheetah.name",
+  "display": "cyber_armorer:unity_cheetah_display",
+  "data": "cyber_armorer:unity_cheetah_data",
+  "tooltip": "tooltip.cyber_armorer.unity_cheetah",
+  "type": "pistol",
+  "sort": 152
+}

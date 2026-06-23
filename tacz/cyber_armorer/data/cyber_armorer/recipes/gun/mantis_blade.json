@@ -1,0 +1,42 @@
+{
+  "type": "tacz:gun_smith_table_crafting",
+  "materials": [
+    {
+      "item": {
+        "type": "forge:partial_nbt",
+        "item": "tacz:ammo",
+        "nbt": {
+          "AmmoId": "cyber_armorer:material_3"
+        }
+      },
+      "count": 12
+    },
+    {
+      "item": {
+        "type": "forge:partial_nbt",
+        "item": "tacz:ammo",
+        "nbt": {
+          "AmmoId": "cyber_armorer:material_2"
+        }
+      },
+      "count": 28
+    },
+    {
+      "item": {
+        "type": "forge:partial_nbt",
+        "item": "tacz:ammo",
+        "nbt": {
+          "AmmoId": "cyber_armorer:material_1"
+        }
+      },
+      "count": 10
+    }
+  ],
+  "result": {
+    "type": "gun",
+    "id": "cyber_armorer:mantis_blade",
+    "nbt": {
+      "GunCurrentAmmoCount": 1
+    }
+  }
+}

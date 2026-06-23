@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.m2038_the_headsman.name",
+  "display": "cyber_armorer:m2038_the_headsman_display",
+  "data": "cyber_armorer:m2038_the_headsman_data",
+  "tooltip": "tooltip.cyber_armorer.m2038_the_headsman",
+  "type": "shotgun",
+  "sort": 154
+}

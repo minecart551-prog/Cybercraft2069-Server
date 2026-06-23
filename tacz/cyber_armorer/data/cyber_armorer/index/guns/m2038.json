@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.m2038.name",
+  "display": "cyber_armorer:m2038_display",
+  "data": "cyber_armorer:m2038_data",
+  "tooltip": "tooltip.cyber_armorer.m2038",
+  "type": "shotgun",
+  "sort": 153
+}

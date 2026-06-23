@@ -1,0 +1,8 @@
+{
+  "name": "gun.cyber_armorer.unity.name",
+  "display": "cyber_armorer:unity_display",
+  "data": "cyber_armorer:unity_data",
+  "tooltip": "tooltip.cyber_armorer.unity",
+  "type": "pistol",
+  "sort": 150
+}
