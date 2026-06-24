@@ -85,7 +85,13 @@ var CONFIG_SHOP_ITEMS = [
 ],
 //Shotgun
 [
+
 { id: "tacz:modern_kinetic_gun", count: 1, price: 1000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 5, "GunFireMode": "SEMI", "GunId": "tacz:spas_12"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 8500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 4, "GunFireMode": "SEMI", "GunId": "cyber_armorer:carnage"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 10000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 6, "GunFireMode": "SEMI", "GunId": "cyber_armorer:carnage_guts"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 12000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 8, "GunFireMode": "SEMI", "GunId": "cyber_armorer:m2038"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 14500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 8, "GunFireMode": "SEMI", "GunId": "cyber_armorer:m2038_bloody_maria"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 16000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 6, "GunFireMode": "SEMI", "GunId": "cyber_armorer:m2038_the_headsman"}, lore: [] },
 ],
 //Snipers
 [
@@ -103,6 +109,7 @@ var CONFIG_SHOP_ITEMS = [
     null,null,null,null,null,
 { id: "tacz:ammo", count: 10, price: 50, nbt: {"AmmoId": "cyber_armorer:bullet_pistol"}, lore: [] },
 { id: "tacz:ammo", count: 10, price: 100, nbt: {"AmmoId": "cyber_armorer:bullet_pistol_smart"}, lore: [] },
+{ id: "tacz:ammo", count: 10, price: 100, nbt: {"AmmoId": "cyber_armorer:bullet_buckshot"}, lore: [] },
 ],
     // Tab 2 — Armour
 [
