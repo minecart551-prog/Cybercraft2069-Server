@@ -1,4 +1,3 @@
-
 <style>
 h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
 .wrap{padding:1rem 0}
@@ -22,7 +21,7 @@ tr:last-child td{border-bottom:none}
 .na{color:var(--color-text-tertiary);font-style:italic}
 .aoe{color:var(--color-text-warning);font-size:11px}
 </style>
-<h2 class="sr-only">Full gun pricing table v21: copperhead_psalm gets explosion DPS and AoE bonus.</h2>
+<h2 class="sr-only">Full gun pricing table v22: all guns included.</h2>
 <div class="wrap">
 <table>
 <thead>
@@ -51,34 +50,46 @@ const EPSILON = 0.001;
 const AOE_BONUS = 15;
 
 const guns = [
-  {name:"unity_cheetah",           dps:20*400/60,          ammo:11, hs:1.75, aim:0.1,  pitch:0.35, yaw:0.15, reload:2.92, smart:false, note:"baseline", aoe:false},
-  {name:"unity",                   dps:18*360/60,          ammo:11, hs:1.25, aim:0.3,  pitch:0.35, yaw:0.15, reload:2.92, smart:false, note:"",         aoe:false},
-  {name:"unity_her_majesty",       dps:13.3*300/60,        ammo:9,  hs:4.0,  aim:0.1,  pitch:0.30, yaw:0.12, reload:2.92, smart:false, note:"sniper",   aoe:false},
-  {name:"overture",                dps:26.6*150/60,        ammo:6,  hs:1.5,  aim:0.1,  pitch:1.50, yaw:0.30, reload:4.70, smart:false, note:"",         aoe:false},
-  {name:"overture_amnesty",        dps:26.6*300/60,        ammo:6,  hs:2.0,  aim:0.1,  pitch:1.50, yaw:0.30, reload:4.41, smart:false, note:"",         aoe:false},
-  {name:"overture_archangel",      dps:27.5*114/60,        ammo:6,  hs:2.0,  aim:0.1,  pitch:1.50, yaw:0.30, reload:4.06, smart:false, note:"auto",     aoe:false},
-  {name:"overture_crash",          dps:26.6*126/60,        ammo:6,  hs:2.0,  aim:0.1,  pitch:1.00, yaw:0.20, reload:4.70, smart:false, note:"auto",     aoe:false},
-  {name:"overture_reliable",       dps:26.6*150/60,        ammo:6,  hs:2.25, aim:0.1,  pitch:1.50, yaw:0.30, reload:4.95, smart:false, note:"",         aoe:false},
-  {name:"overture_rosco",          dps:28.3*150/60,        ammo:6,  hs:1.5,  aim:0.1,  pitch:1.50, yaw:0.30, reload:4.70, smart:false, note:"",         aoe:false},
-  {name:"3516",                    dps:36.6*198/60,        ammo:10, hs:1.75, aim:0.1,  pitch:1.50, yaw:0.30, reload:4.04, smart:false, note:"",         aoe:false},
-  {name:"yukimura",                dps:11.7*420/60,        ammo:30, hs:1.15, aim:0.25, pitch:0.30, yaw:0.10, reload:4.67, smart:true,  note:"smart",    aoe:false},
-  {name:"yukimura_genjiroh",       dps:13.3*480/60,        ammo:40, hs:1.25, aim:0.25, pitch:0.30, yaw:0.10, reload:4.67, smart:true,  note:"smart",    aoe:false},
-  {name:"yukimura_skippy",         dps:12.5*480/60,        ammo:30, hs:1.25, aim:0.25, pitch:0.30, yaw:0.10, reload:4.67, smart:true,  note:"smart",    aoe:false},
-  {name:"g58_dian",                dps:10.8*650/60,        ammo:45, hs:1.15, aim:0.25, pitch:0.40, yaw:0.13, reload:4.13, smart:true,  note:"smart",    aoe:false},
-  {name:"g58_dian_yinglong",       dps:11.7*700/60,        ammo:45, hs:1.25, aim:0.15, pitch:0.30, yaw:0.10, reload:4.13, smart:true,  note:"smart",    aoe:false},
-  {name:"saratoga",                dps:10.8*900/60,        ammo:40, hs:1.5,  aim:0.02, pitch:0.30, yaw:0.12, reload:4.55, smart:false, note:"auto",     aoe:false},
-  {name:"saratoga_fenrir",         dps:11.7*900/60,        ammo:40, hs:1.5,  aim:0.02, pitch:0.30, yaw:0.12, reload:4.55, smart:false, note:"auto",     aoe:false},
-  {name:"saratoga_problem_solver", dps:10.5*1200/60,       ammo:90, hs:1.5,  aim:0.02, pitch:2.00, yaw:1.00, reload:3.63, smart:false, note:"auto",     aoe:false},
-  {name:"copperhead",              dps:8*660/60,           ammo:30, hs:1.5,  aim:0.1,  pitch:0.40, yaw:0.25, reload:4.42, smart:false, note:"rifle",    aoe:false},
-  {name:"copperhead_psalm",        dps:(8.3+5)*660/60,     ammo:50, hs:1.5,  aim:0.1,  pitch:0.40, yaw:0.25, reload:3.67, smart:false, note:"rifle",    aoe:true},
-  {name:"ajax",                    dps:20*450/60,          ammo:30, hs:1.65, aim:0.1,  pitch:0.55, yaw:0.25, reload:4.68, smart:false, note:"rifle",    aoe:false},
-  {name:"ajax_moron_labe",         dps:20*560/60,          ammo:30, hs:1.65, aim:0.1,  pitch:0.50, yaw:0.20, reload:4.68, smart:false, note:"rifle",    aoe:false},
-  {name:"ajax_pit_bull",           dps:20*500/60,          ammo:20, hs:1.65, aim:0.1,  pitch:0.60, yaw:0.27, reload:4.68, smart:false, note:"rifle",    aoe:false},
+  {name:"unity_cheetah", dps:20*400/60, ammo:11, hs:1.75, aim:0.1, pitch:0.35, yaw:0.15, reload:2.92, smart:false, note:"baseline", aoe:false},
+  {name:"unity", dps:18*360/60, ammo:11, hs:1.25, aim:0.3, pitch:0.35, yaw:0.15, reload:2.92, smart:false, note:"", aoe:false},
+  {name:"unity_her_majesty", dps:13.3*300/60, ammo:9, hs:4.0, aim:0.1, pitch:0.3, yaw:0.12, reload:2.92, smart:false, note:"sniper", aoe:false},
+  {name:"overture", dps:26.6*150/60, ammo:6, hs:1.5, aim:0.1, pitch:1.5, yaw:0.3, reload:4.7, smart:false, note:"", aoe:false},
+  {name:"overture_amnesty", dps:26.6*300/60, ammo:6, hs:2.0, aim:0.1, pitch:1.5, yaw:0.3, reload:4.41, smart:false, note:"", aoe:false},
+  {name:"overture_archangel", dps:27.5*114/60, ammo:6, hs:2.0, aim:0.1, pitch:1.5, yaw:0.3, reload:4.06, smart:false, note:"auto", aoe:false},
+  {name:"overture_crash", dps:26.6*126/60, ammo:6, hs:2.0, aim:0.1, pitch:1.0, yaw:0.2, reload:4.7, smart:false, note:"auto", aoe:false},
+  {name:"overture_reliable", dps:26.6*150/60, ammo:6, hs:2.25, aim:0.1, pitch:1.5, yaw:0.3, reload:4.95, smart:false, note:"", aoe:false},
+  {name:"overture_rosco", dps:28.3*150/60, ammo:6, hs:1.5, aim:0.1, pitch:1.5, yaw:0.3, reload:4.7, smart:false, note:"", aoe:false},
+  {name:"3516", dps:36.6*198/60, ammo:10, hs:1.75, aim:0.1, pitch:1.5, yaw:0.3, reload:4.04, smart:false, note:"", aoe:false},
+  {name:"yukimura", dps:11.7*420/60, ammo:30, hs:1.15, aim:0.25, pitch:0.3, yaw:0.1, reload:4.67, smart:true, note:"smart", aoe:false},
+  {name:"yukimura_genjiroh", dps:13.3*480/60, ammo:40, hs:1.25, aim:0.25, pitch:0.3, yaw:0.1, reload:4.67, smart:true, note:"smart", aoe:false},
+  {name:"yukimura_skippy", dps:12.5*480/60, ammo:30, hs:1.25, aim:0.25, pitch:0.3, yaw:0.1, reload:4.67, smart:true, note:"smart", aoe:false},
+  {name:"g58_dian", dps:10.8*650/60, ammo:45, hs:1.15, aim:0.25, pitch:0.4, yaw:0.13, reload:4.13, smart:true, note:"smart", aoe:false},
+  {name:"g58_dian_yinglong", dps:11.7*700/60, ammo:45, hs:1.25, aim:0.15, pitch:0.3, yaw:0.1, reload:4.13, smart:true, note:"smart", aoe:false},
+  {name:"saratoga", dps:10.8*900/60, ammo:40, hs:1.5, aim:0.02, pitch:0.3, yaw:0.12, reload:4.55, smart:false, note:"auto", aoe:false},
+  {name:"saratoga_fenrir", dps:11.7*900/60, ammo:40, hs:1.5, aim:0.02, pitch:0.3, yaw:0.12, reload:4.55, smart:false, note:"auto", aoe:false},
+  {name:"saratoga_problem_solver", dps:10.5*1200/60, ammo:90, hs:1.5, aim:0.02, pitch:2.0, yaw:1.0, reload:3.63, smart:false, note:"auto", aoe:false},
+  {name:"copperhead", dps:8*660/60, ammo:30, hs:1.5, aim:0.1, pitch:0.4, yaw:0.25, reload:4.42, smart:false, note:"rifle", aoe:false},
+  {name:"copperhead_psalm", dps:(8.3+5)*660/60, ammo:50, hs:1.5, aim:0.1, pitch:0.4, yaw:0.25, reload:3.67, smart:false, note:"rifle", aoe:true},
+  {name:"ajax", dps:20*450/60, ammo:30, hs:1.65, aim:0.1, pitch:0.55, yaw:0.25, reload:4.68, smart:false, note:"rifle", aoe:false},
+  {name:"ajax_moron_labe", dps:20*560/60, ammo:30, hs:1.65, aim:0.1, pitch:0.5, yaw:0.2, reload:4.68, smart:false, note:"rifle", aoe:false},
+  {name:"ajax_pit_bull", dps:20*500/60, ammo:20, hs:1.65, aim:0.1, pitch:0.6, yaw:0.27, reload:4.68, smart:false, note:"rifle", aoe:false},
+  {name:"carnage", dps:125*60/60, ammo:4, hs:1.33, aim:4.0, pitch:13.0, yaw:0.5, reload:4.875, smart:false, note:"", aoe:false},
+  {name:"carnage_guts", dps:150*60/60, ammo:6, hs:1.5, aim:4.0, pitch:45.0, yaw:1.5, reload:6.875, smart:false, note:"", aoe:false},
+  {name:"grad_05", dps:66.67*96/60, ammo:2, hs:1.5, aim:0.05, pitch:6.0, yaw:1.0, reload:5.62, smart:false, note:"sniper", aoe:true},
+  {name:"grad_borzaya", dps:91.67*120/60, ammo:4, hs:2.0, aim:0.05, pitch:3.0, yaw:0.35, reload:4.49, smart:false, note:"sniper", aoe:true},
+  {name:"grad", dps:133.33*96/60, ammo:3, hs:2.5, aim:0.05, pitch:6.0, yaw:1.0, reload:5.62, smart:false, note:"sniper", aoe:false},
+  {name:"grad_overwatch", dps:116.67*150/60, ammo:3, hs:2.5, aim:0.05, pitch:4.0, yaw:0.5, reload:4.49, smart:false, note:"sniper", aoe:false},
+  {name:"grad_sparky", dps:116.67*96/60, ammo:3, hs:3.0, aim:0.001, pitch:5.0, yaw:0.75, reload:5.62, smart:false, note:"sniper", aoe:false},
+  {name:"m2038_bloody_maria", dps:90*142.9/60, ammo:8, hs:1.5, aim:3.0, pitch:4.5, yaw:1.5, reload:7.625, smart:false, note:"", aoe:false},
+  {name:"m2038", dps:75*142.9/60, ammo:8, hs:1.33, aim:3.3, pitch:5.5, yaw:1.75, reload:7.625, smart:false, note:"", aoe:false},
+  {name:"m2038_the_headsman", dps:100*142.9/60, ammo:6, hs:1.33, aim:0.15, pitch:5.5, yaw:1.75, reload:5.875, smart:false, note:"", aoe:false},
+  {name:"mantis_blade", dps:35*100/60, ammo:1, hs:1.0, aim:0.001, pitch:0.0, yaw:0.0, reload:0, smart:false, note:"", aoe:false},
+  {name:"mantis_blade_maxtac", dps:45*120/60, ammo:1, hs:1.0, aim:0.001, pitch:0.0, yaw:0.0, reload:0, smart:false, note:"", aoe:false}
 ];
 
 function recoilScore(g) { return g.smart ? 5/EPSILON : 5/(g.pitch+g.yaw); }
-function reloadScore(g) { return 1/g.reload; }
-function aimScore(g)    { return g.smart ? 1/EPSILON : 1/g.aim; }
+function reloadScore(g) { return g.reload > 0 ? 1/g.reload : 0; }
+function aimScore(g)    { return g.smart ? 1/EPSILON : g.aim > 0 ? 1/g.aim : 1/EPSILON; }
 
 function score(g){
   let s;
@@ -104,7 +115,7 @@ sorted.forEach(g=>{
   const isRef = g.name === 'unity_cheetah';
   const rc = (g.pitch+g.yaw).toFixed(2);
   const rcClass = g.pitch >= 1.0 ? 'recoil-hi' : 'recoil-lo';
-  const reloadClass = g.reload <= 3.5 ? 'reload-fast' : g.reload >= 4.5 ? 'reload-slow' : '';
+  const reloadClass = g.reload > 0 ? (g.reload <= 3.5 ? 'reload-fast' : g.reload >= 4.5 ? 'reload-slow' : '') : '';
 
   let badge = '';
   if(g.note==='baseline') badge='<span class="badge badge-blue">baseline</span>';
@@ -116,6 +127,7 @@ sorted.forEach(g=>{
   const rcCell  = g.smart ? '<span class="perfect">0</span>'   : `<span class="${rcClass}">${rc}</span>`;
   const aimCell = g.smart ? '<span class="perfect">0</span>'   : g.aim;
   const hsCell  = g.smart ? '<span class="na">baked in</span>' : `${g.hs}×`;
+  const reloadCell = g.reload > 0 ? `${g.reload}s` : '<span class="na">n/a</span>';
   const dpsCell = g.aoe ? `${dps} <span class="aoe">+AoE</span>` : dps;
 
   const row = document.createElement('tr');
@@ -127,7 +139,7 @@ sorted.forEach(g=>{
     <td>${hsCell}</td>
     <td>${aimCell}</td>
     <td>${rcCell}</td>
-    <td class="${reloadClass}">${g.reload}s</td>
+    <td>${reloadCell}</td>
     <td><span class="score-bar" style="width:${barW}px;background:${barColor}"></span>${s.toFixed(1)}</td>
     <td class="price">$${price}</td>
   `;
