@@ -82,6 +82,11 @@ var CONFIG_SHOP_ITEMS = [
 //rifle
 [
 { id: "tacz:modern_kinetic_gun", count: 1, price: 500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 20, "GunFireMode": "AUTO", "GunId": "tacz:scar_h"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 6000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 30, "GunFireMode": "AUTO", "GunId": "cyber_armorer:copperhead"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 9000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 30, "GunFireMode": "AUTO", "GunId": "cyber_armorer:ajax"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 11000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 30, "GunFireMode": "AUTO", "GunId": "cyber_armorer:ajax_moron_labe"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 12000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 30, "GunFireMode": "AUTO", "GunId": "cyber_armorer:copperhead_psalm"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 9000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 20, "GunFireMode": "AUTO", "GunId": "cyber_armorer:ajax_pit_bull"}, lore: [] },
 ],
 //Shotgun
 [
@@ -109,7 +114,8 @@ var CONFIG_SHOP_ITEMS = [
     null,null,null,null,null,
 { id: "tacz:ammo", count: 10, price: 50, nbt: {"AmmoId": "cyber_armorer:bullet_pistol"}, lore: [] },
 { id: "tacz:ammo", count: 10, price: 100, nbt: {"AmmoId": "cyber_armorer:bullet_pistol_smart"}, lore: [] },
-{ id: "tacz:ammo", count: 10, price: 100, nbt: {"AmmoId": "cyber_armorer:bullet_buckshot"}, lore: [] },
+{ id: "tacz:ammo", count: 10, price: 200, nbt: {"AmmoId": "cyber_armorer:bullet_buckshot"}, lore: [] },
+{ id: "tacz:ammo", count: 10, price: 60, nbt: {"AmmoId": "cyber_armorer:bullet_rifle"}, lore: [] },
 ],
     // Tab 2 — Armour
 [
