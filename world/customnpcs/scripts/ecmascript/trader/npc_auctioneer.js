@@ -1084,7 +1084,7 @@ function openDetailGui(event, listingId) {
         gui.addLabel(C.LBL_PV_QTY, "§7Quantity: §f" + remainingQty + " §7/ §f" + originalQty, 20, 196, 200, 10)
         var unitPriceCents = Math.round((L.price * 100) / originalQty)
         gui.addLabel(C.LBL_PV_HINT, "§7Unit price: §e" + formatPrice(unitPriceCents), 20, 208, 200, 10)
-        gui.addLabel(C.LBL_D5, "§7Custom amount:", 20, 220, 100, 10)
+        gui.addLabel(C.LBL_ICON4, "§7Custom amount:", 20, 220, 100, 10)
         gui.addTextField(C.TF_DAYS, 120, 220, 60, 16).setText("" + remainingQty)
         gui.addLabel(C.LBL_D6, "§7Total: §e" + formatPrice(L.price), 180, 220, 100, 10)
     }
