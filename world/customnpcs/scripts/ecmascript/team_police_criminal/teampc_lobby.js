@@ -205,7 +205,11 @@ function customGuiButton(event) {
 
     if (bid === L.BTN_LEAVE) {
         if (g.phase === PHASE_BOMB_PLANTED) { player.message("\u00a7cCannot leave while the bomb is ticking!"); return }
-        player.closeGui(); removePlayerFromGame(uuid); return
+        setPlayerOptedOut(g, uuid)
+        player.message("\u00a7eYou left the team. You won't be auto-assigned until the round ends.")
+        player.closeGui()
+        removePlayerFromGame(uuid)
+        return
     }
 
     // Receive button (62) - claim balance

@@ -103,6 +103,7 @@ function getGame() {
             bombRefreshTime: 0, activeStartTime: 0,
             balances: "{}",     // offline winnings: { uuid: amount }
             playerNames: "{}", // last known names: { uuid: name }
+            optedOutPlayers: "[]", // players who left and don't want auto-assign until round end
         }))
     }
     try { return JSON.parse(sd.get("teampc")) } catch(e) { return null }
@@ -534,9 +535,44 @@ function getGameFromEvent(event) {
                 bombPlanted: false, bombSiteWorld: "", bombSiteX: 0, bombSiteY: 0, bombSiteZ: 0,
                 bombPlantTime: 0, defusingPlayers: "[]", players: "[]",
                 bombRefreshTime: 0, activeStartTime: 0,
+                balances: "{}", playerNames: "{}", optedOutPlayers: "[]",
             }))
         }
         return sd
     }
     return null
+}
+
+// ============================================================================
+// OPTED-OUT PLAYER MANAGEMENT (for auto-assign)
+// ============================================================================
+function getOptedOutPlayers(g) {
+    if (!g || !g.optedOutPlayers) return []
+    try { return JSON.parse(g.optedOutPlayers) } catch(e) { return [] }
+}
+
+function setOptedOutPlayers(g, arr) {
+    g.optedOutPlayers = JSON.stringify(arr || [])
+}
+
+function isPlayerOptedOut(g, uuid) {
+    if (!g) return false
+    var opted = getOptedOutPlayers(g)
+    return opted.indexOf(uuid) >= 0
+}
+
+function setPlayerOptedOut(g, uuid) {
+    if (!g) return
+    var opted = getOptedOutPlayers(g)
+    if (opted.indexOf(uuid) < 0) {
+        opted.push(uuid)
+        setOptedOutPlayers(g, opted)
+        saveGame(g)
+    }
+}
+
+function clearAllOptedOut(g) {
+    if (!g) return
+    setOptedOutPlayers(g, [])
+    saveGame(g)
 }
