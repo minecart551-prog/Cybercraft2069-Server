@@ -1081,9 +1081,9 @@ function openDetailGui(event, listingId) {
     var originalQty = L.originalQty || L.remainingQty
     var remainingQty = L.remainingQty || originalQty
     if (originalQty > 1) {
-        gui.addLabel(C.LBL_HINT, "§7Quantity: §f" + remainingQty + " §7/ §f" + originalQty, 20, 196, 200, 10)
+        gui.addLabel(C.LBL_PV_QTY, "§7Quantity: §f" + remainingQty + " §7/ §f" + originalQty, 20, 196, 200, 10)
         var unitPriceCents = Math.round((L.price * 100) / originalQty)
-        gui.addLabel(C.LBL_PV_QTY, "§7Unit price: §e" + formatPrice(unitPriceCents), 20, 208, 200, 10)
+        gui.addLabel(C.LBL_PV_HINT, "§7Unit price: §e" + formatPrice(unitPriceCents), 20, 208, 200, 10)
         gui.addLabel(C.LBL_D5, "§7Custom amount:", 20, 220, 100, 10)
         gui.addTextField(C.TF_DAYS, 120, 220, 60, 16).setText("" + remainingQty)
         gui.addLabel(C.LBL_D6, "§7Total: §e" + formatPrice(L.price), 180, 220, 100, 10)
@@ -1093,7 +1093,8 @@ function openDetailGui(event, listingId) {
     var isSeller = (L.sellerUuid === player.getUUID())
     if (!isSeller) {
         if (originalQty > 1) {
-            gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Selected Qty", 12, h - 44, 140, 20)
+            gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Full Stack", 12, h - 60, 130, 20)
+            gui.addButton(C.BTN_VIEW, "§e§l\u2714 Buy Custom", 146, h - 60, 130, 20)
         } else {
             gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Now", 12, h - 44, 130, 20)
         }
@@ -1811,7 +1812,7 @@ function customGuiButton(e) {
     // ---- DETAIL GUI ----
     if (gid === GUIS.DETAIL) {
         if (bid === C.BTN_BACK) { openBrowserGui(e); return }
-        if (bid === C.BTN_BUY) {
+        if (bid === C.BTN_BUY || bid === C.BTN_VIEW) {
             var lid = playerDetailId[pn]
             if (!lid) return
             var world = player.getWorld()
@@ -1821,9 +1822,14 @@ function customGuiButton(e) {
             var L = findListing(data, lid)
             if (!L) { player.message("§c[Auction] Listing not found"); return }
             
-            // Get quantity from text field if available
             var quantity = null
-            if (L.originalQty && L.originalQty > 1) {
+            var iName = getItemLabel(L.itemNbt, world)
+            var originalQty = L.originalQty || L.remainingQty
+            var remainingQty = L.remainingQty || originalQty
+            
+            // BTN_BUY = buy full stack, BTN_VIEW = buy custom amount
+            if (bid === C.BTN_VIEW && originalQty > 1) {
+                // Get custom quantity from text field
                 var qtyComp = gui.getComponent(C.TF_DAYS)
                 var qtyStr = qtyComp ? qtyComp.getText() : ""
                 quantity = parseInt(qtyStr)
@@ -1831,16 +1837,17 @@ function customGuiButton(e) {
                     player.message("§c[Auction] Invalid quantity")
                     return
                 }
-                if (quantity > (L.remainingQty || L.originalQty)) {
-                    player.message("§c[Auction] Only " + (L.remainingQty || L.originalQty) + " items remaining")
+                if (quantity > remainingQty) {
+                    player.message("§c[Auction] Only " + remainingQty + " items remaining")
                     return
                 }
+            } else {
+                // Buy full remaining stack
+                quantity = remainingQty
             }
             
-            var iName = getItemLabel(L.itemNbt, world)
-            var originalQty = L.originalQty || L.remainingQty
-            var priceToPay = quantity ? Math.round((L.price * quantity) / originalQty) : L.price
-            var qtyText = quantity ? "§f x" + quantity + " §7(§e" + formatPrice(priceToPay) + "§7)" : ""
+            var priceToPay = Math.round((L.price * quantity) / originalQty)
+            var qtyText = quantity < remainingQty ? "§f x" + quantity + " §7(§e" + formatPrice(priceToPay) + "§7)" : ""
             
             openConfirmGui(e,
                 "§eConfirm Purchase",
