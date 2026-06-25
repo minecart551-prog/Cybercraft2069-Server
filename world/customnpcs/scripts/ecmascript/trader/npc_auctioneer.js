@@ -1367,8 +1367,8 @@ function openPurchaseGui(event, listingId) {
     gui.addLabel(C.LBL_ICON1, "§7Full stack: §e" + formatPrice(totalForFull), 20, 160, 200, 10)
 
     // Buttons
-    gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Full Stack", 12, h - 56, 130, 20)
-    gui.addButton(C.BTN_VIEW, "§e§l\u2714 Buy Custom", 146, h - 56, 130, 20)
+    gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Full Stack", 12, h - 61, 130, 20)
+    gui.addButton(C.BTN_VIEW, "§e§l\u2714 Buy Custom", 146, h - 61, 130, 20)
     gui.addButton(C.BTN_BACK, "§7\u25C0 Back", 12, h - 33, 70, 20)
 
     gui.addLabel(C.LBL_FOOTER, "§8Partial purchases credit seller incrementally.", 10, h - 12, w - 20, 10)
