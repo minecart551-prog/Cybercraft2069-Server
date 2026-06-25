@@ -117,6 +117,7 @@ TUTORIAL_TOPICS[TU_TOPICS.SMUGGLING] = {
 "\u00a7f|   \u00a7e950 -40 -277",
 "\u00a7f|   \u00a7e1168 -48 -4",       
 "\u00a7f|   \u00a7e2007 -51 115",            
+"\u00a7f|   \u00a7e1520 -41 -515",                  
 "\u00a7f|   \u00a7emore coords to be added..",          
 "\u00a7c\u2694 \u00a7fTake out \u00a7cMercenaries\u00a7f guarding the farm",
 "\u00a7f  then add your name to their spawner safelist",
