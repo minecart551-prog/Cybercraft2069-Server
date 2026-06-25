@@ -15,6 +15,7 @@ var CONFIG_TAB_ICONS = [
     { id: "minecraft:leather_helmet", nbt: {"Damage": 0} },
     { id: "tacz:attachment", nbt: {"AttachmentId": "tacz:sight_sro_dot"} },
     { id: "tacz:attachment", nbt: {"AttachmentId": "tacz:light_extended_mag_1"} },
+    { id: "tacz:attachment", nbt: {"AttachmentId": "tacz:laser_compact"} },
 
 ];
 
@@ -29,7 +30,7 @@ var CONFIG_TAB_NAMES = [
     "Armour",
     "Scope",
     "Mag",
-    "Tab 10",
+    "Lasers",
     "Tab 11",
 ];
 
@@ -100,11 +101,17 @@ var CONFIG_SHOP_ITEMS = [
 [
 { id: "tacz:modern_kinetic_gun", count: 1, price: 2000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 6, "GunFireMode": "SEMI", "GunId": "tacz:m700"}, lore: [] },
 ],
+//Lasers
+[
+{ id: "tacz:attachment", count: 1, price: 20, nbt: {"AttachmentId": "tacz:laser_compact"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 50, nbt: {"AttachmentId": "tacz:laser_lopro"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 35, nbt: {"AttachmentId": "tacz:laser_nightstick"}, lore: [] },
+],
 //Something
 [],
     // Tab 6 — Ammo
 [
-
+ 
 { id: "tacz:ammo", count: 10, price: 1, nbt: {"AmmoId": "tacz:9mm"}, lore: [] },
 { id: "tacz:ammo", count: 10, price: 10, nbt: {"AmmoId": "tacz:308"}, lore: [] },
 { id: "tacz:ammo", count: 10, price: 10, nbt: {"AmmoId": "tacz:12g"}, lore: [] },
@@ -114,6 +121,10 @@ var CONFIG_SHOP_ITEMS = [
 { id: "tacz:ammo", count: 10, price: 100, nbt: {"AmmoId": "cyber_armorer:bullet_pistol_smart"}, lore: [] },
 { id: "tacz:ammo", count: 10, price: 200, nbt: {"AmmoId": "cyber_armorer:bullet_buckshot"}, lore: [] },
 { id: "tacz:ammo", count: 10, price: 60, nbt: {"AmmoId": "cyber_armorer:bullet_rifle"}, lore: [] },
+    null,null,null,null,null,
+{ id: "tacz:ammo_box", count: 1, price: 300, nbt: {"Level": 0}, lore: [] },
+{ id: "tacz:ammo_box", count: 1, price: 6000, nbt: {"Level": 1}, lore: [] },
+{ id: "tacz:ammo_box", count: 1, price: 9000, nbt: {"Level": 2}, lore: [] },
 ],
     // Tab 2 — Armour
 [
