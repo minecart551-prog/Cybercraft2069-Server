@@ -972,7 +972,12 @@ function openBrowserGui(event, selectedIdx) {
     for (var i = 0; i < active.length; i++) {
         var L = active[i]
         var itemName = getItemLabel(L.itemNbt, world)
-        lines.push(formatPrice(L.price) + " §r§8|§r " + itemName + " §r§8|§r §b" + timeLeftStr(L))
+        var qtyInfo = ""
+        if (L.originalQty && L.originalQty > 1) {
+            var rem = L.remainingQty || L.originalQty
+            qtyInfo = " §8(§f" + rem + "§8/§f" + L.originalQty + "§8)"
+        }
+        lines.push(formatPrice(L.price) + " §r§8|§r " + itemName + qtyInfo + " §r§8|§r §b" + timeLeftStr(L))
         ids.push(L.id)
     }
     if (lines.length === 0) {
@@ -1056,10 +1061,10 @@ function openDetailGui(event, listingId) {
     gui.addLabel(C.LBL_HINT, "§8Posted as a market stall listing", 62, 102, 250, 10)
 
     // --- Deal section ---
-    buildSection(gui, C.BG_SECTION2, 12, 132, w - 24, 66, SKIN.DETAIL.sectionB || TEX.SECTION)
+    buildSection(gui, C.BG_SECTION2, 12, 132, w - 24, 80, SKIN.DETAIL.sectionB || TEX.SECTION)
     buildDivider(gui, C.BG_DIVIDER, 18, 146, w - 36, SKIN.DETAIL.trim)
 
-    gui.addLabel(C.LBL_D2, "§7Price", 20, 152, 80, 12)
+    gui.addLabel(C.LBL_D2, "§7Total Price", 20, 152, 80, 12)
     gui.addLabel(C.LBL_ICON1, "§e§l" + formatPrice(L.price), 100, 152, 210, 12)
 
     gui.addLabel(C.LBL_D3, "§7Time left", 20, 166, 80, 12)
@@ -1072,10 +1077,26 @@ function openDetailGui(event, listingId) {
     var canAfford = bal >= L.price
     gui.addLabel(C.LBL_ICON3, (canAfford ? "§a" : "§c") + formatPrice(bal) + (canAfford ? "" : " §c(insufficient)"), 100, 180, 210, 12)
 
+    // Quantity section (for partial purchases)
+    var originalQty = L.originalQty || L.remainingQty
+    var remainingQty = L.remainingQty || originalQty
+    if (originalQty > 1) {
+        gui.addLabel(C.LBL_HINT, "§7Quantity: §f" + remainingQty + " §7/ §f" + originalQty, 20, 196, 200, 10)
+        var unitPriceCents = Math.round((L.price * 100) / originalQty)
+        gui.addLabel(C.LBL_PV_QTY, "§7Unit price: §e" + formatPrice(unitPriceCents), 20, 208, 200, 10)
+        gui.addLabel(C.LBL_D5, "§7Custom amount:", 20, 220, 100, 10)
+        gui.addTextField(C.TF_DAYS, 120, 220, 60, 16).setText("" + remainingQty)
+        gui.addLabel(C.LBL_D6, "§7Total: §e" + formatPrice(L.price), 180, 220, 100, 10)
+    }
+
     // Actions
     var isSeller = (L.sellerUuid === player.getUUID())
     if (!isSeller) {
-        gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Now", 12, h - 44, 130, 20)
+        if (originalQty > 1) {
+            gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Selected Qty", 12, h - 44, 140, 20)
+        } else {
+            gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Now", 12, h - 44, 130, 20)
+        }
     } else {
         gui.addLabel(C.LBL_INFO, "§7§oThis stall belongs to you", 12, h - 40, 180, 12)
     }
@@ -1395,6 +1416,7 @@ for (var bi = 0; bi < BLOCKED_ITEMS.length; bi++) {
     player.updatePlayerInventory()
 
     // Create listing entry
+    var originalQty = held.getStackSize()
     var listing = {
         id: generateId(),
         sellerUuid: player.getUUID(),
@@ -1404,7 +1426,9 @@ for (var bi = 0; bi < BLOCKED_ITEMS.length; bi++) {
         days: days,
         feePaid: fee,
         createdAt: now(),
-        status: "active"
+        status: "active",
+        originalQty: originalQty,
+        remainingQty: originalQty
     }
     data.listings.push(listing)
     saveData(npc, data)
@@ -1414,9 +1438,9 @@ for (var bi = 0; bi < BLOCKED_ITEMS.length; bi++) {
 }
 
 // ============================================================================
-// CORE LOGIC — Purchase
+// CORE LOGIC — Purchase (supports partial quantities)
 // ============================================================================
-function doPurchase(event, listingId) {
+function doPurchase(event, listingId, quantity) {
     var player = event.player
     var world = player.getWorld()
     var npc = getNpc(world)
@@ -1444,8 +1468,29 @@ function doPurchase(event, listingId) {
         return
     }
 
+    // Handle legacy listings without originalQty (full stack only)
+    var originalQty = L.originalQty || L.remainingQty
+    var remainingQty = L.remainingQty || originalQty
+    
+    // If quantity not specified, buy full remaining stack
+    if (!quantity || isNaN(quantity)) {
+        quantity = remainingQty
+    }
+    
+    // Validate quantity
+    if (quantity < 1) {
+        player.message("§c[Auction] Invalid quantity")
+        return
+    }
+    if (quantity > remainingQty) {
+        player.message("§c[Auction] Only " + remainingQty + " items remaining")
+        return
+    }
+
+    // Calculate proportional price (rounded to nearest cent)
+    var priceToPay = Math.round((L.price * quantity) / originalQty)
+    
     // Check buyer funds
-    var priceToPay = L.price
     if (countPlayerCoins(player) < priceToPay) {
         player.message("§c[Auction] You need " + formatPrice(priceToPay))
         return
@@ -1468,20 +1513,26 @@ function doPurchase(event, listingId) {
         return
     }
 
-    // Mark as sold
-    L.status = "sold"
-    L.soldAt = now()
-    L.buyerName = player.getName()
+    // Update remaining quantity
+    L.remainingQty = remainingQty - quantity
 
-    // Credit seller payout
+    // If this was the last item, mark as sold
+    if (L.remainingQty <= 0) {
+        L.status = "sold"
+        L.soldAt = now()
+        L.buyerName = player.getName()
+    }
+
+    // Credit seller payout (proportional amount)
     if (!data.payouts[L.sellerUuid]) data.payouts[L.sellerUuid] = 0
-    data.payouts[L.sellerUuid] += L.price
+    data.payouts[L.sellerUuid] += priceToPay
 
     saveData(npc, data)
 
-    // Give item to buyer
+    // Give items to buyer (create stack with correct quantity)
     var item = deserializeItem(L.itemNbt, world)
     if (item) {
+        item.setStackSize(quantity)
         if (!player.giveItem(item)) {
             player.dropItem(item)
         }
@@ -1489,7 +1540,11 @@ function doPurchase(event, listingId) {
         player.message("§e[Auction] Warning: Could not reconstruct item. Contact an admin.")
     }
 
-    player.message("§a[Auction] Purchased! " + formatPrice(L.price) + " §apaid.")
+    if (L.remainingQty <= 0) {
+        player.message("§a[Auction] Purchased all items! " + formatPrice(priceToPay) + " §apaid.")
+    } else {
+        player.message("§a[Auction] Purchased " + quantity + " items! " + formatPrice(priceToPay) + " §apaid. §7(" + L.remainingQty + " remaining)")
+    }
     player.updatePlayerInventory()
     openBrowserGui(event)
 }
@@ -1765,12 +1820,33 @@ function customGuiButton(e) {
             var data = loadData(npc)
             var L = findListing(data, lid)
             if (!L) { player.message("§c[Auction] Listing not found"); return }
+            
+            // Get quantity from text field if available
+            var quantity = null
+            if (L.originalQty && L.originalQty > 1) {
+                var qtyComp = gui.getComponent(C.TF_DAYS)
+                var qtyStr = qtyComp ? qtyComp.getText() : ""
+                quantity = parseInt(qtyStr)
+                if (isNaN(quantity) || quantity < 1) {
+                    player.message("§c[Auction] Invalid quantity")
+                    return
+                }
+                if (quantity > (L.remainingQty || L.originalQty)) {
+                    player.message("§c[Auction] Only " + (L.remainingQty || L.originalQty) + " items remaining")
+                    return
+                }
+            }
+            
             var iName = getItemLabel(L.itemNbt, world)
+            var originalQty = L.originalQty || L.remainingQty
+            var priceToPay = quantity ? Math.round((L.price * quantity) / originalQty) : L.price
+            var qtyText = quantity ? "§f x" + quantity + " §7(§e" + formatPrice(priceToPay) + "§7)" : ""
+            
             openConfirmGui(e,
                 "§eConfirm Purchase",
-                "§fBuy §b" + iName + "§f for " + formatPrice(L.price) + "§f?",
+                "§fBuy §b" + iName + qtyText + "§f?",
                 "purchase",
-                { listingId: lid }
+                { listingId: lid, quantity: quantity }
             )
         }
         return
@@ -1858,7 +1934,7 @@ function customGuiButton(e) {
             if (conf.action === "create_listing") {
                 doCreateListing(e, conf.data.price, conf.data.days)
             } else if (conf.action === "purchase") {
-                doPurchase(e, conf.data.listingId)
+                doPurchase(e, conf.data.listingId, conf.data.quantity)
             } else if (conf.action === "cancel_listing") {
                 doCancelListing(e, conf.data.listingId)
             } else if (conf.action === "admin_remove") {
