@@ -1024,7 +1024,7 @@ function openBrowserGui(event, selectedIdx) {
 }
 
 // ============================================================================
-// LISTING DETAIL GUI — Card-style item showcase
+// LISTING DETAIL GUI — Card-style item showcase (inspect only)
 // ============================================================================
 function openDetailGui(event, listingId) {
     var player = event.player
@@ -1055,7 +1055,12 @@ function openDetailGui(event, listingId) {
         addItemDisplay(gui, C.ITEM_PREVIEW, 28, 66, item)
     }
     var iName = getItemLabel(L.itemNbt, world)
-    gui.addLabel(C.LBL_D1, "§f§l" + iName, 62, 58, 250, 12)
+    var qtyLabel = ""
+    if (L.originalQty && L.originalQty > 1) {
+        var rem = L.remainingQty || L.originalQty
+        qtyLabel = " §8(§f" + rem + "§8/§f" + L.originalQty + "§8)"
+    }
+    gui.addLabel(C.LBL_D1, "§f§l" + iName + qtyLabel, 62, 58, 250, 12)
     gui.addLabel(C.LBL_D5, "§7Seller: §f" + L.sellerName, 62, 74, 250, 10)
     gui.addLabel(C.LBL_PV_TIME, "§7Listing fee paid: " + formatPrice(L.feePaid), 62, 88, 250, 10)
     gui.addLabel(C.LBL_HINT, "§8Posted as a market stall listing", 62, 102, 250, 10)
@@ -1077,27 +1082,10 @@ function openDetailGui(event, listingId) {
     var canAfford = bal >= L.price
     gui.addLabel(C.LBL_ICON3, (canAfford ? "§a" : "§c") + formatPrice(bal) + (canAfford ? "" : " §c(insufficient)"), 100, 180, 210, 12)
 
-    // Quantity section (for partial purchases)
-    var originalQty = L.originalQty || L.remainingQty
-    var remainingQty = L.remainingQty || originalQty
-    if (originalQty > 1) {
-        gui.addLabel(C.LBL_PV_QTY, "§7Quantity: §f" + remainingQty + " §7/ §f" + originalQty, 20, 196, 200, 10)
-        var unitPriceCents = Math.round((L.price * 100) / originalQty)
-        gui.addLabel(C.LBL_PV_HINT, "§7Unit price: §e" + formatPrice(unitPriceCents), 20, 208, 200, 10)
-        gui.addLabel(C.LBL_ICON4, "§7Custom amount:", 20, 220, 100, 10)
-        gui.addTextField(C.TF_DAYS, 120, 220, 60, 16).setText("" + remainingQty)
-        gui.addLabel(C.LBL_PV_SELLER, "§7Total: §e" + formatPrice(L.price), 180, 220, 100, 10)
-    }
-
     // Actions
     var isSeller = (L.sellerUuid === player.getUUID())
     if (!isSeller) {
-        if (originalQty > 1) {
-            gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Full Stack", 12, h - 60, 130, 20)
-            gui.addButton(C.BTN_VIEW, "§e§l\u2714 Buy Custom", 146, h - 60, 130, 20)
-        } else {
-            gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Now", 12, h - 44, 130, 20)
-        }
+        gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Now", 12, h - 44, 130, 20)
     } else {
         gui.addLabel(C.LBL_INFO, "§7§oThis stall belongs to you", 12, h - 40, 180, 12)
     }
@@ -1326,6 +1314,64 @@ function openAdminGui(event, selectedIdx) {
     gui.addButton(C.BTN_BACK, "§7\u25C0 Back", w - 72, h - 56, 62, 18)
 
     gui.addLabel(C.LBL_FOOTER, "§8\u26A0 Admin actions are permanent. Select listing first.", 10, h - 30, w - 20, 10)
+    player.showCustomGui(gui)
+}
+
+// ============================================================================
+// PURCHASE GUI — Quantity selection for multi-item listings
+// ============================================================================
+function openPurchaseGui(event, listingId) {
+    var player = event.player
+    var api = event.API
+    var world = player.getWorld()
+    var npc = getNpc(world)
+    if (!npc) return
+
+    var data = loadData(npc)
+    var L = findListing(data, listingId)
+    if (!L) { player.message("§c[Auction] Listing not found"); return }
+
+    var pn = player.getName()
+    playerDetailId[pn] = listingId
+
+    var originalQty = L.originalQty || L.remainingQty
+    var remainingQty = L.remainingQty || originalQty
+    var unitPriceCents = Math.round((L.price * 100) / originalQty)
+    var iName = getItemLabel(L.itemNbt, world)
+
+    var w = 330
+    var h = 245
+    var gui = api.createCustomGui(GUIS.DETAIL, w, h, false, player)
+    buildFrame(gui, w, h, "§6§l\u2714 Purchase Options", SKIN.DETAIL)
+
+    gui.addLabel(C.LBL_SUBTITLE, "§8Choose how many to buy from this listing", 12, 34, w - 24, 10)
+
+    // Item info
+    buildSection(gui, C.BG_SECTION1, 12, 42, w - 24, 84, SKIN.DETAIL.sectionA)
+    var item = deserializeItem(L.itemNbt, world)
+    if (item) {
+        gui.addTexturedRect(C.BG_ITEM_FRAME, TEX.FRAME, 20, 58, 34, 34)
+        addItemDisplay(gui, C.ITEM_PREVIEW, 28, 66, item)
+    }
+    gui.addLabel(C.LBL_D1, "§f§l" + iName, 62, 58, 250, 12)
+    gui.addLabel(C.LBL_D5, "§7Seller: §f" + L.sellerName, 62, 74, 250, 10)
+    gui.addLabel(C.LBL_PV_TIME, "§7Price: " + formatPrice(L.price), 62, 88, 250, 10)
+    gui.addLabel(C.LBL_HINT, "§8Qty: " + remainingQty + "/" + originalQty + " | Unit: " + formatPrice(unitPriceCents), 62, 102, 250, 10)
+
+    // Quantity controls
+    gui.addLabel(C.LBL_PV_QTY, "§7Custom amount:", 20, 140, 100, 10)
+    gui.addTextField(C.TF_DAYS, 120, 136, 60, 16).setText("" + remainingQty)
+    gui.addLabel(C.LBL_PV_HINT, "§7Max: §f" + remainingQty, 185, 140, 100, 10)
+    
+    var totalForFull = L.price
+    gui.addLabel(C.LBL_ICON1, "§7Full stack: §e" + formatPrice(totalForFull), 20, 160, 200, 10)
+
+    // Buttons
+    gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Full Stack", 12, h - 44, 130, 20)
+    gui.addButton(C.BTN_VIEW, "§e§l\u2714 Buy Custom", 146, h - 44, 130, 20)
+    gui.addButton(C.BTN_BACK, "§7\u25C0 Back", 12, h - 28, 70, 20)
+
+    gui.addLabel(C.LBL_FOOTER, "§8Partial purchases credit seller incrementally.", 10, h - 12, w - 20, 10)
     player.showCustomGui(gui)
 }
 
@@ -1797,19 +1843,25 @@ function customGuiButton(e) {
                 var data = loadData(npc)
                 var L = findListing(data, lid)
                 if (!L) { player.message("§c[Auction] Listing not found"); return }
-                var iName = getItemLabel(L.itemNbt, world)
-                openConfirmGui(e,
-                    "§eConfirm Purchase",
-                    "§fBuy §b" + iName + "§f for " + formatPrice(L.price) + "§f?",
-                    "purchase",
-                    { listingId: lid }
-                )
+                // For multi-item listings, open purchase GUI with quantity options
+                var originalQty = L.originalQty || L.remainingQty
+                if (originalQty > 1) {
+                    openPurchaseGui(e, lid)
+                } else {
+                    var iName = getItemLabel(L.itemNbt, world)
+                    openConfirmGui(e,
+                        "§eConfirm Purchase",
+                        "§fBuy §b" + iName + "§f for " + formatPrice(L.price) + "§f?",
+                        "purchase",
+                        { listingId: lid }
+                    )
+                }
             }
         }
         return
     }
 
-    // ---- DETAIL GUI ----
+    // ---- DETAIL / PURCHASE GUI ----
     if (gid === GUIS.DETAIL) {
         if (bid === C.BTN_BACK) { openBrowserGui(e); return }
         if (bid === C.BTN_BUY || bid === C.BTN_VIEW) {
@@ -1822,17 +1874,15 @@ function customGuiButton(e) {
             var L = findListing(data, lid)
             if (!L) { player.message("§c[Auction] Listing not found"); return }
             
-            var quantity = null
             var iName = getItemLabel(L.itemNbt, world)
             var originalQty = L.originalQty || L.remainingQty
             var remainingQty = L.remainingQty || originalQty
             
-            // BTN_BUY = buy full stack, BTN_VIEW = buy custom amount
+            // BTN_VIEW = buy custom amount (from purchase GUI)
             if (bid === C.BTN_VIEW && originalQty > 1) {
-                // Get custom quantity from text field
                 var qtyComp = gui.getComponent(C.TF_DAYS)
                 var qtyStr = qtyComp ? qtyComp.getText() : ""
-                quantity = parseInt(qtyStr)
+                var quantity = parseInt(qtyStr)
                 if (isNaN(quantity) || quantity < 1) {
                     player.message("§c[Auction] Invalid quantity")
                     return
@@ -1841,20 +1891,22 @@ function customGuiButton(e) {
                     player.message("§c[Auction] Only " + remainingQty + " items remaining")
                     return
                 }
+                var priceToPay = Math.round((L.price * quantity) / originalQty)
+                openConfirmGui(e,
+                    "§eConfirm Purchase",
+                    "§fBuy §b" + iName + " §f x" + quantity + " §7(§e" + formatPrice(priceToPay) + "§7)?",
+                    "purchase",
+                    { listingId: lid, quantity: quantity }
+                )
             } else {
-                // Buy full remaining stack
-                quantity = remainingQty
+                // Buy full stack (from inspect or purchase GUI)
+                openConfirmGui(e,
+                    "§eConfirm Purchase",
+                    "§fBuy §b" + iName + "§f for " + formatPrice(L.price) + "§f?",
+                    "purchase",
+                    { listingId: lid }
+                )
             }
-            
-            var priceToPay = Math.round((L.price * quantity) / originalQty)
-            var qtyText = quantity < remainingQty ? "§f x" + quantity + " §7(§e" + formatPrice(priceToPay) + "§7)" : ""
-            
-            openConfirmGui(e,
-                "§eConfirm Purchase",
-                "§fBuy §b" + iName + qtyText + "§f?",
-                "purchase",
-                { listingId: lid, quantity: quantity }
-            )
         }
         return
     }
