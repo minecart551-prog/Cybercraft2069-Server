@@ -720,15 +720,24 @@ function nbtMatchesIgnoreDamageAndLore(playerStack, cfg) {
     try {
         var snbt = playerStack.getItemNbt().toJsonString();
         var cfgNbt = cfg.nbt || {};
- 
+  
         if (snbt.indexOf('"id": "' + cfg.id + '"') === -1) return false;
- 
+  
+        // For attachments, ensure we're matching the root item, not a gun with an attachment equipped
+        if (cfg.id === "tacz:attachment") {
+            var idPattern = '"id":"tacz:attachment"';
+            var firstIdIndex = snbt.indexOf('"id":');
+            var attachmentIdIndex = snbt.indexOf(idPattern);
+            // If the attachment ID is not at the first "id:" position, it's nested inside a gun
+            if (firstIdIndex !== attachmentIdIndex) return false;
+        }
+  
         if (cfgNbt.AttributeModifiers && cfgNbt.AttributeModifiers.length > 0) {
             var firstUUID = cfgNbt.AttributeModifiers[0].UUID;
             if (firstUUID && snbt.indexOf(firstUUID) === -1) return false;
             return true;
         }
- 
+  
         for (var k = 0; k < VARIANT_KEYS.length; k++) {
             var key = VARIANT_KEYS[k];
             if (!cfgNbt.hasOwnProperty(key)) continue;
