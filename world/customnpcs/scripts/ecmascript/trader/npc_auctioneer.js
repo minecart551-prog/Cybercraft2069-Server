@@ -1336,7 +1336,7 @@ function openPurchaseGui(event, listingId) {
 
     var originalQty = L.originalQty || L.remainingQty
     var remainingQty = L.remainingQty || originalQty
-    var unitPriceCents = Math.round((L.price * 100) / originalQty)
+    var unitPriceCents = Math.round(L.price / originalQty)
     var iName = getItemLabel(L.itemNbt, world)
 
     var w = 330
@@ -1367,9 +1367,9 @@ function openPurchaseGui(event, listingId) {
     gui.addLabel(C.LBL_ICON1, "§7Full stack: §e" + formatPrice(totalForFull), 20, 160, 200, 10)
 
     // Buttons
-    gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Full Stack", 12, h - 44, 130, 20)
-    gui.addButton(C.BTN_VIEW, "§e§l\u2714 Buy Custom", 146, h - 44, 130, 20)
-    gui.addButton(C.BTN_BACK, "§7\u25C0 Back", 12, h - 28, 70, 20)
+    gui.addButton(C.BTN_BUY, "§a§l\u2714 Buy Full Stack", 12, h - 56, 130, 20)
+    gui.addButton(C.BTN_VIEW, "§e§l\u2714 Buy Custom", 146, h - 56, 130, 20)
+    gui.addButton(C.BTN_BACK, "§7\u25C0 Back", 12, h - 33, 70, 20)
 
     gui.addLabel(C.LBL_FOOTER, "§8Partial purchases credit seller incrementally.", 10, h - 12, w - 20, 10)
     player.showCustomGui(gui)
@@ -1536,6 +1536,12 @@ function doPurchase(event, listingId, quantity) {
 
     // Calculate proportional price (rounded to nearest cent)
     var priceToPay = Math.round((L.price * quantity) / originalQty)
+    
+    // Prevent purchase if price is less than 1 cent
+    if (priceToPay < MIN_PRICE) {
+        player.message("§c[Auction] Purchase amount must be at least " + formatPrice(MIN_PRICE) + ". Try buying more items.")
+        return
+    }
     
     // Check buyer funds
     if (countPlayerCoins(player) < priceToPay) {
@@ -1892,6 +1898,10 @@ function customGuiButton(e) {
                     return
                 }
                 var priceToPay = Math.round((L.price * quantity) / originalQty)
+                if (priceToPay < MIN_PRICE) {
+                    player.message("§c[Auction] Purchase amount must be at least " + formatPrice(MIN_PRICE) + ". Try buying more items.")
+                    return
+                }
                 openConfirmGui(e,
                     "§eConfirm Purchase",
                     "§fBuy §b" + iName + " §f x" + quantity + " §7(§e" + formatPrice(priceToPay) + "§7)?",
