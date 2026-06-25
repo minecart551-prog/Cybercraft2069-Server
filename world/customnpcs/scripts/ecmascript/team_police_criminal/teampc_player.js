@@ -24,16 +24,23 @@ function init(event) {
     var pIdx = -1
     for (var i = 0; i < players.length; i++) if (players[i].uuid === uuid) { pIdx = i; break }
     
-    // If player is not in any team and hasn't opted out, assign random team
+    // If player is not in any team and hasn't opted out, assign to balance teams
     if (pIdx < 0 && !isPlayerOptedOut(g, uuid)) {
-        var randomTeam = Math.random() < 0.5 ? TEAM_POLICE : TEAM_CRIMINAL
-        var teamNameStr = randomTeam === TEAM_POLICE ? "§bPolice" : "§cCriminal"
-        var respawn = randomTeam === TEAM_POLICE ? POLICE_RESPAWN : CRIMINAL_RESPAWN
+        var policeCount = countTeam(TEAM_POLICE)
+        var criminalCount = countTeam(TEAM_CRIMINAL)
+        var assignedTeam
+        if (policeCount <= criminalCount) {
+            assignedTeam = TEAM_POLICE
+        } else {
+            assignedTeam = TEAM_CRIMINAL
+        }
+        var teamNameStr = assignedTeam === TEAM_POLICE ? "§bPolice" : "§cCriminal"
+        var respawn = assignedTeam === TEAM_POLICE ? POLICE_RESPAWN : CRIMINAL_RESPAWN
         
         players.push({
             uuid: uuid,
             name: player.getName(),
-            team: randomTeam,
+            team: assignedTeam,
             contributed: 0,
             lastDayTick: SYS.currentTimeMillis()
         })
