@@ -101,12 +101,7 @@ var CONFIG_SHOP_ITEMS = [
 [
 { id: "tacz:modern_kinetic_gun", count: 1, price: 2000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 6, "GunFireMode": "SEMI", "GunId": "tacz:m700"}, lore: [] },
 ],
-//Lasers
-[
-{ id: "tacz:attachment", count: 1, price: 20, nbt: {"AttachmentId": "tacz:laser_compact"}, lore: [] },
-{ id: "tacz:attachment", count: 1, price: 50, nbt: {"AttachmentId": "tacz:laser_lopro"}, lore: [] },
-{ id: "tacz:attachment", count: 1, price: 35, nbt: {"AttachmentId": "tacz:laser_nightstick"}, lore: [] },
-],
+
 //Something
 [],
     // Tab 6 — Ammo
@@ -172,7 +167,12 @@ var CONFIG_SHOP_ITEMS = [
 { id: "tacz:attachment", count: 1, price: 100, nbt: {"AttachmentId": "tacz:shotgun_extended_mag_1"}, lore: [] },
 ],
 
-
+//Lasers
+[
+{ id: "tacz:attachment", count: 1, price: 20, nbt: {"AttachmentId": "tacz:laser_compact"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 50, nbt: {"AttachmentId": "tacz:laser_lopro"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 35, nbt: {"AttachmentId": "tacz:laser_nightstick"}, lore: [] },
+],
 ];
 
 
