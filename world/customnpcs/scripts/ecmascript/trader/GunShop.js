@@ -55,29 +55,26 @@ var CONFIG_SHOP_ITEMS = [
 { id: "tacz:modern_kinetic_gun", count: 1, price: 15, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 17, "GunFireMode": "SEMI", "GunId": "tacz:glock_17"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 100, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 16, "GunFireMode": "AUTO", "GunId": "tacz:cz75"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 4500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_archangel"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 4500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_crash"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 5000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 5000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_crash"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 5500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 5500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_rosco"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 5500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_reliable"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 6500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:unity_her_majesty"}, lore: [] },
-
 { id: "tacz:modern_kinetic_gun", count: 1, price: 8000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:unity"}, lore: [] },
-
-
 { id: "tacz:modern_kinetic_gun", count: 1, price: 9000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:3516"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 10000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_amnesty"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 10000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:yukimura"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 9500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_amnesty"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 9000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:yukimura"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 10000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:unity_cheetah"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 13000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:yukimura_skippy"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 14000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:yukimura_genjiroh"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 11000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:yukimura_skippy"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 12000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:yukimura_genjiroh"}, lore: [] },
 ],
 //SMG
 [
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 13000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 40, "GunFireMode": "AUTO", "GunId": "cyber_armorer:saratoga"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 13500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 40, "GunFireMode": "AUTO", "GunId": "cyber_armorer:saratoga"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 14000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 40, "GunFireMode": "AUTO", "GunId": "cyber_armorer:saratoga_fenrir"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 14000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 40, "GunFireMode": "AUTO", "GunId": "cyber_armorer:g58_dian"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 13000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 40, "GunFireMode": "AUTO", "GunId": "cyber_armorer:g58_dian"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 17000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 40, "GunFireMode": "AUTO", "GunId": "cyber_armorer:saratoga_problem_solver"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 17500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 40, "GunFireMode": "AUTO", "GunId": "cyber_armorer:g58_dian_yinglong"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 15000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 40, "GunFireMode": "AUTO", "GunId": "cyber_armorer:g58_dian_yinglong"}, lore: [] },
 ],
 //rifle
 [
