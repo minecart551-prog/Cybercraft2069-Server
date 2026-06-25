@@ -1057,7 +1057,7 @@ function openDetailGui(event, listingId) {
     var iName = getItemLabel(L.itemNbt, world)
     gui.addLabel(C.LBL_D1, "§f§l" + iName, 62, 58, 250, 12)
     gui.addLabel(C.LBL_D5, "§7Seller: §f" + L.sellerName, 62, 74, 250, 10)
-    gui.addLabel(C.LBL_D6, "§7Listing fee paid: " + formatPrice(L.feePaid), 62, 88, 250, 10)
+    gui.addLabel(C.LBL_PV_TIME, "§7Listing fee paid: " + formatPrice(L.feePaid), 62, 88, 250, 10)
     gui.addLabel(C.LBL_HINT, "§8Posted as a market stall listing", 62, 102, 250, 10)
 
     // --- Deal section ---
@@ -1086,7 +1086,7 @@ function openDetailGui(event, listingId) {
         gui.addLabel(C.LBL_PV_HINT, "§7Unit price: §e" + formatPrice(unitPriceCents), 20, 208, 200, 10)
         gui.addLabel(C.LBL_ICON4, "§7Custom amount:", 20, 220, 100, 10)
         gui.addTextField(C.TF_DAYS, 120, 220, 60, 16).setText("" + remainingQty)
-        gui.addLabel(C.LBL_D6, "§7Total: §e" + formatPrice(L.price), 180, 220, 100, 10)
+        gui.addLabel(C.LBL_PV_SELLER, "§7Total: §e" + formatPrice(L.price), 180, 220, 100, 10)
     }
 
     // Actions
