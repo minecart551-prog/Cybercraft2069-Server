@@ -101,7 +101,7 @@ function removeEntry(data, blockKey) {
 
 function isExpired(entry) {
     if (!entry || !entry.renter || entry.renter === "") return true;
-    var now = System.currentTimeMillis();
+    var now = java.lang.System.currentTimeMillis();
     return now >= entry.expiryDate;
 }
 
@@ -260,7 +260,7 @@ function openInfoGui(player, api, block, world, entry) {
 
     gui.addLabel(INFO_LBL_TITLE, "§6§lAdBlock Rental Info", width / 2 - 60, 10, 160, 14);
 
-    var now = System.currentTimeMillis();
+    var now = java.lang.System.currentTimeMillis();
     var currentTimeStr = fmtTime(now);
 
     gui.addLabel(INFO_LBL_CURRENT_TIME, "§7Current Time: §f" + currentTimeStr, 15, 35, 250, 10);
@@ -578,7 +578,7 @@ function handleRentPayment(e) {
     }
 
     var totalCents = costCentsPerDay * days;
-    var now = System.currentTimeMillis();
+    var now = java.lang.System.currentTimeMillis();
     var expiryMs = days * 24 * 60 * 60 * 1000;
 
     if (countCents(player) < totalCents) {
