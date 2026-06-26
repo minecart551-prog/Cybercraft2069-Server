@@ -39,7 +39,8 @@ var RENT_LBL_BALANCE    = 12;
 var RENT_TF_DAYS        = 13;
 var RENT_BTN_PAY        = 14;
 var RENT_BTN_CANCEL     = 15;
-var RENT_LBL_TOTAL      = 16;
+var RENT_LBL_DAYS_LABEL = 16;
+var RENT_LBL_TOTAL      = 17;
 
 // Admin GUI component IDs
 var ADM_LBL_TITLE      = 20;
@@ -274,7 +275,7 @@ function openRentGui(player, api, block, world, existingEntry) {
     gui.addLabel(RENT_LBL_COST_DAY, "§7Cost per day: §a" + fmtCoins(costPerDay), 15, 35, 200, 10);
     gui.addLabel(RENT_LBL_BALANCE, "§6Wallet: §e" + fmtCoins(countCoins(player)), 15, 55, 200, 10);
 
-    gui.addLabel(16, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 80, 100, 10);
+    gui.addLabel(RENT_LBL_DAYS_LABEL, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 80, 100, 10);
     gui.addTextField(RENT_TF_DAYS, 110, 77, 50, 16).setText("1");
 
     gui.addLabel(RENT_LBL_TOTAL, "§7Total: §a" + fmtCoins(costPerDay * 1), 15, 105, 200, 10);
@@ -462,7 +463,7 @@ function openNewRentGui(player, api, world, bx, by, bz) {
     gui.addLabel(RENT_LBL_TITLE, "§6§lRent This AdBlock", width / 2 - 60, 10, 160, 14);
     gui.addLabel(RENT_LBL_COST_DAY, "§cNo rental cost configured! Ask admin.", 15, 35, 230, 10);
     gui.addLabel(RENT_LBL_BALANCE, "", 15, 55, 200, 10);
-    gui.addLabel(16, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 80, 100, 10);
+    gui.addLabel(RENT_LBL_DAYS_LABEL, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 80, 100, 10);
     gui.addTextField(RENT_TF_DAYS, 110, 77, 50, 16).setText("1");
     gui.addLabel(RENT_LBL_TOTAL, "§cCannot rent - no cost set", 15, 105, 200, 10);
     gui.addButton(RENT_BTN_CANCEL, "§7Close", width / 2 - 30, 135, 60, 20);
@@ -483,7 +484,7 @@ function openRentGuiForEntry(player, api, world, entry, blockKey) {
     gui.addLabel(RENT_LBL_COST_DAY, "§7Cost per day: §a" + fmtCoins(costPerDay), 15, 35, 200, 10);
     gui.addLabel(RENT_LBL_BALANCE, "§6Wallet: §e" + fmtCoins(countCoins(player)), 15, 55, 200, 10);
 
-    gui.addLabel(16, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 80, 100, 10);
+    gui.addLabel(RENT_LBL_DAYS_LABEL, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 80, 100, 10);
     gui.addTextField(RENT_TF_DAYS, 110, 77, 50, 16).setText("1");
 
     gui.addLabel(RENT_LBL_TOTAL, "§7Total: §a" + fmtCoins(costPerDay * 1), 15, 105, 200, 10);
