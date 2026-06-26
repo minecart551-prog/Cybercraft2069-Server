@@ -377,7 +377,7 @@ function customGuiButton(e) {
                     var tpY = data[i].tpY;
                     var tpZ = data[i].tpZ;
                     if (tpX !== undefined && tpY !== undefined && tpZ !== undefined) {
-                        player.setPos(tpX, tpY, tpZ);
+                        player.setPosition(tpX, tpY, tpZ);
                         player.message("§aTeleported to your rented adblock location!");
                     } else {
                         player.message("§cNo teleport coordinates have been set by the admin.");
