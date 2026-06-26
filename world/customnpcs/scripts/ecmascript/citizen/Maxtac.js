@@ -28,7 +28,7 @@ function init(e) {
     npc.getInventory().setDropItem(1, item, 100);
     npc.getInventory().setExp(30, 30);
     
-    // Scan for all players within 30 blocks immediately on init
+    // Scan for all players within 30 blocks immediately on init s
     // This overrides any pre-existing targets from the NPC template
     targetPlayerNames = [];
     try {
