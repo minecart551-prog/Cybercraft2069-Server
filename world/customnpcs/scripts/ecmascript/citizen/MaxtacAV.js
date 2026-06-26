@@ -12,7 +12,7 @@ var tickCounter = 0;
 var TICK_TIMEOUT = 2400; // 2 minutes (20 ticks/sec * 120)
 var INITIAL_SCAN_RANGE = 50;
 
-// Simple motion-based movement variables
+// Simple direct motion for descent
 var AV_SPEED = 0.7; // Customizable speed for descent
 var targetX = 0, targetY = 0, targetZ = 0;
 var hasSetTarget = false;
@@ -43,7 +43,6 @@ function init(e) {
     hasStartedDescent = false;
     hasFlownUp = false;
     hasSetTarget = false;
-    motionX = 0; motionY = 0; motionZ = 0;
 }
 
 function tick(e) {
@@ -61,20 +60,17 @@ function tick(e) {
     if (targetPlayerName == null && !hasSpawnedMaxtacs) {
         var nearby = world.getNearbyEntities(npc.getPos(), INITIAL_SCAN_RANGE, 1); // 1 = players
         if (nearby && nearby.length > 0) {
-            // Target the nearest player
             targetPlayerName = nearby[0].getName();
         } else {
-            // No players found, despawn
             npc.despawn();
             return;
         }
     }
 
-    // Phase 1: Descent toward the player using setMotion (like FlyingCar1.js)
+    // Phase 1: Descent toward the player using direct setMotion
     if (!hasSpawnedMaxtacs) {
         var targetPlayer = findPlayerByName(npc, targetPlayerName);
         if (targetPlayer == null || !targetPlayer.isAlive()) {
-            // Target not found, despawn
             npc.despawn();
             return;
         }
@@ -82,7 +78,7 @@ function tick(e) {
         var targetPos = targetPlayer.getPos();
         var npcPos = npc.getPos();
 
-        // Set the target landing position once (offset ~10 blocks around player at their Y level)
+        // Set the target landing position once
         if (!hasSetTarget) {
             var angle = Math.random() * Math.PI * 2;
             var offsetX = Math.cos(angle) * 10;
@@ -93,35 +89,23 @@ function tick(e) {
             hasSetTarget = true;
         }
 
-        // Calculate direction vector toward target
+        // Calculate direction toward target and apply motion directly
         var dx = targetX - npcPos.getX();
         var dy = targetY - npcPos.getY();
         var dz = targetZ - npcPos.getZ();
         var dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
 
         if (dist > 0.5) {
-            // Normalize and apply speed
-            var targetMotionX = (dx / dist) * AV_SPEED;
-            var targetMotionY = (dy / dist) * AV_SPEED;
-            var targetMotionZ = (dz / dist) * AV_SPEED;
-
-            // Smoothly interpolate toward target motion (like FlyingCar1 lerp)
-            motionX = motionX + (targetMotionX - motionX) * 0.2;
-            motionY = motionY + (targetMotionY - motionY) * 0.2;
-            motionZ = motionZ + (targetMotionZ - motionZ) * 0.2;
+            npc.setMotionX((dx / dist) * AV_SPEED);
+            npc.setMotionY((dy / dist) * AV_SPEED);
+            npc.setMotionZ((dz / dist) * AV_SPEED);
         } else {
-            // Slow down when close
-            motionX = motionX * (1 - decay);
-            motionY = motionY * (1 - decay);
-            motionZ = motionZ * (1 - decay);
+            npc.setMotionX(0);
+            npc.setMotionY(0);
+            npc.setMotionZ(0);
         }
 
-        // Apply motion
-        npc.setMotionX(motionX);
-        npc.setMotionY(motionY);
-        npc.setMotionZ(motionZ);
-
-        // Check if fully landed (close enough to target position)
+        // Check if fully landed
         var flatDist = Math.sqrt(
             Math.pow(npcPos.getX() - targetX, 2) +
             Math.pow(npcPos.getZ() - targetZ, 2)
@@ -130,12 +114,11 @@ function tick(e) {
 
         if (flatDist < 5 && yDiff < 3) {
             // Stop motion
-            motionX = 0; motionY = 0; motionZ = 0;
             npc.setMotionX(0);
             npc.setMotionY(0);
             npc.setMotionZ(0);
             
-            // Fully landed at player's Y level - spawn 5 Maxtac NPCs at AV's exact position
+            // Spawn 5 Maxtac NPCs at AV's exact position
             var avPos = npc.getPos();
             var sx = Math.floor(avPos.getX());
             var sy = Math.floor(avPos.getY());
@@ -144,9 +127,7 @@ function tick(e) {
             for (var i = 0; i < 5; i++) {
                 try {
                     world.spawnClone(sx, sy, sz, 3, "Maxtac");
-                } catch (err) {
-                    // Ignore spawn errors for individual units
-                }
+                } catch (err) {}
             }
             
             hasSpawnedMaxtacs = true;
@@ -155,10 +136,9 @@ function tick(e) {
         return;
     }
     
-    // Phase 2: After spawning, wait then fly up and despawn (use navigateTo for leaving)
+    // Phase 2: After spawning, fly up and despawn
     if (hasSpawnedMaxtacs && !hasFlownUp) {
-        // Check if any Maxtac NPCs are still alive nearby
-        var nearbyNpcs = world.getNearbyEntities(npc.getPos(), 50, 2); // 2 = ICustomNpc
+        var nearbyNpcs = world.getNearbyEntities(npc.getPos(), 50, 2);
         var maxtacCount = 0;
         for (var i = 0; i < nearbyNpcs.length; i++) {
             if (nearbyNpcs[i].getName() === "Maxtac" && nearbyNpcs[i].isAlive()) {
@@ -167,16 +147,13 @@ function tick(e) {
         }
         
         if (maxtacCount == 0) {
-            // All Maxtacs have despawned (completed their mission), fly up and despawn
             var pos = npc.getPos();
-            // Store the target Y once when first entering this phase
             if (flyUpTargetY == null) {
                 flyUpTargetY = pos.getY() + 20;
             }
             npc.navigateTo(pos.getX(), flyUpTargetY, pos.getZ(), 5);
             
-            var dist = Math.abs(pos.getY() - flyUpTargetY);
-            if (dist < 3) {
+            if (Math.abs(pos.getY() - flyUpTargetY) < 3) {
                 hasFlownUp = true;
                 npc.despawn();
             }
