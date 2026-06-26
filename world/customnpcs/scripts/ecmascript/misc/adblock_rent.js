@@ -11,9 +11,9 @@
 var MAX_RENT_DAYS = 10;
 var DATA_KEY = "adblock_rent";
 
-// Coin denominations (matching spawner.js)
-var STONE_TO_COAL   = 100;
-var COAL_TO_EMERALD = 100;
+// Currency: stone_coin = cent, coal_coin = dollar, emerald_coin = 100 dollars
+var STONE_TO_COAL   = 100;  // 1 dollar = 100 cents
+var COAL_TO_EMERALD = 100;  // 1 emerald = 100 dollars
 
 // GUI IDs
 var GUI_INFO    = 11001;
@@ -42,17 +42,12 @@ var RENT_BTN_CANCEL     = 15;
 var RENT_LBL_DAYS_LABEL = 16;
 var RENT_LBL_TOTAL      = 17;
 
-// Admin GUI component IDs (all in 50-65 range, no overlap with other GUIs)
+// Admin GUI component IDs
 var ADM_LBL_TITLE      = 50;
 var ADM_LBL_COST       = 51;
 var ADM_TF_COST        = 52;
 var ADM_LBL_TP         = 53;
-var ADM_LBL_X          = 54;
-var ADM_TF_TPX         = 55;
-var ADM_LBL_Y          = 56;
-var ADM_TF_TPY         = 57;
-var ADM_LBL_Z          = 58;
-var ADM_TF_TPZ         = 59;
+var ADM_TF_TP          = 54;
 var ADM_BTN_SAVE       = 60;
 var ADM_BTN_DELETE     = 61;
 var ADM_BTN_CLOSE      = 62;
@@ -106,8 +101,11 @@ function isExpired(entry) {
     return now >= entry.expiryDate;
 }
 
-// ----------------- CURRENCY HELPERS (exact same as spawner.js) -----------------
-function countCoins(player) {
+// ----------------- CURRENCY HELPERS -----------------
+// stone_coin = cent, coal_coin = dollar (100 cents), emerald_coin = 100 dollars (10000 cents)
+// All amounts stored internally in cents.
+
+function countCents(player) {
     var stoneTotal   = 0;
     var coalTotal    = 0;
     var emeraldTotal = 0;
@@ -124,12 +122,12 @@ function countCoins(player) {
     return stoneTotal + (coalTotal * STONE_TO_COAL) + (emeraldTotal * STONE_TO_COAL * COAL_TO_EMERALD);
 }
 
-function removeCoins(player, amount) {
-    if (countCoins(player) < amount) return false;
+function removeCents(player, amount) {
+    if (countCents(player) < amount) return false;
     var remaining = amount;
     var inv = player.getInventory();
 
-    // stone coins
+    // stone coins (cents)
     for (var i = 0; i < inv.getSize() && remaining > 0; i++) {
         var stack = inv.getSlot(i);
         if (!stack || stack.isEmpty() || stack.getName() !== "coins:stone_coin") continue;
@@ -143,15 +141,15 @@ function removeCoins(player, amount) {
         }
     }
 
-    // coal coins
+    // coal coins (dollars)
     for (var i = 0; i < inv.getSize() && remaining > 0; i++) {
         var stack = inv.getSlot(i);
         if (!stack || stack.isEmpty() || stack.getName() !== "coins:coal_coin") continue;
         var stackAmount = stack.getStackSize();
-        var stoneValue  = stackAmount * STONE_TO_COAL;
-        if (stoneValue <= remaining) {
+        var centValue  = stackAmount * STONE_TO_COAL;
+        if (centValue <= remaining) {
             inv.setSlot(i, null);
-            remaining -= stoneValue;
+            remaining -= centValue;
         } else {
             var coalsNeeded = Math.ceil(remaining / STONE_TO_COAL);
             stack.setStackSize(stackAmount - coalsNeeded);
@@ -163,27 +161,27 @@ function removeCoins(player, amount) {
         }
     }
 
-    // emerald coins
+    // emerald coins (100 dollars each)
     for (var i = 0; i < inv.getSize() && remaining > 0; i++) {
         var stack = inv.getSlot(i);
         if (!stack || stack.isEmpty() || stack.getName() !== "coins:emerald_coin") continue;
         var stackAmount = stack.getStackSize();
-        var stoneValue  = stackAmount * STONE_TO_COAL * COAL_TO_EMERALD;
-        if (stoneValue <= remaining) {
+        var centValue  = stackAmount * STONE_TO_COAL * COAL_TO_EMERALD;
+        if (centValue <= remaining) {
             inv.setSlot(i, null);
-            remaining -= stoneValue;
+            remaining -= centValue;
         } else {
             var emeraldsNeeded = Math.ceil(remaining / (STONE_TO_COAL * COAL_TO_EMERALD));
             stack.setStackSize(stackAmount - emeraldsNeeded);
             var overpaid    = (emeraldsNeeded * STONE_TO_COAL * COAL_TO_EMERALD) - remaining;
             remaining = 0;
-            var changeCoal  = Math.floor(overpaid / STONE_TO_COAL);
-            var changeStone = overpaid % STONE_TO_COAL;
-            if (changeCoal  > 0) {
-                try { player.giveItem(player.world.createItem("coins:coal_coin",  changeCoal));  } catch (e) {}
+            var changeDollars = Math.floor(overpaid / STONE_TO_COAL);
+            var changeCents   = overpaid % STONE_TO_COAL;
+            if (changeDollars > 0) {
+                try { player.giveItem(player.world.createItem("coins:coal_coin",  changeDollars)); } catch (e) {}
             }
-            if (changeStone > 0) {
-                try { player.giveItem(player.world.createItem("coins:stone_coin", changeStone)); } catch (e) {}
+            if (changeCents > 0) {
+                try { player.giveItem(player.world.createItem("coins:stone_coin", changeCents)); } catch (e) {}
             }
         }
     }
@@ -191,17 +189,33 @@ function removeCoins(player, amount) {
     return true;
 }
 
+// Parses "5.20" into cents (520)
+function dollarsToCents(dollarStr) {
+    dollarStr = dollarStr.trim();
+    if (dollarStr.indexOf(".") === -1) {
+        return parseInt(dollarStr) * 100;
+    }
+    var parts = dollarStr.split(".");
+    var dollars = parseInt(parts[0]) || 0;
+    var centsStr = parts[1];
+    if (centsStr.length === 1) centsStr = centsStr + "0";
+    else if (centsStr.length > 2) centsStr = centsStr.substring(0, 2);
+    var cents = parseInt(centsStr) || 0;
+    return dollars * 100 + cents;
+}
+
+// Formats cents as "$X.XX"
+function fmtDollars(cents) {
+    var dollars = Math.floor(cents / 100);
+    var c = cents % 100;
+    return "$" + dollars + "." + (c < 10 ? "0" + c : c);
+}
+
 function fmtTime(ms) {
     var Date = Java.type('java.util.Date');
     var SimpleDateFormat = Java.type('java.text.SimpleDateFormat');
     var formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     return formatter.format(new Date(ms));
-}
-
-function fmtCoins(cents) {
-    var dollars = Math.floor(cents / 100);
-    var c       = cents % 100;
-    return "$" + dollars + "." + (c < 10 ? "0" + c : c);
 }
 
 // ----------------- INTERACT (ENTRY POINT) -----------------
@@ -250,7 +264,7 @@ function openInfoGui(player, api, block, world, entry) {
     if (entry && entry.renter && entry.renter !== "" && !isExpired(entry)) {
         gui.addLabel(INFO_LBL_RENTER, "§7Rented by: §e" + entry.renter, 15, 55, 250, 10);
         gui.addLabel(INFO_LBL_EXPIRY_TIME, "§7Expires: §c" + fmtTime(entry.expiryDate), 15, 75, 250, 10);
-        gui.addLabel(INFO_LBL_COST, "§7Cost per day: §a" + fmtCoins(entry.rentCost || 0), 15, 95, 250, 10);
+        gui.addLabel(INFO_LBL_COST, "§7Cost per day: §a" + fmtDollars(entry.rentCostCents || 0), 15, 95, 250, 10);
 
         // Teleport and Cancel buttons only for the current renter
         var playerName = player.getName();
@@ -274,16 +288,16 @@ function openRentGui(player, api, block, world, existingEntry) {
     var height = 180;
     var gui = api.createCustomGui(GUI_RENT, width, height, false, player);
 
-    var costPerDay = existingEntry ? (existingEntry.rentCost || 0) : 0;
+    var costCentsPerDay = existingEntry ? (existingEntry.rentCostCents || 0) : 0;
 
     gui.addLabel(RENT_LBL_TITLE, "§6§lRent This AdBlock", width / 2 - 60, 10, 160, 14);
-    gui.addLabel(RENT_LBL_COST_DAY, "§7Cost per day: §a" + fmtCoins(costPerDay), 15, 35, 200, 10);
-    gui.addLabel(RENT_LBL_BALANCE, "§6Wallet: §e" + fmtCoins(countCoins(player)), 15, 55, 200, 10);
+    gui.addLabel(RENT_LBL_COST_DAY, "§7Cost per day: §a" + fmtDollars(costCentsPerDay), 15, 35, 200, 10);
+    gui.addLabel(RENT_LBL_BALANCE, "§6Wallet: §e" + fmtDollars(countCents(player)), 15, 55, 200, 10);
 
     gui.addLabel(RENT_LBL_DAYS_LABEL, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 80, 100, 10);
     gui.addTextField(RENT_TF_DAYS, 110, 77, 50, 16).setText("1");
 
-    gui.addLabel(RENT_LBL_TOTAL, "§7Total: §a" + fmtCoins(costPerDay * 1), 15, 105, 200, 10);
+    gui.addLabel(RENT_LBL_TOTAL, "§7Total: §a" + fmtDollars(costCentsPerDay * 1), 15, 105, 200, 10);
 
     gui.addButton(RENT_BTN_PAY, "§a§lPay & Rent", width / 2 - 70, 135, 80, 20);
     gui.addButton(RENT_BTN_CANCEL, "§7Cancel", width / 2 + 10, 135, 60, 20);
@@ -304,16 +318,11 @@ function openAdminGui(player, api, block, world) {
 
     gui.addLabel(ADM_LBL_TITLE, "§6§lAdmin - AdBlock Settings", width / 2 - 80, 10, 180, 14);
 
-    gui.addLabel(ADM_LBL_COST, "§7Rent Cost per Day (in coins):", 15, 35, 200, 10);
-    gui.addTextField(ADM_TF_COST, 15, 48, 100, 16).setText(entry ? String(entry.rentCost || 0) : "0");
+    gui.addLabel(ADM_LBL_COST, "§7Rent Cost per Day (enter as §eD.CC §7e.g. 5.20):", 15, 35, 250, 10);
+    gui.addTextField(ADM_TF_COST, 15, 48, 100, 16).setText(entry ? fmtDollarsNoSign(entry.rentCostCents || 0) : "0.00");
 
-    gui.addLabel(ADM_LBL_TP, "§7Teleport Coordinates:", 15, 75, 200, 10);
-    gui.addLabel(ADM_LBL_X, "§7X:", 15, 92, 20, 10);
-    gui.addTextField(ADM_TF_TPX, 35, 89, 60, 16).setText(entry ? String(entry.tpX || 0) : "0");
-    gui.addLabel(ADM_LBL_Y, "§7Y:", 105, 92, 20, 10);
-    gui.addTextField(ADM_TF_TPY, 125, 89, 60, 16).setText(entry ? String(entry.tpY || 0) : "0");
-    gui.addLabel(ADM_LBL_Z, "§7Z:", 195, 92, 20, 10);
-    gui.addTextField(ADM_TF_TPZ, 215, 89, 60, 16).setText(entry ? String(entry.tpZ || 0) : "0");
+    gui.addLabel(ADM_LBL_TP, "§7Teleport Coordinates (X Y Z):", 15, 75, 250, 10);
+    gui.addTextField(ADM_TF_TP, 15, 90, 200, 16).setText(formatTpCoords(entry));
 
     gui.addButton(ADM_BTN_SAVE,   "§a§lSave",   40,  130, 80, 20);
     gui.addButton(ADM_BTN_DELETE, "§c§lDelete", 140, 130, 80, 20);
@@ -329,6 +338,17 @@ function openAdminGui(player, api, block, world) {
     player.showCustomGui(gui);
 }
 
+function fmtDollarsNoSign(cents) {
+    var dollars = Math.floor(cents / 100);
+    var c = cents % 100;
+    return dollars + "." + (c < 10 ? "0" + c : c);
+}
+
+function formatTpCoords(entry) {
+    if (!entry || entry.tpX === undefined) return "0 0 0";
+    return entry.tpX + " " + entry.tpY + " " + entry.tpZ;
+}
+
 // ----------------- GUI BUTTON HANDLER -----------------
 function customGuiButton(e) {
     var player  = e.player;
@@ -339,13 +359,11 @@ function customGuiButton(e) {
 
     // --- INFO GUI ---
     if (gui.getID() === GUI_INFO) {
-        // Close
         if (buttonId === INFO_BTN_CLOSE) {
             player.closeGui();
             return;
         }
 
-        // Teleport (only renter can see this button, but double-check)
         if (buttonId === INFO_BTN_TELEPORT) {
             var data = getRentData(world);
             var playerName = player.getName();
@@ -369,13 +387,11 @@ function customGuiButton(e) {
             return;
         }
 
-        // Cancel Rent button (renter only)
         if (buttonId === INFO_BTN_CANCEL_RENT) {
             handleCancelRent(e);
             return;
         }
 
-        // Rent button (available block)
         if (buttonId === INFO_BTN_RENT) {
             player.closeGui();
             openRentFromInfo(player, api, world);
@@ -400,19 +416,16 @@ function customGuiButton(e) {
 
     // --- ADMIN GUI ---
     if (gui.getID() === GUI_ADMIN) {
-        // Close
         if (buttonId === ADM_BTN_CLOSE) {
             player.closeGui();
             return;
         }
 
-        // Save
         if (buttonId === ADM_BTN_SAVE) {
             handleAdminSave(e);
             return;
         }
 
-        // Delete
         if (buttonId === ADM_BTN_DELETE) {
             handleAdminDelete(e);
             return;
@@ -421,14 +434,13 @@ function customGuiButton(e) {
     }
 }
 
-// ----------------- RENT FROM INFO (helper when clicking "Rent" from info GUI) -----------------
+// ----------------- RENT FROM INFO -----------------
 function openRentFromInfo(player, api, world) {
     var data = getRentData(world);
     var playerX = Math.floor(player.getX());
     var playerY = Math.floor(player.getY());
     var playerZ = Math.floor(player.getZ());
 
-    // Search for the nearest available block entry
     var nearestEntry = null;
     var nearestDist = 999999;
     var nearestKey = null;
@@ -482,16 +494,16 @@ function openRentGuiForEntry(player, api, world, entry, blockKey) {
     var height = 180;
     var gui = api.createCustomGui(GUI_RENT, width, height, false, player);
 
-    var costPerDay = entry ? (entry.rentCost || 0) : 0;
+    var costCentsPerDay = entry ? (entry.rentCostCents || 0) : 0;
 
     gui.addLabel(RENT_LBL_TITLE, "§6§lRent This AdBlock", width / 2 - 60, 10, 160, 14);
-    gui.addLabel(RENT_LBL_COST_DAY, "§7Cost per day: §a" + fmtCoins(costPerDay), 15, 35, 200, 10);
-    gui.addLabel(RENT_LBL_BALANCE, "§6Wallet: §e" + fmtCoins(countCoins(player)), 15, 55, 200, 10);
+    gui.addLabel(RENT_LBL_COST_DAY, "§7Cost per day: §a" + fmtDollars(costCentsPerDay), 15, 35, 200, 10);
+    gui.addLabel(RENT_LBL_BALANCE, "§6Wallet: §e" + fmtDollars(countCents(player)), 15, 55, 200, 10);
 
     gui.addLabel(RENT_LBL_DAYS_LABEL, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 80, 100, 10);
     gui.addTextField(RENT_TF_DAYS, 110, 77, 50, 16).setText("1");
 
-    gui.addLabel(RENT_LBL_TOTAL, "§7Total: §a" + fmtCoins(costPerDay * 1), 15, 105, 200, 10);
+    gui.addLabel(RENT_LBL_TOTAL, "§7Total: §a" + fmtDollars(costCentsPerDay * 1), 15, 105, 200, 10);
 
     gui.addButton(RENT_BTN_PAY, "§a§lPay & Rent", width / 2 - 70, 135, 80, 20);
     gui.addButton(RENT_BTN_CANCEL, "§7Cancel", width / 2 + 10, 135, 60, 20);
@@ -504,7 +516,6 @@ function handleRentPayment(e) {
     var gui     = e.gui;
     var world   = player.world;
 
-    // Get days from text field
     var daysField = gui.getComponent(RENT_TF_DAYS);
     if (!daysField) {
         player.message("§cError reading days field.");
@@ -517,7 +528,6 @@ function handleRentPayment(e) {
         return;
     }
 
-    // Find the entry by pendingBlockKey, or search nearby
     var data = getRentData(world);
     var entry = null;
     var blockKey = null;
@@ -527,7 +537,6 @@ function handleRentPayment(e) {
         blockKey = pendingBlockKey;
     }
 
-    // If no pending block key or entry not found, search nearby
     if (!entry) {
         var playerX = Math.floor(player.getX());
         var playerY = Math.floor(player.getY());
@@ -558,29 +567,26 @@ function handleRentPayment(e) {
         return;
     }
 
-    var costPerDay = entry.rentCost || 0;
-    if (costPerDay <= 0) {
+    var costCentsPerDay = entry.rentCostCents || 0;
+    if (costCentsPerDay <= 0) {
         player.message("§cThis adblock has no rent cost configured. Ask an admin to set it.");
         return;
     }
 
-    var totalCost = costPerDay * days;
+    var totalCents = costCentsPerDay * days;
     var now = System.currentTimeMillis();
-    var expiryMs = days * 24 * 60 * 60 * 1000; // days to ms
+    var expiryMs = days * 24 * 60 * 60 * 1000;
 
-    // Check if player has enough coins
-    if (countCoins(player) < totalCost) {
-        player.message("§cYou need " + fmtCoins(totalCost) + " to rent for " + days + " day(s). You have " + fmtCoins(countCoins(player)) + ".");
+    if (countCents(player) < totalCents) {
+        player.message("§cYou need " + fmtDollars(totalCents) + " to rent for " + days + " day(s). You have " + fmtDollars(countCents(player)) + ".");
         return;
     }
 
-    // Remove coins
-    if (!removeCoins(player, totalCost)) {
+    if (!removeCents(player, totalCents)) {
         player.message("§cTransaction failed! Could not remove coins.");
         return;
     }
 
-    // Update the entry
     entry.renter = player.getName();
     entry.rentedDate = now;
     entry.expiryDate = now + expiryMs;
@@ -588,40 +594,43 @@ function handleRentPayment(e) {
     saveRentData(world, data);
 
     pendingBlockKey = null;
-    player.message("§aYou have rented this adblock for " + days + " day(s)! Cost: " + fmtCoins(totalCost));
+    player.message("§aYou have rented this adblock for " + days + " day(s)! Cost: " + fmtDollars(totalCents));
     player.closeGui();
 }
 
+// ----------------- ADMIN SAVE -----------------
 function handleAdminSave(e) {
     var player  = e.player;
     var gui     = e.gui;
     var world   = player.world;
 
-    // Get admin-set values from text fields
     var costField = gui.getComponent(ADM_TF_COST);
-    var xField    = gui.getComponent(ADM_TF_TPX);
-    var yField    = gui.getComponent(ADM_TF_TPY);
-    var zField    = gui.getComponent(ADM_TF_TPZ);
+    var tpField   = gui.getComponent(ADM_TF_TP);
 
-    if (!costField || !xField || !yField || !zField) {
+    if (!costField || !tpField) {
         player.message("§cError reading admin fields.");
         return;
     }
 
-    var costText = costField.getText().trim();
-    var xText    = xField.getText().trim();
-    var yText    = yField.getText().trim();
-    var zText    = zField.getText().trim();
-
-    var cost = parseInt(costText);
-    var tpX  = parseInt(xText);
-    var tpY  = parseInt(yText);
-    var tpZ  = parseInt(zText);
-
-    if (isNaN(cost) || cost < 0) {
-        player.message("§cRent cost must be a valid positive number.");
+    // Parse cost in dollar.cents format
+    var costStr = costField.getText().trim();
+    if (costStr === "") costStr = "0.00";
+    var costCents = dollarsToCents(costStr);
+    if (costCents < 0) {
+        player.message("§cInvalid cost! Enter as dollars.cents (e.g. 5.20).");
         return;
     }
+
+    // Parse teleport coords "x y z"
+    var tpStr = tpField.getText().trim();
+    var tpParts = tpStr.split(/\s+/);
+    if (tpParts.length < 3) {
+        player.message("§cEnter teleport coords as: X Y Z (space separated)");
+        return;
+    }
+    var tpX = parseInt(tpParts[0]);
+    var tpY = parseInt(tpParts[1]);
+    var tpZ = parseInt(tpParts[2]);
     if (isNaN(tpX) || isNaN(tpY) || isNaN(tpZ)) {
         player.message("§cTeleport coordinates must be valid numbers.");
         return;
@@ -642,7 +651,7 @@ function handleAdminSave(e) {
             renter: "",
             rentedDate: 0,
             expiryDate: 0,
-            rentCost: cost,
+            rentCostCents: costCents,
             tpX: tpX,
             tpY: tpY,
             tpZ: tpZ
@@ -650,7 +659,7 @@ function handleAdminSave(e) {
         data.push(entry);
         player.message("§aNew adblock entry created at " + blockKey);
     } else {
-        entry.rentCost = cost;
+        entry.rentCostCents = costCents;
         entry.tpX = tpX;
         entry.tpY = tpY;
         entry.tpZ = tpZ;
