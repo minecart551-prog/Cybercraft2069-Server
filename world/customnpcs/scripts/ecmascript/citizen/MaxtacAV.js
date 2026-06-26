@@ -14,12 +14,13 @@ var INITIAL_SCAN_RANGE = 50;
 
 // Simple direct motion for descent
 var AV_SPEED = 0.7; // Customizable speed for descent
-var targetX = 0, targetY = 0, targetZ = 0;
-var hasSetTarget = false;
+// Fixed offset from player landing spot (set once on first tick)
+var offsetX = 0, offsetZ = 0;
+var hasSetOffset = false;
 
 function init(e) {
     var npc = e.npc;
-    npc.getDisplay().setHitboxState(1);
+    
     // Read killer name from world tempdata
     var tempData = npc.getWorld().getTempdata();
     if (tempData.has("maxtacav_killer")) {
@@ -36,13 +37,13 @@ function init(e) {
     npc.getAi().setNavigationType(1);
     
     // Configure stats
-    npc.getStats().setMaxHealth(999);
-    
+    npc.getStats().setMaxHealth(9999);
+    npc.getStats().setCombatRegen(9998);
+    npc.getStats().setHealthRegen(9998);
     // Reset state
     hasSpawnedMaxtacs = false;
     hasStartedDescent = false;
     hasFlownUp = false;
-    hasSetTarget = false;
 }
 
 function tick(e) {
@@ -67,7 +68,7 @@ function tick(e) {
         }
     }
 
-    // Phase 1: Descent toward the player using direct setMotion
+    // Phase 1: Follow the police killer player and descend toward them
     if (!hasSpawnedMaxtacs) {
         var targetPlayer = findPlayerByName(npc, targetPlayerName);
         if (targetPlayer == null || !targetPlayer.isAlive()) {
@@ -78,16 +79,17 @@ function tick(e) {
         var targetPos = targetPlayer.getPos();
         var npcPos = npc.getPos();
 
-        // Set the target landing position once
-        if (!hasSetTarget) {
+        // Set fixed offset from player once, then follow their position every tick
+        if (!hasSetOffset) {
             var angle = Math.random() * Math.PI * 2;
-            var offsetX = Math.cos(angle) * 10;
-            var offsetZ = Math.sin(angle) * 10;
-            targetX = targetPos.getX() + offsetX;
-            targetY = targetPos.getY();
-            targetZ = targetPos.getZ() + offsetZ;
-            hasSetTarget = true;
+            offsetX = Math.cos(angle) * 10;
+            offsetZ = Math.sin(angle) * 10;
+            hasSetOffset = true;
         }
+        // Follow the player's current position + fixed offset
+        var targetX = targetPos.getX() + offsetX;
+        var targetY = targetPos.getY();
+        var targetZ = targetPos.getZ() + offsetZ;
 
         // Calculate direction toward target and apply motion directly
         var dx = targetX - npcPos.getX();
@@ -105,14 +107,14 @@ function tick(e) {
             npc.setMotionZ(0);
         }
 
-        // Check if fully landed
+        // Check if close enough to the player to deploy
         var flatDist = Math.sqrt(
-            Math.pow(npcPos.getX() - targetX, 2) +
-            Math.pow(npcPos.getZ() - targetZ, 2)
+            Math.pow(npcPos.getX() - targetPos.getX(), 2) +
+            Math.pow(npcPos.getZ() - targetPos.getZ(), 2)
         );
-        var yDiff = Math.abs(npcPos.getY() - targetY);
+        var yDiff = Math.abs(npcPos.getY() - targetPos.getY());
 
-        if (flatDist < 5 && yDiff < 3) {
+        if (flatDist < 15 && yDiff < 5) {
             // Stop motion
             npc.setMotionX(0);
             npc.setMotionY(0);
