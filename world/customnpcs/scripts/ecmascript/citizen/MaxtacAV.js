@@ -64,7 +64,6 @@ function tick(e) {
         
         var targetPos = targetPlayer.getPos();
         var npcPos = npc.getPos();
-        var dist = npcPos.distanceTo(targetPos);
         
         // Navigate to a spot ~10 blocks around the player at their Y level
         var angle = Math.random() * Math.PI * 2;
@@ -76,22 +75,21 @@ function tick(e) {
         
         npc.navigateTo(targetX, targetY, targetZ, 5);
         
-        // When close enough to the target, spawn Maxtacs
+        // Wait until fully landed: check both horizontal AND vertical proximity
         var flatDist = Math.sqrt(
             Math.pow(npcPos.getX() - targetX, 2) + 
             Math.pow(npcPos.getZ() - targetZ, 2)
         );
+        var yDiff = Math.abs(npcPos.getY() - targetY);
         
-        if (flatDist < 5) {
-            // Spawn 5 Maxtac NPCs around the AV in tab 3
+        if (flatDist < 5 && yDiff < 3) {
+            // Fully landed at player's Y level - spawn 5 Maxtac NPCs at AV's exact position
             var avPos = npc.getPos();
+            var sx = Math.floor(avPos.getX());
+            var sy = Math.floor(avPos.getY());
+            var sz = Math.floor(avPos.getZ());
+            
             for (var i = 0; i < 5; i++) {
-                var spawnAngle = (Math.PI * 2 / 5) * i + Math.random() * 0.5;
-                var spawnDist = 2 + Math.random() * 2;
-                var sx = Math.floor(avPos.getX() + Math.cos(spawnAngle) * spawnDist);
-                var sz = Math.floor(avPos.getZ() + Math.sin(spawnAngle) * spawnDist);
-                var sy = Math.floor(targetPos.getY());
-                
                 try {
                     world.spawnClone(sx, sy, sz, 3, "Maxtac");
                 } catch (err) {
