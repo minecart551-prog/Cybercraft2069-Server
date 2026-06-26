@@ -346,6 +346,31 @@ function GetPlayerRotation(npc, player) {
     return angle;
 }
 
+function died(e) {
+    var npc = e.npc;
+    // Only trigger for police NPCs
+    if (isPolice != 1) return;
+
+    var killer = e.source; // the entity that killed this npc
+    if (killer == null) return;
+
+    // Only react to player kills
+    if (killer.getType() != 1) return; // 1 = IPlayer
+
+    var killerName = killer.getName();
+    var pos = npc.getPos();
+
+    // Store killer name in world tempdata for MaxtacAV to read
+    var tempData = npc.getWorld().getTempdata();
+    tempData.put("maxtacav_killer", JSON.stringify(killerName));
+
+    // Spawn MaxtacAV 20 blocks above where the police died
+    var spawnX = Math.floor(pos.getX());
+    var spawnY = Math.floor(pos.getY()) + 20;
+    var spawnZ = Math.floor(pos.getZ());
+    npc.getWorld().spawnClone(spawnX, spawnY, spawnZ, 3, "MaxtacAV");
+}
+
 function randomFrom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
