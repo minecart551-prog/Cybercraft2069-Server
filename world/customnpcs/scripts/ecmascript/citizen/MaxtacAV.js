@@ -19,7 +19,7 @@ var hasSetTarget = false;
 
 function init(e) {
     var npc = e.npc;
-    
+    npc.getDisplay().setHitboxState(1);
     // Read killer name from world tempdata
     var tempData = npc.getWorld().getTempdata();
     if (tempData.has("maxtacav_killer")) {
