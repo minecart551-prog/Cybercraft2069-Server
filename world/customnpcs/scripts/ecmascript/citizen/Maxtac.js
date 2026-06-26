@@ -48,11 +48,10 @@ function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
     
-    // Auto-despawn after 2 minutes (stored per-NPC in storeddata)
-    var maxtacTick = parseInt(npc.storeddata.get("maxtac_tick")) || 0;
-    maxtacTick++;
-    npc.storeddata.put("maxtac_tick", "" + maxtacTick);
-    if (maxtacTick >= TICK_TIMEOUT) {
+    // Auto-despawn after 2 minutes (stored directly on npc object, guaranteed per-NPC)
+    if (!npc._maxtacTick) npc._maxtacTick = 0;
+    npc._maxtacTick++;
+    if (npc._maxtacTick >= TICK_TIMEOUT) {
         npc.despawn();
         return;
     }
