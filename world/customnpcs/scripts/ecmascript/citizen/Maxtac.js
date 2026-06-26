@@ -5,6 +5,8 @@
 // ===============================================================
 
 var targetPlayerNames = []; // Array of player names to kill
+var tickCounter = 0;
+var TICK_TIMEOUT = 2400; // 2 minutes (20 ticks/sec * 120)
 var FOV = 180;
 var SCAN_RANGE = 30;
 var SUGAR_SCAN_RANGE = 30;
@@ -46,6 +48,13 @@ function init(e) {
 function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
+    
+    // Auto-despawn after 2 minutes
+    tickCounter++;
+    if (tickCounter >= TICK_TIMEOUT) {
+        npc.despawn();
+        return;
+    }
     
     // Phase 1: Take sugar from nearby players' inventories immediately
     removeNearbySugar(npc, world);

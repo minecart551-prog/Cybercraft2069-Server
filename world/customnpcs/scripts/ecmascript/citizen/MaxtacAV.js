@@ -7,6 +7,9 @@ var targetPlayerName = null;
 var hasSpawnedMaxtacs = false;
 var hasStartedDescent = false;
 var hasFlownUp = false;
+var flyUpTargetY = null;
+var tickCounter = 0;
+var TICK_TIMEOUT = 2400; // 2 minutes (20 ticks/sec * 120)
 var INITIAL_SCAN_RANGE = 50;
 
 function init(e) {
@@ -39,6 +42,13 @@ function init(e) {
 function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
+    
+    // Auto-despawn after 2 minutes
+    tickCounter++;
+    if (tickCounter >= TICK_TIMEOUT) {
+        npc.despawn();
+        return;
+    }
     
     // If we don't have a target player, scan for nearby players
     if (targetPlayerName == null && !hasSpawnedMaxtacs) {
@@ -117,10 +127,13 @@ function tick(e) {
         if (maxtacCount == 0) {
             // All Maxtacs have despawned (completed their mission), fly up and despawn
             var pos = npc.getPos();
-            var flyUpY = pos.getY() + 20;
-            npc.navigateTo(pos.getX(), flyUpY, pos.getZ(), 5);
+            // Store the target Y once when first entering this phase
+            if (flyUpTargetY == null) {
+                flyUpTargetY = pos.getY() + 20;
+            }
+            npc.navigateTo(pos.getX(), flyUpTargetY, pos.getZ(), 5);
             
-            var dist = Math.abs(pos.getY() - flyUpY);
+            var dist = Math.abs(pos.getY() - flyUpTargetY);
             if (dist < 3) {
                 hasFlownUp = true;
                 npc.despawn();
