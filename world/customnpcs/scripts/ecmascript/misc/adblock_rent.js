@@ -58,6 +58,7 @@ var ADM_LBL_RENTER_EXP = 65;
 // Store block position for GUI button callbacks (block reference not available in customGuiButton)
 var pendingBlockKey = null;
 var pendingAdminBlockKey = null;
+var pendingInfoBlockKey = null;
 
 function init(e) {
     e.block.setModel("minecraft:light_gray_concrete");
@@ -249,6 +250,8 @@ function interact(e) {
     }
 
     // Entry exists and not expired -> show info GUI
+    pendingBlockKey = blockKey;
+    pendingInfoBlockKey = blockKey;
     openInfoGui(player, api, block, world, entry);
 }
 
@@ -370,23 +373,16 @@ function customGuiButton(e) {
 
         if (buttonId === INFO_BTN_TELEPORT) {
             var data = getRentData(world);
-            var playerName = player.getName();
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].renter === playerName) {
-                    var tpX = data[i].tpX;
-                    var tpY = data[i].tpY;
-                    var tpZ = data[i].tpZ;
-                    if (tpX !== undefined && tpY !== undefined && tpZ !== undefined) {
-                        player.setPosition(tpX, tpY, tpZ);
-                        player.message("§aTeleported to your rented adblock location!");
-                    } else {
-                        player.message("§cNo teleport coordinates have been set by the admin.");
-                    }
-                    player.closeGui();
-                    return;
-                }
+            var entry = null;
+            if (pendingInfoBlockKey) {
+                entry = findEntry(data, pendingInfoBlockKey);
             }
-            player.message("§cYou are not currently renting any adblock.");
+            if (entry && entry.tpX !== undefined && entry.tpY !== undefined && entry.tpZ !== undefined) {
+                player.setPosition(entry.tpX, entry.tpY, entry.tpZ);
+                player.message("§aTeleported!");
+            } else {
+                player.message("§cNo teleport coordinates have been set by the admin.");
+            }
             player.closeGui();
             return;
         }
@@ -727,4 +723,5 @@ function handleCancelRent(e) {
 function customGuiClosed(e) {
     pendingBlockKey = null;
     pendingAdminBlockKey = null;
+    pendingInfoBlockKey = null;
 }
