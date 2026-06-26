@@ -27,35 +27,28 @@ function init(e) {
     npc.getInventory().setDropItem(1, item, 100);
     npc.getInventory().setExp(30, 30);
     
-    // Don't wander initially - we have a mission
-    npc.getAi().setWanderingRange(0);
-    
-    hasScannedInitial = false;
+    // Scan for all players within 30 blocks immediately on init
+    // This overrides any pre-existing targets from the NPC template
     targetPlayerNames = [];
+    try {
+        var nearbyPlayers = npc.world.getNearbyEntities(npc.getPos(), SCAN_RANGE, 1); // 1 = players
+        for (var i = 0; i < nearbyPlayers.length; i++) {
+            var player = nearbyPlayers[i];
+            if (player.isAlive()) {
+                var pName = player.getName();
+                if (targetPlayerNames.indexOf(pName) === -1) {
+                    targetPlayerNames.push(pName);
+                }
+            }
+        }
+    } catch (err) {}
 }
 
 function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
     
-    // Phase 1: Initial scan - find all players within 30 blocks
-    if (!hasScannedInitial) {
-        var nearbyPlayers = world.getNearbyEntities(npc.getPos(), SCAN_RANGE, 1); // 1 = players
-        for (var i = 0; i < nearbyPlayers.length; i++) {
-            var player = nearbyPlayers[i];
-            if (player.isAlive()) {
-                var pName = player.getName();
-                // Add to target list if not already there
-                if (targetPlayerNames.indexOf(pName) === -1) {
-                    targetPlayerNames.push(pName);
-                }
-            }
-        }
-        hasScannedInitial = true;
-        return;
-    }
-    
-    // Phase 2: Acquire attack target
+    // Phase 1: Acquire attack target
     var currentTarget = npc.getAttackTarget();
     
     // Check if current target is still valid (alive and a target)
