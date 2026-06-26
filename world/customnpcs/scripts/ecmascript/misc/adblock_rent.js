@@ -59,6 +59,10 @@ var ADM_LBL_RENTER_EXP = 65;
 var pendingBlockKey = null;
 var pendingAdminBlockKey = null;
 
+function init(e) {
+    e.block.setModel("minecraft:light_gray_concrete");
+}
+
 // ----------------- WORLD DATA HELPERS -----------------
 function getRentData(world) {
     var wdata = world.getStoreddata();
