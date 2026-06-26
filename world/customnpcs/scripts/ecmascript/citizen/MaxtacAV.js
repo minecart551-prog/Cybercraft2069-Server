@@ -129,7 +129,7 @@ function tick(e) {
             var pos = npc.getPos();
             // Store the target Y once when first entering this phase
             if (flyUpTargetY == null) {
-                flyUpTargetY = pos.getY() + 20;
+                flyUpTargetY = pos.getY() + 40;
             }
             npc.navigateTo(pos.getX(), flyUpTargetY, pos.getZ(), 5);
             
