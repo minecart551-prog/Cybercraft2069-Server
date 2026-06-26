@@ -30,6 +30,7 @@ var INFO_LBL_COST         = 6;
 var INFO_BTN_TELEPORT     = 7;
 var INFO_BTN_RENT         = 8;
 var INFO_BTN_CLOSE        = 9;
+var INFO_BTN_CANCEL_RENT  = 40;
 
 // Rent GUI component IDs
 var RENT_LBL_TITLE      = 10;
@@ -245,17 +246,18 @@ function openInfoGui(player, api, block, world, entry) {
         gui.addLabel(INFO_LBL_EXPIRY_TIME, "§7Expires: §c" + fmtTime(entry.expiryDate), 15, 75, 250, 10);
         gui.addLabel(INFO_LBL_COST, "§7Cost per day: §a" + fmtCoins(entry.rentCost || 0), 15, 95, 250, 10);
 
-        // Teleport button only for the current renter
+        // Teleport and Cancel buttons only for the current renter
         var playerName = player.getName();
         if (playerName === entry.renter) {
-            gui.addButton(INFO_BTN_TELEPORT, "§b§lTeleport", width / 2 - 60, 125, 120, 20);
+            gui.addButton(INFO_BTN_TELEPORT, "§b§lTeleport", width / 2 - 60, 120, 120, 20);
+            gui.addButton(INFO_BTN_CANCEL_RENT, "§c§lCancel Rent", width / 2 - 60, 145, 120, 20);
         }
     } else {
         gui.addLabel(INFO_LBL_RENTER, "§7Status: §aAvailable for rent", 15, 55, 250, 10);
         gui.addButton(INFO_BTN_RENT, "§a§lRent This Block", width / 2 - 60, 125, 120, 20);
     }
 
-    gui.addButton(INFO_BTN_CLOSE, "§7Close", width / 2 - 30, 160, 60, 20);
+    gui.addButton(INFO_BTN_CLOSE, "§7Close", width / 2 - 30, 170, 60, 20);
 
     player.showCustomGui(gui);
 }
@@ -358,6 +360,12 @@ function customGuiButton(e) {
             }
             player.message("§cYou are not currently renting any adblock.");
             player.closeGui();
+            return;
+        }
+
+        // Cancel Rent button (renter only)
+        if (buttonId === INFO_BTN_CANCEL_RENT) {
+            handleCancelRent(e);
             return;
         }
 
@@ -673,6 +681,31 @@ function handleAdminDelete(e) {
     } else {
         player.message("§cNo adblock entry found at your location.");
     }
+}
+
+// ----------------- CANCEL RENT -----------------
+function handleCancelRent(e) {
+    var player  = e.player;
+    var gui     = e.gui;
+    var world   = player.world;
+
+    var data = getRentData(world);
+    var playerName = player.getName();
+
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].renter === playerName) {
+            // Clear the renter and dates - no refund given
+            data[i].renter = "";
+            data[i].rentedDate = 0;
+            data[i].expiryDate = 0;
+            saveRentData(world, data);
+            player.message("§cYour rent has been cancelled. No refund was given.");
+            player.closeGui();
+            return;
+        }
+    }
+    player.message("§cYou are not currently renting any adblock.");
+    player.closeGui();
 }
 
 // ----------------- GUI CLOSED -----------------
