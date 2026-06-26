@@ -30,7 +30,7 @@ var INFO_LBL_COST         = 6;
 var INFO_BTN_TELEPORT     = 7;
 var INFO_BTN_RENT         = 8;
 var INFO_BTN_CLOSE        = 9;
-var INFO_BTN_CANCEL_RENT  = 40;
+var INFO_BTN_CANCEL_RENT  = 46;
 
 // Rent GUI component IDs
 var RENT_LBL_TITLE      = 10;
@@ -42,18 +42,23 @@ var RENT_BTN_CANCEL     = 15;
 var RENT_LBL_DAYS_LABEL = 16;
 var RENT_LBL_TOTAL      = 17;
 
-// Admin GUI component IDs
-var ADM_LBL_TITLE      = 20;
-var ADM_LBL_COST       = 21;
-var ADM_TF_COST        = 22;
-var ADM_LBL_TP         = 23;
-var ADM_TF_TPX         = 24;
-var ADM_TF_TPY         = 25;
-var ADM_TF_TPZ         = 26;
-var ADM_BTN_SAVE       = 27;
-var ADM_BTN_DELETE     = 28;
-var ADM_BTN_CLOSE      = 29;
-var ADM_LBL_STATUS     = 30;
+// Admin GUI component IDs (all in 50-65 range, no overlap with other GUIs)
+var ADM_LBL_TITLE      = 50;
+var ADM_LBL_COST       = 51;
+var ADM_TF_COST        = 52;
+var ADM_LBL_TP         = 53;
+var ADM_LBL_X          = 54;
+var ADM_TF_TPX         = 55;
+var ADM_LBL_Y          = 56;
+var ADM_TF_TPY         = 57;
+var ADM_LBL_Z          = 58;
+var ADM_TF_TPZ         = 59;
+var ADM_BTN_SAVE       = 60;
+var ADM_BTN_DELETE     = 61;
+var ADM_BTN_CLOSE      = 62;
+var ADM_LBL_STATUS     = 63;
+var ADM_LBL_RENTER     = 64;
+var ADM_LBL_RENTER_EXP = 65;
 
 // Store block position for GUI button callbacks (block reference not available in customGuiButton)
 var pendingBlockKey = null;
@@ -303,11 +308,11 @@ function openAdminGui(player, api, block, world) {
     gui.addTextField(ADM_TF_COST, 15, 48, 100, 16).setText(entry ? String(entry.rentCost || 0) : "0");
 
     gui.addLabel(ADM_LBL_TP, "§7Teleport Coordinates:", 15, 75, 200, 10);
-    gui.addLabel(23, "§7X:", 15, 92, 20, 10);
+    gui.addLabel(ADM_LBL_X, "§7X:", 15, 92, 20, 10);
     gui.addTextField(ADM_TF_TPX, 35, 89, 60, 16).setText(entry ? String(entry.tpX || 0) : "0");
-    gui.addLabel(24, "§7Y:", 105, 92, 20, 10);
+    gui.addLabel(ADM_LBL_Y, "§7Y:", 105, 92, 20, 10);
     gui.addTextField(ADM_TF_TPY, 125, 89, 60, 16).setText(entry ? String(entry.tpY || 0) : "0");
-    gui.addLabel(25, "§7Z:", 195, 92, 20, 10);
+    gui.addLabel(ADM_LBL_Z, "§7Z:", 195, 92, 20, 10);
     gui.addTextField(ADM_TF_TPZ, 215, 89, 60, 16).setText(entry ? String(entry.tpZ || 0) : "0");
 
     gui.addButton(ADM_BTN_SAVE,   "§a§lSave",   40,  130, 80, 20);
@@ -317,8 +322,8 @@ function openAdminGui(player, api, block, world) {
     gui.addLabel(ADM_LBL_STATUS, "", 15, 155, 250, 10);
 
     if (entry && entry.renter && entry.renter !== "") {
-        gui.addLabel(26, "§7Current Renter: §e" + entry.renter, 15, 200, 250, 10);
-        gui.addLabel(27, "§7Expires: §c" + fmtTime(entry.expiryDate), 15, 215, 250, 10);
+        gui.addLabel(ADM_LBL_RENTER, "§7Current Renter: §e" + entry.renter, 15, 200, 250, 10);
+        gui.addLabel(ADM_LBL_RENTER_EXP, "§7Expires: §c" + fmtTime(entry.expiryDate), 15, 215, 250, 10);
     }
 
     player.showCustomGui(gui);
@@ -447,7 +452,6 @@ function openRentFromInfo(player, api, world) {
     }
 
     if (!nearestEntry) {
-        // No existing entry found - the block might not have been configured yet
         openNewRentGui(player, api, world, playerX, playerY, playerZ);
         return;
     }
@@ -633,7 +637,6 @@ function handleAdminSave(e) {
     var entry = findEntry(data, blockKey);
 
     if (!entry) {
-        // Create a new entry at this block's position
         entry = {
             blockPos: blockKey,
             renter: "",
@@ -656,7 +659,6 @@ function handleAdminSave(e) {
 
     saveRentData(world, data);
 
-    // Update the status label dynamically
     var statusLbl = gui.getComponent(ADM_LBL_STATUS);
     if (statusLbl) {
         statusLbl.setText("§aSaved successfully!");
@@ -695,7 +697,6 @@ function handleCancelRent(e) {
 
     for (var i = 0; i < data.length; i++) {
         if (data[i].renter === playerName) {
-            // Clear the renter and dates - no refund given
             data[i].renter = "";
             data[i].rentedDate = 0;
             data[i].expiryDate = 0;
