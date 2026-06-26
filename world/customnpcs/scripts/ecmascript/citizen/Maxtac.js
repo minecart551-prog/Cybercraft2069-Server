@@ -91,8 +91,8 @@ function tick(e) {
         }
     }
     
-    // Phase 3: Check if all targets are dead - return to MaxtacAV
-    if (areAllTargetsDead(npc, world)) {
+    // Phase 3: Check if all targets are dead OR out of 30-block range - return to MaxtacAV
+    if (areAllTargetsDead(npc, world) || areAllTargetsOutOfRange(npc, world)) {
         // Find nearest MaxtacAV to return to
         var av = findNearestMaxtacAV(npc, world);
         if (av != null) {
@@ -199,6 +199,22 @@ function areAllTargetsDead(npc, world) {
         }
     }
     return true;
+}
+
+function areAllTargetsOutOfRange(npc, world) {
+    // Returns true if none of the target players are within 30 blocks of the NPC
+    for (var t = 0; t < targetPlayerNames.length; t++) {
+        var tName = targetPlayerNames[t];
+        var player = findPlayerByName(npc, tName);
+        if (player != null && player.isAlive()) {
+            var dist = npc.getPos().distanceTo(player.getPos());
+            if (dist < SCAN_RANGE) {
+                return false; // At least one target is still within range
+            }
+        }
+    }
+    // No alive targets in range - return true
+    return targetPlayerNames.length > 0; // Only return true if we actually had targets
 }
 
 function findNearestMaxtacAV(npc, world) {
