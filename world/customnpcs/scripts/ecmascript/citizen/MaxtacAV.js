@@ -115,15 +115,17 @@ function tick(e) {
         var yDiff = Math.abs(npcPos.getY() - targetPos.getY());
 
         if (flatDist < 15 && yDiff < 5) {
-            // Stop motion
+            // Stop horizontal motion
             npc.setMotionX(0);
-            npc.setMotionY(0);
             npc.setMotionZ(0);
             
-            // Spawn 5 Maxtac NPCs at AV's exact position
+            // Keep pushing downward to stay on the ground
+            npc.setMotionY(-0.3);
+            
+            // Spawn 5 Maxtac NPCs 2 blocks above AV's position
             var avPos = npc.getPos();
             var sx = Math.floor(avPos.getX());
-            var sy = Math.floor(avPos.getY());
+            var sy = Math.floor(avPos.getY()) + 2;
             var sz = Math.floor(avPos.getZ());
             
             for (var i = 0; i < 5; i++) {
