@@ -1,7 +1,7 @@
 // ============================================================================
 // BOMB TEAM — PLAYER SCRIPT
 // ============================================================================
-// Attach to all players. Handles HUD, chat command !teampc, bomb enforcement,
+// Attach to all players. Handles HUD, chat command .teampc, bomb enforcement,
 // and game round management.
 // Requires bombteam_config.js loaded FIRST.
 
@@ -49,7 +49,7 @@ function init(event) {
         
         try { player.setSpawnpoint(respawn.x, respawn.y, respawn.z) } catch(e) {}
         player.message("§e[Auto] Assigned to " + teamNameStr + " §eteam!")
-        player.message("§7Use §e!teampc §7to view team info or click §7Leave §7in lobby to opt-out.")
+        player.message("§7Use §e.teampc §7to view team info or click §7Leave to opt-out.")
     }
 }
 
@@ -121,7 +121,7 @@ function timer(event) {
             // Explicitly marked ready
             bombDeadline = 0
         }
-        // rt === 0 means timer not started yet (joined via !teampc) - leave bombDeadline = -1 (no display)
+        // rt === 0 means timer not started yet (joined via .teampc) - leave bombDeadline = -1 (no display)
     }
 
     var timerStr = ""
@@ -149,7 +149,7 @@ function timer(event) {
         timerStr = "§7Round Over"
         phaseMsg = "§7Joining locked till reset"
     } else {
-        timerStr = "§7Use !teampc for info"
+        timerStr = ""
         phaseMsg = ""
     }
     overlay.addLabel(2, timerStr, -120, -15)
@@ -333,7 +333,7 @@ function endBombTeamRound(winner, reason) {
 
     teamBroadcast("§6§l" + winnerName + " §6win! (" + reason + "§6)")
     teamBroadcast("§7Winner takes §e" + fmt(loserFund) + " §7from the losing team!")
-    teamBroadcast("§eAll players removed from teams. Rejoin via !teampc or lobby block!")
+    teamBroadcast("§eAll players removed from teams. Rejoin via .teampc or lobby block!")
 
     var totalContributed = 0
     for (var i = 0; i < players.length; i++) {
