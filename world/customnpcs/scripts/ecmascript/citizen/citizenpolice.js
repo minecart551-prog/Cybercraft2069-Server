@@ -366,7 +366,7 @@ function died(e) {
 
     // Spawn MaxtacAV 20 blocks above where the police died
     var spawnX = Math.floor(pos.getX());
-    var spawnY = Math.floor(pos.getY()) + 30;
+    var spawnY = Math.floor(pos.getY()) + 40;
     var spawnZ = Math.floor(pos.getZ());
     npc.getWorld().spawnClone(spawnX, spawnY, spawnZ, 3, "MaxtacAV");
 }

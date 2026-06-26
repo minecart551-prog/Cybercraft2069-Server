@@ -5,7 +5,6 @@
 // ===============================================================
 
 var targetPlayerNames = []; // Array of player names to kill
-var tickCounter = 0;
 var TICK_TIMEOUT = 2400; // 2 minutes (20 ticks/sec * 120)
 var FOV = 180;
 var SCAN_RANGE = 30;
@@ -49,9 +48,11 @@ function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
     
-    // Auto-despawn after 2 minutes
-    tickCounter++;
-    if (tickCounter >= TICK_TIMEOUT) {
+    // Auto-despawn after 2 minutes (stored per-NPC in storeddata)
+    var maxtacTick = parseInt(npc.storeddata.get("maxtac_tick")) || 0;
+    maxtacTick++;
+    npc.storeddata.put("maxtac_tick", "" + maxtacTick);
+    if (maxtacTick >= TICK_TIMEOUT) {
         npc.despawn();
         return;
     }

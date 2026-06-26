@@ -8,12 +8,11 @@ var hasSpawnedMaxtacs = false;
 var hasStartedDescent = false;
 var hasFlownUp = false;
 var flyUpTargetY = null;
-var tickCounter = 0;
 var TICK_TIMEOUT = 2400; // 2 minutes (20 ticks/sec * 120)
 var INITIAL_SCAN_RANGE = 50;
 
 // Simple direct motion for descent
-var AV_SPEED = 0.7; // Customizable speed for descent
+var AV_SPEED = 0.6; // Customizable speed for descent
 // Fixed offset from player landing spot (set once on first tick)
 var offsetX = 0, offsetZ = 0;
 var hasSetOffset = false;
@@ -50,9 +49,11 @@ function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
 
-    // Auto-despawn after 2 minutes
-    tickCounter++;
-    if (tickCounter >= TICK_TIMEOUT) {
+    // Auto-despawn after 2 minutes (stored per-NPC in storeddata)
+    var avTick = parseInt(npc.storeddata.get("maxtacav_tick")) || 0;
+    avTick++;
+    npc.storeddata.put("maxtacav_tick", "" + avTick);
+    if (avTick >= TICK_TIMEOUT) {
         npc.despawn();
         return;
     }
@@ -153,7 +154,7 @@ function tick(e) {
         if (maxtacCount == 0) {
             var pos = npc.getPos();
             if (flyUpTargetY == null) {
-                flyUpTargetY = pos.getY() + 20;
+                flyUpTargetY = pos.getY() + 40;
             }
             npc.navigateTo(pos.getX(), flyUpTargetY, pos.getZ(), 5);
             
