@@ -27,6 +27,9 @@ function init(e) {
     npc.getInventory().setDropItem(1, item, 100);
     npc.getInventory().setExp(30, 30);
     
+    // Store birth timestamp for timeout check
+    npc.storeddata.put("_birth", "" + Math.floor(Date.now() / 1000));
+    
     // Scan for all players within 30 blocks immediately on init s
     // This overrides any pre-existing targets from the NPC template
     targetPlayerNames = [];
@@ -48,12 +51,15 @@ function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
     
-    // Auto-despawn after 2 minutes (stored directly on npc object, guaranteed per-NPC)
-    if (!npc._maxtacTick) npc._maxtacTick = 0;
-    npc._maxtacTick++;
-    if (npc._maxtacTick >= TICK_TIMEOUT) {
-        npc.despawn();
-        return;
+    // Auto-despawn after 2 minutes using stored birth timestamp
+    var birthStr = npc.storeddata.get("_birth");
+    if (birthStr) {
+        var birthTime = parseInt(birthStr);
+        var now = Math.floor(Date.now() / 1000);
+        if (now - birthTime >= 120) { // 120 seconds = 2 minutes
+            npc.despawn();
+            return;
+        }
     }
     
     // Phase 1: Take sugar from nearby players' inventories immediately

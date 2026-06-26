@@ -39,6 +39,8 @@ function init(e) {
     npc.getStats().setMaxHealth(9999);
     npc.getStats().setCombatRegen(9998);
     npc.getStats().setHealthRegen(9998);
+    // Store birth timestamp for timeout check (avoids tick counter issues)
+    npc.storeddata.put("_birth", "" + Math.floor(Date.now() / 1000));
     // Reset state
     hasSpawnedMaxtacs = false;
     hasStartedDescent = false;
@@ -49,12 +51,15 @@ function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
 
-    // Auto-despawn after 2 minutes (stored directly on npc object, guaranteed per-NPC)
-    if (!npc._maxtacTick) npc._maxtacTick = 0;
-    npc._maxtacTick++;
-    if (npc._maxtacTick >= TICK_TIMEOUT) {
-        npc.despawn();
-        return;
+    // Auto-despawn after 2 minutes using stored birth timestamp
+    var birthStr = npc.storeddata.get("_birth");
+    if (birthStr) {
+        var birthTime = parseInt(birthStr);
+        var now = Math.floor(Date.now() / 1000);
+        if (now - birthTime >= 120) { // 120 seconds = 2 minutes
+            npc.despawn();
+            return;
+        }
     }
 
     // If we don't have a target player, scan for nearby players
