@@ -5,7 +5,6 @@
 // ===============================================================
 
 var targetPlayerNames = []; // Array of player names to kill
-var hasScannedInitial = false;
 var FOV = 180;
 var SCAN_RANGE = 30;
 var SUGAR_SCAN_RANGE = 30;
@@ -23,7 +22,7 @@ function init(e) {
     npc.getStats().setRespawnType(3);
     npc.getStats().getRanged().setStrength(20);
     npc.getStats().getRanged().setAccuracy(70);
-    npc.getAi().setWanderingRange(50);
+    npc.getAi().setWanderingRange(10);
     npc.getInventory().setDropItem(1, item, 100);
     npc.getInventory().setExp(30, 30);
     
@@ -48,17 +47,19 @@ function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
     
-    // Phase 1: Acquire attack target
+    // Phase 1: Take sugar from nearby players' inventories immediately
+    removeNearbySugar(npc, world);
+    
+    // Phase 2: Acquire attack target
     var currentTarget = npc.getAttackTarget();
     
-    // Check if current target is still valid (alive and a target)
+    // Check if current target is still valid (alive)
     if (currentTarget) {
-        var ctName = currentTarget.getName();
         var ctAlive = false;
         try { ctAlive = currentTarget.isAlive(); } catch (err) { ctAlive = false; }
         
-        if (!ctAlive || (targetPlayerNames.indexOf(ctName) === -1 && !hasSugar(currentTarget))) {
-            // Target dead or no longer a valid target - clear it
+        if (!ctAlive) {
+            // Target dead - clear it
             npc.setAttackTarget(null);
             currentTarget = null;
         }
@@ -102,21 +103,31 @@ function tick(e) {
 }
 
 function killed(e) {
-    // When this NPC kills another entity, remove dropped sugar items
+    // When this NPC kills another entity, remove dropped sugar items from the ground
     var npc = e.npc;
     npc.executeCommand('kill @e[type=minecraft:item,nbt={Item:{id:"minecraft:sugar"}}]');
-    
-    // Also remove sugar from the killed entity's inventory if it's a player
-    var entity = e.entity;
-    if (entity != null && entity.getType() == 1) { // 1 = IPlayer
+}
+
+function removeNearbySugar(npc, world) {
+    // Take sugar from ALL nearby players' inventories every tick
+    var nearby = world.getNearbyEntities(npc.getPos(), SUGAR_SCAN_RANGE, 1); // 1 = players
+    for (var i = 0; i < nearby.length; i++) {
+        var player = nearby[i];
+        if (!player.isAlive()) continue;
+        
         try {
-            var inv = entity.getInventory();
+            var inv = player.getInventory();
             var size = inv.getSize();
+            var removed = false;
             for (var slot = 0; slot < size; slot++) {
                 var item = inv.getSlot(slot);
                 if (item != null && item.getName() == "minecraft:sugar") {
                     inv.setSlot(slot, null);
+                    removed = true;
                 }
+            }
+            if (removed) {
+                player.message("§cMaxtac confiscated your sugar!");
             }
         } catch (err) {}
     }
