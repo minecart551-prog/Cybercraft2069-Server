@@ -83,7 +83,7 @@ function tick(e) {
         var targetY = targetPos.getY();
         var targetZ = targetPos.getZ() + offsetZ;
         
-        npc.navigateTo(targetX, targetY, targetZ, 5);
+        npc.navigateTo(targetX, targetY, targetZ, 15);
         
         // Wait until fully landed: check both horizontal AND vertical proximity
         var flatDist = Math.sqrt(
