@@ -20,7 +20,7 @@ var hasSetOffset = false;
 
 function init(e) {
     var npc = e.npc;
-    
+    npc.setFaction(17);
     // Read killer name from world tempdata
     var tempData = npc.getWorld().getTempdata();
     if (tempData.has("maxtacav_killer")) {
