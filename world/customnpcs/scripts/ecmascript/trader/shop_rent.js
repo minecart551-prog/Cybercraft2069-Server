@@ -514,7 +514,7 @@ function openRentGui(player, api, npcData, rentalInfo) {
     gui.addLabel(RENT_LBL_BALANCE, "§7Your balance: §e" + formatPrice(playerBalance), 15, 55, 250, 10);
     gui.addLabel(RENT_LBL_STATUS, "§aStatus: §fAvailable for rent", 15, 75, 250, 10);
 
-    gui.addLabel(4, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 100, 100, 10);
+    gui.addLabel(9, "§7Days (1-" + MAX_RENT_DAYS + "):", 15, 100, 100, 10);
     gui.addTextField(RENT_TF_DAYS, 110, 97, 50, 16).setText("1");
 
     gui.addLabel(RENT_LBL_TOTAL, "§7Total: §a" + formatPrice(costPerDay), 15, 125, 250, 10);
@@ -947,7 +947,7 @@ function openShopEditor(player, api, npcData) {
             guiRef.addTextField(ID_ROWS_FIELD, -105, -17, 40, 18).setText("" + totalRows);
             guiRef.addButton(ID_SET_ROWS_BUTTON, "Set", -60, -17, 30, 18);
 
-            guiRef.showPlayerInventory(3, 91, false);
+            guiRef.showPlayerInventory(11, 91, false);
         }
 
         // Load tab items
