@@ -624,7 +624,7 @@ function customGuiButton(e) {
         }
 
         if (buttonId === RENT_BTN_PAY) {
-            handleRentPayment(player, api, npcData, rentalInfo);
+            handleRentPayment(player, api, npcData, rentalInfo, gui);
             return;
         }
         return;
@@ -693,7 +693,7 @@ function customGuiButton(e) {
 // ============================================================================
 // RENT PAYMENT HANDLER
 // ============================================================================
-function handleRentPayment(player, api, npcData, rentalInfo) {
+function handleRentPayment(player, api, npcData, rentalInfo, gui) {
     var daysField = gui.getComponent(RENT_TF_DAYS);
     if (!daysField) {
         player.message("§cError reading days field.");
