@@ -1350,8 +1350,8 @@ function customGuiSlotClicked(event) {
                 // Sync earnings to world data for the block
                 if (lastNpc) {
                     var world = lastNpc.getWorld();
-                    // Credit earnings to current renter (shop owner)
-                    var targetUUID = rentalInfo.renterUUID;
+                    // Credit earnings to current renter, or previous renter if stopped
+                    var targetUUID = rentalInfo.renterUUID || rentalInfo.previousRenterUUID;
                     var pd = getPlayerData(world, targetUUID);
                     var npcUUID = lastNpc.getUUID();
                     var found = false;
