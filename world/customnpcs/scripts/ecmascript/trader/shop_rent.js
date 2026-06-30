@@ -33,7 +33,7 @@ var SYS = Java.type("java.lang.System");
 // CONSTANTS
 // ============================================================================
 var MAX_RENT_DAYS = 10;
-var RENT_COST_PER_DAY = 100; // $1 per day in cents
+var RENT_COST_PER_DAY = 0; // Free to rent
 var STONE_TO_COAL = 100;
 var COAL_TO_EMERALD = 100;
 
@@ -1773,11 +1773,10 @@ function handleStopRenting(player, npcData) {
     if (lastNpc) {
         var world = lastNpc.getWorld()
         var pd = getPlayerData(world, rentalInfo.renterUUID)
-        var stopPos = lastNpc.getPos()
-        var stopCoord = stopPos.getX() + "," + stopPos.getY() + "," + stopPos.getZ()
+        var npcUUID = lastNpc.getUUID()
         if (pd.ownedShops) {
             for (var i = pd.ownedShops.length - 1; i >= 0; i--) {
-                if (pd.ownedShops[i].npcCoord === stopCoord) {
+                if (pd.ownedShops[i].npcUUID === npcUUID) {
                     var expired = pd.ownedShops.splice(i, 1)[0]
                     if (!pd.expiredShops) pd.expiredShops = []
                     // Auto-claim earnings: add to player's claimableCoins
