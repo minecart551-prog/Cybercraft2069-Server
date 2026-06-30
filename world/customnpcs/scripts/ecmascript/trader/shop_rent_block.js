@@ -396,7 +396,7 @@ function openShopDetailGui(player, api, world, shopEntry) {
         gui.addLabel(ID_DTL_LBL_EARNINGS, "§7Earnings: §a" + formatPrice(shop.totalEarnings || 0), 10, 65, 300, 10)
         gui.addLabel(ID_DTL_LBL_ITEMS, "§7Items in shop: §e" + (shop.itemCount || 0), 10, 80, 300, 10)
         
-        gui.addButton(ID_DTL_BTN_CLAIM_COINS, "§a§lClaim Earnings", 10, 110, 120, 20)
+        gui.addLabel(59, "§7Use 'Claim All Coins' on main menu", 10, 110, 250, 10)
         gui.addButton(ID_DTL_BTN_BACK, "§7Back", 250, 160, 80, 20)
     } else if (shopEntry.type === "expired") {
         // Yellow - expired, available for others
@@ -406,14 +406,13 @@ function openShopDetailGui(player, api, world, shopEntry) {
         // Check if this shop has claimable items for this player
         var pd = currentPlayerData
         var hasItems = pd.claimableItems && pd.claimableItems.length > 0
-        var hasCoins = (pd.claimableCoins || 0) > 0
         
-        if (hasItems || hasCoins) {
-            gui.addLabel(ID_DTL_LBL_ITEMS, "§6You have items/coins to claim!", 10, 85, 300, 10)
+        if (hasItems) {
+            gui.addLabel(ID_DTL_LBL_ITEMS, "§6You have items to claim!", 10, 85, 300, 10)
             gui.addButton(ID_DTL_BTN_CLAIM_ITEMS, "§e§lClaim Items", 10, 110, 120, 20)
-            gui.addButton(ID_DTL_BTN_CLAIM_COINS, "§a§lClaim Coins", 140, 110, 120, 20)
         }
         
+        gui.addLabel(59, "§7Use 'Claim All Coins' on main menu", 10, 130, 250, 10)
         gui.addButton(ID_DTL_BTN_BACK, "§7Back", 250, 160, 80, 20)
     } else if (shopEntry.type === "rentedByOther") {
         // Red - rented by another player
@@ -523,53 +522,6 @@ function customGuiButton(event) {
     
     if (gui.getID() === GUI_SHOP_DETAIL) {
         if (buttonId === ID_DTL_BTN_BACK) {
-            openMainGui(player, api, world)
-            return
-        }
-        
-        if (buttonId === ID_DTL_BTN_CLAIM_COINS) {
-            var pd = getPlayerData(world, playerUUID)
-            var coins = pd.claimableCoins || 0
-            
-            if (selectedShopIndex >= 0 && selectedShopIndex < currentShopList.length) {
-                var entry = currentShopList[selectedShopIndex]
-                if (entry.type === "owned" || entry.type === "expired") {
-                    // Find this shop in fresh data by matching UUID
-                    var npcUUID = entry.data.npcUUID
-                    var found = false
-                    // Check owned shops first
-                    if (pd.ownedShops) {
-                        for (var si = 0; si < pd.ownedShops.length; si++) {
-                            if (pd.ownedShops[si].npcUUID === npcUUID) {
-                                coins += (pd.ownedShops[si].totalEarnings || 0)
-                                pd.ownedShops[si].totalEarnings = 0
-                                found = true
-                                break
-                            }
-                        }
-                    }
-                    // If not in owned, check expired shops (for stopped renters)
-                    if (!found && pd.expiredShops) {
-                        for (var si = 0; si < pd.expiredShops.length; si++) {
-                            if (pd.expiredShops[si].npcUUID === npcUUID) {
-                                coins += (pd.expiredShops[si].totalEarnings || 0)
-                                pd.expiredShops[si].totalEarnings = 0
-                                break
-                            }
-                        }
-                    }
-                }
-            }
-            
-            if (coins <= 0) {
-                player.message("§7No coins to claim.")
-                return
-            }
-            
-            giveCoins(player, coins)
-            pd.claimableCoins = 0
-            savePlayerData(world, playerUUID, pd)
-            player.message("§aClaimed §e" + formatPrice(coins) + "!")
             openMainGui(player, api, world)
             return
         }
