@@ -85,7 +85,7 @@ function saveWorldData(world, data) {
 function getPlayerData(world, playerUUID) {
     var wd = getWorldData(world)
     if (!wd.playerShops[playerUUID]) {
-        wd.playerShops[playerUUID] = { ownedShops: [], expiredShops: [], rentedByOther: [], claimableCoins: 0, claimableItems: [], employees: [] }
+        wd.playerShops[playerUUID] = { ownedShops: [], expiredShops: [], claimableCoins: 0, claimableItems: [], employees: [] }
         saveWorldData(world, wd)
     }
     return wd.playerShops[playerUUID]
@@ -226,7 +226,7 @@ function openMainGui(player, api, world) {
     
     gui.addLabel(ID_LBL_INFO, "§6§lYour Shop Rentals", 10, 8, 200, 14)
     
-    // Stats - sum claimable coins + all shop earnings (owned + expired + rentedByOther)
+    // Stats - sum claimable coins + all shop earnings (owned + expired)
     var totalCoins = pd.claimableCoins || 0
     if (pd.ownedShops) {
         for (var si = 0; si < pd.ownedShops.length; si++) {
@@ -236,11 +236,6 @@ function openMainGui(player, api, world) {
     if (pd.expiredShops) {
         for (var si = 0; si < pd.expiredShops.length; si++) {
             totalCoins += (pd.expiredShops[si].totalEarnings || 0)
-        }
-    }
-    if (pd.rentedByOther) {
-        for (var si = 0; si < pd.rentedByOther.length; si++) {
-            totalCoins += (pd.rentedByOther[si].totalEarnings || 0)
         }
     }
     var totalItems = (pd.claimableItems || []).length
@@ -330,13 +325,12 @@ function buildScrollLabels(shopList, world) {
     for (var i = 0; i < shopList.length; i++) {
         var entry = shopList[i]
         var shop = entry.data
-        // Look up NPC info by UUID
+        // Look up NPC info by UUID from registry only
         var npcInfo = reg[shop.npcUUID]
-        var name = npcInfo ? npcInfo.displayName : (shop.npcName || "Unknown Shop")
+        var name = npcInfo ? npcInfo.displayName : "Unknown Shop"
         
-        // Try to get current NPC position if it exists in the world
-        var currentCoords = getCurrentNpcCoords(world, shop.npcUUID)
-        var coords = currentCoords ? "§7(" + currentCoords.x + ", " + currentCoords.y + ", " + currentCoords.z + ")" : (npcInfo ? "§7(" + npcInfo.x + ", " + npcInfo.y + ", " + npcInfo.z + ")" : "§7(Unknown)")
+        // Look up coordinates from registry only
+        var coords = npcInfo ? "§7(" + npcInfo.x + ", " + npcInfo.y + ", " + npcInfo.z + ")" : "§7(Unknown)"
         
         if (entry.type === "owned") {
             // Green - actively rented by this player
@@ -384,11 +378,8 @@ function openShopDetailGui(player, api, world, shopEntry) {
     var shop = shopEntry.data
     var reg = getNpcRegistry(world)
     var npcInfo = reg[shop.npcUUID]
-    var name = npcInfo ? npcInfo.displayName : (shop.npcName || "Unknown Shop")
-    
-    // Try to get current NPC position if it exists in the world
-    var currentCoords = getCurrentNpcCoords(world, shop.npcUUID)
-    var coords = currentCoords ? "§7" + currentCoords.x + ", " + currentCoords.y + ", " + currentCoords.z : (npcInfo ? "§7" + npcInfo.x + ", " + npcInfo.y + ", " + npcInfo.z : "§7Unknown")
+    var name = npcInfo ? npcInfo.displayName : "Unknown Shop"
+    var coords = npcInfo ? "§7" + npcInfo.x + ", " + npcInfo.y + ", " + npcInfo.z : "§7Unknown"
     
     gui.addLabel(ID_DTL_LBL_NAME, "§6§l" + name, 10, 10, 300, 14)
     gui.addLabel(ID_DTL_LBL_COORDS, coords, 10, 30, 300, 10)
@@ -812,9 +803,8 @@ function openWorkplacesGui(player, api, world) {
                         var shop = ownerData.ownedShops[si]
                         if (shop.expiryDate > now) {
                             var npcInfo = reg[shop.npcUUID]
-                            var name = npcInfo ? npcInfo.displayName : (shop.npcName || "Unknown Shop")
-                            var currentCoords = getCurrentNpcCoords(world, shop.npcUUID)
-                            var coords = currentCoords ? "§7(" + currentCoords.x + ", " + currentCoords.y + ", " + currentCoords.z + ")" : (npcInfo ? "§7(" + npcInfo.x + ", " + npcInfo.y + ", " + npcInfo.z + ")" : "§7(Unknown)")
+                            var name = npcInfo ? npcInfo.displayName : "Unknown Shop"
+                            var coords = npcInfo ? "§7(" + npcInfo.x + ", " + npcInfo.y + ", " + npcInfo.z + ")" : "§7(Unknown)"
                             var rem = shop.expiryDate - now
                             var hrs = Math.floor(rem / 3600000)
                             var d = Math.floor(hrs / 24)

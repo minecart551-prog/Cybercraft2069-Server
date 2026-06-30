@@ -225,7 +225,7 @@ function saveWorldData(world, data) {
 function getPlayerData(world, playerUUID) {
     var wd = getWorldData(world)
     if (!wd.playerShops[playerUUID]) {
-        wd.playerShops[playerUUID] = { ownedShops: [], expiredShops: [], rentedByOther: [], claimableCoins: 0, claimableItems: [] }
+        wd.playerShops[playerUUID] = { ownedShops: [], expiredShops: [], claimableCoins: 0, claimableItems: [] }
         saveWorldData(world, wd)
     }
     return wd.playerShops[playerUUID]
@@ -1353,12 +1353,11 @@ function customGuiSlotClicked(event) {
                     // Credit earnings to current renter (shop owner)
                     var targetUUID = rentalInfo.renterUUID;
                     var pd = getPlayerData(world, targetUUID);
-                    var npcPos3 = lastNpc.getPos();
-                    var npcCoord3 = npcPos3.getX() + "," + npcPos3.getY() + "," + npcPos3.getZ();
+                    var npcUUID = lastNpc.getUUID();
                     var found = false;
                     if (pd.ownedShops) {
                         for (var si = 0; si < pd.ownedShops.length; si++) {
-                            if (pd.ownedShops[si].npcCoord === npcCoord3) {
+                            if (pd.ownedShops[si].npcUUID === npcUUID) {
                                 // Add to existing world data value rather than overwriting with npcData
                                 pd.ownedShops[si].totalEarnings = (pd.ownedShops[si].totalEarnings || 0) + price;
                                 found = true;
@@ -1369,7 +1368,7 @@ function customGuiSlotClicked(event) {
                     // If not found in owned, check expired shops (stopped renting)
                     if (!found && pd.expiredShops) {
                         for (var si = 0; si < pd.expiredShops.length; si++) {
-                            if (pd.expiredShops[si].npcCoord === npcCoord3) {
+                            if (pd.expiredShops[si].npcUUID === npcUUID) {
                                 pd.expiredShops[si].totalEarnings = (pd.expiredShops[si].totalEarnings || 0) + price;
                                 break;
                             }
@@ -1577,33 +1576,22 @@ function handleRentPayment(player, api, npcData, gui) {
         // Track rental in world data
         var pd = getPlayerData(world, playerUUID);
         if (!pd.ownedShops) pd.ownedShops = [];
-        // Remove any existing entry for this NPC from all arrays by coordinates
-        var npcPos = lastNpc.getPos();
-        var npcCoord = npcPos.getX() + "," + npcPos.getY() + "," + npcPos.getZ();
+        // Remove any existing entry for this NPC from all arrays by UUID
+        var npcUUID = lastNpc.getUUID();
         for (var i = pd.ownedShops.length - 1; i >= 0; i--) {
-            if (pd.ownedShops[i].npcCoord === npcCoord) {
+            if (pd.ownedShops[i].npcUUID === npcUUID) {
                 pd.ownedShops.splice(i, 1);
             }
         }
         if (pd.expiredShops) {
             for (var i = pd.expiredShops.length - 1; i >= 0; i--) {
-                if (pd.expiredShops[i].npcCoord === npcCoord) {
+                if (pd.expiredShops[i].npcUUID === npcUUID) {
                     pd.expiredShops.splice(i, 1);
-                }
-            }
-        }
-        if (pd.rentedByOther) {
-            for (var i = pd.rentedByOther.length - 1; i >= 0; i--) {
-                if (pd.rentedByOther[i].npcCoord === npcCoord) {
-                    pd.rentedByOther.splice(i, 1);
                 }
             }
         }
         pd.ownedShops.push({
             npcUUID: lastNpc.getUUID(),
-            npcCoord: npcCoord,
-            npcName: lastNpc.getName(),
-            employees: [],
             rentedDate: nowTime,
             expiryDate: expiryTime,
             totalEarnings: 0,
@@ -1886,23 +1874,30 @@ function openAdminGui(player, api, npcData) {
     player.showCustomGui(gui);
 }
 
+var ID_APP_NAME_FIELD = 304;
+
 function openAppearanceGui(player, api) {
     var width = 280;
-    var height = 200;
+    var height = 240;
     var gui = api.createCustomGui(GUI_APPEARANCE, width, height, false, player);
 
     gui.addLabel(1, "\u00a7d\u00a7lNPC Appearance", width / 2 - 50, 10, 140, 14);
 
-    gui.addLabel(2, "\u00a77Title:", 15, 40, 100, 10);
+    gui.addLabel(4, "\u00a77Name:", 15, 35, 100, 10);
+    var currentName = "";
+    try { currentName = lastNpc.getDisplay().getName(); } catch(e) {}
+    gui.addTextField(ID_APP_NAME_FIELD, 15, 48, 200, 16).setText(currentName);
+
+    gui.addLabel(2, "\u00a77Title:", 15, 70, 100, 10);
     var currentTitle = "";
     try { currentTitle = lastNpc.getDisplay().getTitle(); } catch(e) {}
-    gui.addTextField(ID_APP_TITLE_FIELD, 15, 55, 200, 16).setText(currentTitle);
+    gui.addTextField(ID_APP_TITLE_FIELD, 15, 84, 200, 16).setText(currentTitle);
 
-    gui.addLabel(3, "\u00a77Skin URL:", 15, 85, 100, 10);
-    gui.addTextField(ID_APP_SKIN_FIELD, 15, 100, 200, 16).setText("");
+    gui.addLabel(3, "\u00a77Skin URL:", 15, 110, 100, 10);
+    gui.addTextField(ID_APP_SKIN_FIELD, 15, 124, 200, 16).setText("");
 
-    gui.addButton(ID_APP_BTN_SAVE, "\u00a7a\u00a7lSave", width / 2 - 80, 150, 70, 20);
-    gui.addButton(ID_APP_BTN_CANCEL, "\u00a77Cancel", width / 2 + 10, 150, 70, 20);
+    gui.addButton(ID_APP_BTN_SAVE, "\u00a7a\u00a7lSave", width / 2 - 80, 170, 70, 20);
+    gui.addButton(ID_APP_BTN_CANCEL, "\u00a77Cancel", width / 2 + 10, 170, 70, 20);
 
     player.showCustomGui(gui);
     playerGuiRef[player.getUUID()] = gui;
@@ -1910,8 +1905,28 @@ function openAppearanceGui(player, api) {
 
 function handleAppearanceSave(player, api, gui) {
     if (!lastNpc) return;
+    var nameField = gui.getComponent(ID_APP_NAME_FIELD);
     var titleField = gui.getComponent(ID_APP_TITLE_FIELD);
     var skinField = gui.getComponent(ID_APP_SKIN_FIELD);
+
+    if (nameField) {
+        var name = nameField.getText().trim();
+        if (name) {
+            try {
+                lastNpc.getDisplay().setName(name);
+                // Update NPC registry in world data
+                var world = lastNpc.getWorld();
+                var wd = getWorldData(world);
+                if (wd.npcRegistry && wd.npcRegistry[lastNpc.getUUID()]) {
+                    wd.npcRegistry[lastNpc.getUUID()].displayName = name;
+                    saveWorldData(world, wd);
+                }
+                player.message("\u00a7aNPC name updated!");
+            } catch(e) {
+                player.message("\u00a7cError setting name: " + e);
+            }
+        }
+    }
 
     if (titleField) {
         var title = titleField.getText().trim();
