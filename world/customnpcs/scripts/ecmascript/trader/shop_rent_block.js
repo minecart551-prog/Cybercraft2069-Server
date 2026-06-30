@@ -15,6 +15,8 @@ var API = Java.type("noppes.npcs.api.NpcAPI").Instance()
 // GUI IDs
 var GUI_MAIN = 3000
 var GUI_SHOP_DETAIL = 3001
+var GUI_EMPLOYEES = 3002
+var GUI_WORKPLACES = 3003
 
 // Component IDs
 var ID_SCROLL_SHOPS = 10
@@ -27,6 +29,7 @@ var ID_LBL_COINS = 31
 var ID_LBL_ITEMS = 32
 var ID_LBL_RENTED = 33
 var ID_LBL_EXPIRED = 34
+var ID_BTN_MY_WORKPLACES = 35
 // Detail GUI
 var ID_DTL_LBL_NAME = 50
 var ID_DTL_LBL_COORDS = 51
@@ -36,6 +39,18 @@ var ID_DTL_BTN_CLAIM_ITEMS = 54
 var ID_DTL_BTN_CLAIM_COINS = 55
 var ID_DTL_BTN_BACK = 56
 var ID_DTL_LBL_ITEMS = 57
+var ID_DTL_BTN_EMPLOYEES = 58
+// Employee GUI
+var ID_EMP_LBL_TITLE = 60
+var ID_EMP_LBL_LIST = 61
+var ID_EMP_TF_ADD = 62
+var ID_EMP_BTN_ADD = 63
+var ID_EMP_BTN_BACK = 64
+var ID_EMP_SCROLL = 65
+// Workplaces GUI
+var ID_WP_SCROLL = 70
+var ID_WP_BTN_BACK = 71
+var ID_WP_LBL_TITLE = 72
 
 // Constants (must match shop_rent.js)
 var STONE_TO_COAL = 100
@@ -46,6 +61,7 @@ var currentPlayerData = null
 var currentShopList = []
 var currentScrollIndex = 0
 var selectedShopIndex = -1
+var selectedShopEntry = null
 
 // ============================================================================
 // WORLD DATA (shared with shop_rent.js)
@@ -69,7 +85,7 @@ function saveWorldData(world, data) {
 function getPlayerData(world, playerUUID) {
     var wd = getWorldData(world)
     if (!wd.playerShops[playerUUID]) {
-        wd.playerShops[playerUUID] = { ownedShops: [], expiredShops: [], rentedByOther: [], claimableCoins: 0, claimableItems: [] }
+        wd.playerShops[playerUUID] = { ownedShops: [], expiredShops: [], rentedByOther: [], claimableCoins: 0, claimableItems: [], employees: [] }
         saveWorldData(world, wd)
     }
     return wd.playerShops[playerUUID]
@@ -87,15 +103,13 @@ function getNpcRegistry(world) {
     return wd.npcRegistry
 }
 
-function registerNpc(world, npcUUID, npcName, npcDisplayName, pos) {
+function registerNpc(world, npcUUID, npcDisplayName, pos) {
     var reg = getNpcRegistry(world)
     reg[npcUUID] = {
-        name: npcName,
         displayName: npcDisplayName,
         x: pos.getX(),
         y: pos.getY(),
-        z: pos.getZ(),
-        npcUUID: npcUUID
+        z: pos.getZ()
     }
     var wd = getWorldData(world)
     wd.npcRegistry = reg
@@ -234,6 +248,8 @@ function openMainGui(player, api, world) {
     gui.addLabel(ID_LBL_EXPIRED, "§eExpired: §f" + countExpired(pd), 10, 42, 120, 10)
     gui.addLabel(ID_LBL_COINS, "§6Claimable Coins: §a" + formatPrice(totalCoins), 140, 30, 180, 10)
     gui.addLabel(ID_LBL_ITEMS, "§6Claimable Items: §e" + totalItems, 140, 42, 180, 10)
+    gui.addButton(ID_DTL_BTN_EMPLOYEES, "§d§lEmployees", 330, 8, 80, 20)
+    gui.addButton(ID_BTN_MY_WORKPLACES, "§b§lMy Workplaces", 330, 30, 80, 20)
     
     // Scroll list of shops
     var scrollLabels = buildScrollLabels(currentShopList, world)
@@ -252,6 +268,7 @@ function buildShopList(world, pd, playerUUID) {
     var list = []
     var reg = getNpcRegistry(world)
     var now = SYS.currentTimeMillis()
+    var wd = getWorldData(world)
     
     // Add owned shops (currently rented by this player)
     if (pd.ownedShops) {
@@ -263,15 +280,38 @@ function buildShopList(world, pd, playerUUID) {
         }
     }
     
-    // Add expired shops (not rented by anyone else)
+    // Add expired shops - check if they're actually rented by someone else now
     if (pd.expiredShops) {
         for (var i = 0; i < pd.expiredShops.length; i++) {
             var shop = pd.expiredShops[i]
-            list.push({ type: "expired", data: shop, index: i })
+            // Check world data to see if any other player currently owns this NPC
+            var isRentedByOther = false
+            if (wd.playerShops) {
+                for (var ownerUUID in wd.playerShops) {
+                    if (wd.playerShops.hasOwnProperty(ownerUUID) && ownerUUID !== playerUUID) {
+                        var otherPd = wd.playerShops[ownerUUID]
+                        if (otherPd.ownedShops) {
+                            for (var si = 0; si < otherPd.ownedShops.length; si++) {
+                                if (otherPd.ownedShops[si].npcUUID === shop.npcUUID && otherPd.ownedShops[si].expiryDate > now) {
+                                    isRentedByOther = true
+                                    break
+                                }
+                            }
+                        }
+                        if (isRentedByOther) break
+                    }
+                }
+            }
+            
+            if (isRentedByOther) {
+                list.push({ type: "rentedByOther", data: shop, index: i })
+            } else {
+                list.push({ type: "expired", data: shop, index: i })
+            }
         }
     }
     
-    // Add shops rented by other players
+    // Add shops rented by other players (from stored rentedByOther list)
     if (pd.rentedByOther) {
         for (var i = 0; i < pd.rentedByOther.length; i++) {
             var shop = pd.rentedByOther[i]
@@ -476,6 +516,18 @@ function customGuiButton(event) {
             openMainGui(player, api, world)
             return
         }
+        
+        if (buttonId === ID_DTL_BTN_EMPLOYEES) {
+            // Open employee management GUI
+            openEmployeeGui(player, api, world)
+            return
+        }
+        
+        if (buttonId === ID_BTN_MY_WORKPLACES) {
+            // Open workplaces GUI
+            openWorkplacesGui(player, api, world)
+            return
+        }
     }
     
     if (gui.getID() === GUI_SHOP_DETAIL) {
@@ -556,6 +608,135 @@ function customGuiButton(event) {
             openMainGui(player, api, world)
             return
         }
+        
+    }
+    
+    // Handle Workplaces GUI buttons
+    if (gui.getID() === GUI_WORKPLACES) {
+        if (buttonId === ID_WP_BTN_BACK) {
+            openMainGui(player, api, world)
+            return
+        }
+    }
+    
+    // Handle Employee GUI buttons
+    if (gui.getID() === GUI_EMPLOYEES) {
+        if (buttonId === ID_EMP_BTN_BACK) {
+            // Go back to main GUI instead of shop detail
+            openMainGui(player, api, world)
+            return
+        }
+        
+        if (buttonId === ID_EMP_BTN_ADD) {
+            var empField = gui.getComponent(ID_EMP_TF_ADD)
+            if (!empField) return
+            var empName = empField.getText().trim()
+            if (!empName) {
+                player.message("§cPlease enter a player name!")
+                return
+            }
+            addEmployee(world, playerUUID, empName)
+            player.message("§aAdded employee: " + empName)
+            openEmployeeGui(player, api, world)
+            return
+        }
+        
+        // Handle employee removal from scroll list
+        if (buttonId === ID_EMP_SCROLL) {
+            var empIndex = event.scrollIndex
+            var pd2 = getPlayerData(world, playerUUID)
+            var employees2 = pd2.employees || []
+            
+            if (empIndex >= 0 && empIndex < employees2.length) {
+                var empToRemove = employees2[empIndex]
+                removeEmployee(world, playerUUID, empToRemove)
+                player.message("§cRemoved employee: " + empToRemove)
+                openEmployeeGui(player, api, world)
+            }
+            return
+        }
+    }
+}
+
+// ============================================================================
+// EMPLOYEE MANAGEMENT GUI
+// ============================================================================
+function openEmployeeGui(player, api, world) {
+    var width = 350
+    var height = 220
+    var gui = api.createCustomGui(GUI_EMPLOYEES, width, height, false, player)
+    
+    var playerUUID = player.getUUID()
+    var pd = getPlayerData(world, playerUUID)
+    
+    // Use global employees list
+    var employees = pd.employees || []
+    
+    gui.addLabel(ID_EMP_LBL_TITLE, "§6§lManage Employees (All Shops)", 10, 10, 300, 14)
+    gui.addLabel(66, "§7Current employees (applies to all your shops):", 10, 35, 250, 10)
+    
+    // Show employee list
+    var empLabels = []
+    if (employees.length === 0) {
+        empLabels.push("§8No employees")
+    } else {
+        for (var i = 0; i < employees.length; i++) {
+            empLabels.push("§7- " + employees[i])
+        }
+    }
+    gui.addScroll(ID_EMP_SCROLL, 10, 50, 200, 100, empLabels)
+    
+    // Add employee field
+    gui.addLabel(67, "§7Add employee (player name):", 10, 160, 150, 10)
+    gui.addTextField(ID_EMP_TF_ADD, 10, 175, 150, 16)
+    gui.addButton(ID_EMP_BTN_ADD, "§a§lAdd", 170, 175, 60, 16)
+    gui.addButton(ID_EMP_BTN_BACK, "§7Back", 280, 175, 60, 16)
+    
+    player.showCustomGui(gui)
+}
+
+function addEmployee(world, playerUUID, employeeName) {
+    var pd = getPlayerData(world, playerUUID)
+    
+    // Look up the employee's UUID from their name
+    var employeeUUID = null
+    try {
+        // Try to find player by name in the world
+        var players = world.getPlayers()
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].getName() === employeeName) {
+                employeeUUID = players[i].getUUID()
+                break
+            }
+        }
+    } catch(e) {}
+    
+    // If we couldn't find the player online, use the name as fallback
+    if (!employeeUUID) {
+        employeeUUID = employeeName
+    }
+    
+    // Add to global employees list (storing UUID)
+    if (!pd.employees) {
+        pd.employees = []
+    }
+    // Check if already added
+    if (pd.employees.indexOf(employeeUUID) === -1) {
+        pd.employees.push(employeeUUID)
+        savePlayerData(world, playerUUID, pd)
+    }
+}
+
+function removeEmployee(world, playerUUID, employeeUUID) {
+    var pd = getPlayerData(world, playerUUID)
+    
+    // Remove from global employees list
+    if (pd.employees) {
+        var index = pd.employees.indexOf(employeeUUID)
+        if (index !== -1) {
+            pd.employees.splice(index, 1)
+            savePlayerData(world, playerUUID, pd)
+        }
     }
 }
 
@@ -567,16 +748,94 @@ function customGuiScroll(event) {
     var api = event.API
     var gui = event.gui
     var world = player.getWorld()
+    var playerUUID = player.getUUID()
     
     if (gui.getID() === GUI_MAIN && event.scrollId === ID_SCROLL_SHOPS) {
         currentScrollIndex = event.scrollIndex
         
         if (currentScrollIndex >= 0 && currentScrollIndex < currentShopList.length) {
             selectedShopIndex = currentScrollIndex
-            var entry = currentShopList[currentScrollIndex]
-            openShopDetailGui(player, api, world, entry)
+            selectedShopEntry = currentShopList[currentScrollIndex]
+            openShopDetailGui(player, api, world, selectedShopEntry)
         }
     }
+    
+    // Handle employee scroll click - remove employee
+    if (gui.getID() === GUI_EMPLOYEES && event.scrollId === ID_EMP_SCROLL) {
+        var empIndex = event.scrollIndex
+        var pd = getPlayerData(world, playerUUID)
+        var employees = pd.employees || []
+        
+        if (empIndex >= 0 && empIndex < employees.length) {
+            var empToRemove = employees[empIndex]
+            removeEmployee(world, playerUUID, empToRemove)
+            player.message("§cRemoved employee: " + empToRemove)
+            // Refresh the employee GUI
+            openEmployeeGui(player, api, world)
+        }
+    }
+}
+
+// ============================================================================
+// WORKPLACES GUI - Shows shops where the player is employed
+// ============================================================================
+function openWorkplacesGui(player, api, world) {
+    var width = 420
+    var height = 240
+    var gui = api.createCustomGui(GUI_WORKPLACES, width, height, false, player)
+    
+    gui.addLabel(ID_WP_LBL_TITLE, "§b§lMy Workplaces", 10, 8, 200, 14)
+    
+    // Scan all player data to find shops where this player is an employee
+    var playerUUID = player.getUUID()
+    var playerName = player.getName()
+    var wd = getWorldData(world)
+    var workplaceLabels = []
+    var now = SYS.currentTimeMillis()
+    var reg = getNpcRegistry(world)
+    
+    if (wd.playerShops) {
+        for (var ownerUUID in wd.playerShops) {
+            if (wd.playerShops.hasOwnProperty(ownerUUID)) {
+                var ownerData = wd.playerShops[ownerUUID]
+                var employees = ownerData.employees || []
+                // Check if this player is an employee of this owner
+                var isEmp = false
+                for (var e = 0; e < employees.length; e++) {
+                    if (employees[e] === playerUUID || employees[e] === playerName) {
+                        isEmp = true
+                        break
+                    }
+                }
+                if (isEmp && ownerData.ownedShops) {
+                    for (var si = 0; si < ownerData.ownedShops.length; si++) {
+                        var shop = ownerData.ownedShops[si]
+                        if (shop.expiryDate > now) {
+                            var npcInfo = reg[shop.npcUUID]
+                            var name = npcInfo ? npcInfo.displayName : (shop.npcName || "Unknown Shop")
+                            var currentCoords = getCurrentNpcCoords(world, shop.npcUUID)
+                            var coords = currentCoords ? "§7(" + currentCoords.x + ", " + currentCoords.y + ", " + currentCoords.z + ")" : (npcInfo ? "§7(" + npcInfo.x + ", " + npcInfo.y + ", " + npcInfo.z + ")" : "§7(Unknown)")
+                            var rem = shop.expiryDate - now
+                            var hrs = Math.floor(rem / 3600000)
+                            var d = Math.floor(hrs / 24)
+                            var h = hrs % 24
+                            var timeStr = d > 0 ? d + "d " + h + "h" : (h > 0 ? h + "h" : Math.floor(rem / 60000) + "m")
+                            workplaceLabels.push("§b◈ §f" + name + " " + coords + " §7(" + timeStr + ") §8- " + (ownerData.ownerName || ownerUUID))
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    if (workplaceLabels.length === 0) {
+        workplaceLabels.push("§7You are not employed at any shops")
+    }
+    
+    gui.addScroll(ID_WP_SCROLL, 10, 30, 380, 150, workplaceLabels)
+    gui.addButton(ID_WP_BTN_BACK, "§7Back", 340, 190, 60, 20)
+    
+    player.showCustomGui(gui)
 }
 
 // ============================================================================

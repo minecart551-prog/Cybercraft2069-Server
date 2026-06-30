@@ -243,15 +243,13 @@ function getNpcRegistry(world) {
     return wd.npcRegistry
 }
 
-function registerNpc(world, npcUUID, npcName, npcDisplayName, pos) {
+function registerNpc(world, npcUUID, npcDisplayName, pos) {
     var reg = getNpcRegistry(world)
     reg[npcUUID] = {
-        name: npcName,
         displayName: npcDisplayName,
         x: pos.getX(),
         y: pos.getY(),
-        z: pos.getZ(),
-        npcUUID: npcUUID
+        z: pos.getZ()
     }
     var wd = getWorldData(world)
     wd.npcRegistry = reg
@@ -549,8 +547,33 @@ function openShop(player, api, npcData) {
     var adminMode = (player.getMainhandItem() && !player.getMainhandItem().isEmpty() && player.getMainhandItem().getName() === "minecraft:barrier");
     // Previous renter who stopped (can clear/claim items, but NOT edit shop items)
     var isPreviousRenter = rentalInfo.renterName === player.getName() && (!rentalInfo.expiryDate || rentalInfo.expiryDate === 0);
-    // Allow edit if: admin or current renter in modify mode (previous renters cannot edit)
-    var canEditShop = adminMode || (rentalInfo.renterUUID === player.getUUID() && modifyMode);
+    // Allow edit if: admin, current renter, or employee
+    var isOwner = rentalInfo.renterUUID === player.getUUID();
+    var isEmployee = false;
+    if (!isOwner && lastNpc && rentalInfo.renterUUID) {
+        // Check if current player is a global employee of the renter
+        var world = lastNpc.getWorld();
+        var pd = getPlayerData(world, rentalInfo.renterUUID);
+        var employees = pd.employees || [];
+        // Check both UUID and player name (for offline employees added by name)
+        var playerUUID = player.getUUID();
+        var playerName = player.getName();
+        for (var i = 0; i < employees.length; i++) {
+            var emp = employees[i];
+            // Match by UUID or by name (if employee was added while offline)
+            if (emp === playerUUID || emp === playerName) {
+                isEmployee = true;
+                break;
+            }
+        }
+    }
+    var isOwnerOrEmployee = isOwner || isEmployee;
+    // Both owners and employees need modifyMode to edit, otherwise they can purchase as customers
+    var canEditShop = adminMode || ((isOwner || isEmployee) && modifyMode);
+    
+    // ===== LEFT SIDE INFO PANEL =====
+    // Show renter view if actively renting or if employee of the renter
+    var isActivelyRenting = (rentalInfo.renterUUID === player.getUUID() || isOwnerOrEmployee) && rentalInfo.renterUUID && !isExpired(rentalInfo);
     
     // Load max pages
     loadMaxPages(npcData);
@@ -611,9 +634,6 @@ function openShop(player, api, npcData) {
     // Scroll position indicator
     guiRef.addLabel(10, "", scrollX + 1, scrollY + 42, 0.7, 0.7);
 
-    // ===== LEFT SIDE INFO PANEL =====
-    // Show renter view only if actively renting (has expiry date in the future)
-    var isActivelyRenting = rentalInfo.renterUUID === player.getUUID() && !isExpired(rentalInfo);
     // Check if this is a previous renter who stopped (has renter info but no active rental)
     var isPreviousRenter = rentalInfo.renterName === player.getName() && (!rentalInfo.expiryDate || rentalInfo.expiryDate === 0);
     
@@ -633,13 +653,14 @@ function openShop(player, api, npcData) {
                 }
             }
         }
-        // Customer view - show shop with Modify Shop button
-        guiRef.addLabel(ID_LBL_INFO_TITLE, "\u00a76\u00a7lYour Shop", -128, -76, 100, 12);
+        // Customer/Employee view - show shop with Modify Shop button
+        var titleText = isOwner ? "\u00a76\u00a7lYour Shop" : "\u00a76\u00a7lShop (Employee)";
+        guiRef.addLabel(ID_LBL_INFO_TITLE, titleText, -128, -76, 100, 12);
         guiRef.addLabel(ID_LBL_RENTER, "\u00a77Owner: \u00a7f" + rentalInfo.renterName, -128, -62, 100, 10);
         guiRef.addLabel(ID_LBL_RENT_EXPIRY, "\u00a77Expires: \u00a7f" + timeLeftStr(rentalInfo), -128, -50, 100, 10);
         guiRef.addLabel(ID_LBL_EARNINGS, "\u00a77Earnings: \u00a7a" + formatPrice(rentalInfo.totalEarnings || 0), -128, -38, 100, 10);
 
-        // Modify Shop button
+        // Modify Shop button - available for both owner and employees
         guiRef.addButton(209, "\u00a76\u00a7lModify Shop", -128, -24, 80, 18);
     } else if (isActivelyRenting && modifyMode) {
         // Editor view - show management controls
@@ -833,11 +854,31 @@ function customGuiButton(event) {
     rentalInfo = loadRentalInfo(npcData);
     var isPreviousRenter = rentalInfo.renterName === player.getName() && (!rentalInfo.expiryDate || rentalInfo.expiryDate === 0);
     // Previous renters can only purchase, not edit
-    var canEditShop = adminMode || (rentalInfo.renterUUID === player.getUUID() && modifyMode);
+    var isOwner = rentalInfo.renterUUID === player.getUUID();
+    var isEmployee = false;
+    if (!isOwner && lastNpc && rentalInfo.renterUUID) {
+        // Check if current player is a global employee of the renter
+        var world = lastNpc.getWorld();
+        var pd = getPlayerData(world, rentalInfo.renterUUID);
+        var employees = pd.employees || [];
+        // Check both UUID and player name (for offline employees added by name)
+        var playerUUID = player.getUUID();
+        var playerName = player.getName();
+        for (var i = 0; i < employees.length; i++) {
+            var emp = employees[i];
+            if (emp === playerUUID || emp === playerName) {
+                isEmployee = true;
+                break;
+            }
+        }
+    }
+    // Both owners and employees need modifyMode to edit, otherwise they can purchase as customers
+    var canEditShop = adminMode || ((isOwner || isEmployee) && modifyMode);
+    var isOwnerOrEmployee = isOwner || isEmployee;
     var maxViewportRow = Math.max(0, totalRows - viewportRows);
 
     // Handle Done Editing button - return to customer view
-    if (buttonId === 210 && guiRef && rentalInfo.renterUUID === player.getUUID()) {
+    if (buttonId === 210 && guiRef && isOwnerOrEmployee) {
         modifyMode = false;
         // Save current page items before switching views
         savePageItems(npcData);
@@ -849,14 +890,14 @@ function customGuiButton(event) {
         return;
     }
 
-    // Handle Stop Renting button (for modify mode)
-    if (buttonId === 207 && guiRef && rentalInfo.renterUUID === player.getUUID() && !isExpired(rentalInfo)) {
+    // Handle Stop Renting button (for modify mode) - owner only
+    if (buttonId === 207 && guiRef && isOwner && !isExpired(rentalInfo)) {
         handleStopRenting(player, npcData);
         return;
     }
 
     // Handle Modify Shop button - toggle to editor view with tabs, items, and controls
-    if (buttonId === 209 && guiRef && rentalInfo.renterUUID === player.getUUID()) {
+    if (buttonId === 209 && guiRef && isOwnerOrEmployee) {
         modifyMode = !modifyMode;
         // Save current items to storage before switching views
         saveShopItems(npcData, storedSlotItems);
@@ -867,8 +908,8 @@ function customGuiButton(event) {
         return;
     }
 
-    // Handle Appearance button (for modify mode)
-    if (buttonId === ID_BTN_APPEARANCE && guiRef && rentalInfo.renterUUID === player.getUUID()) {
+    // Handle Appearance button (for modify mode) - owner or employee
+    if (buttonId === ID_BTN_APPEARANCE && guiRef && isOwnerOrEmployee) {
         openAppearanceGui(player, api);
         return;
     }
@@ -1116,7 +1157,26 @@ function customGuiSlotClicked(event) {
     rentalInfo = loadRentalInfo(npcData);
     var adminMode = (player.getMainhandItem() && !player.getMainhandItem().isEmpty() && player.getMainhandItem().getName() === "minecraft:barrier");
     var slotIndex = mySlots.indexOf(clickedSlot);
-    var canEditShop = adminMode || (rentalInfo.renterUUID === player.getUUID() && modifyMode);
+    var isOwner = rentalInfo.renterUUID === player.getUUID();
+    var isEmployee = false;
+    if (!isOwner && lastNpc && rentalInfo.renterUUID) {
+        // Check if current player is a global employee of the renter
+        var world = lastNpc.getWorld();
+        var pd = getPlayerData(world, rentalInfo.renterUUID);
+        var employees = pd.employees || [];
+        // Check both UUID and player name (for offline employees added by name)
+        var playerUUID = player.getUUID();
+        var playerName = player.getName();
+        for (var i = 0; i < employees.length; i++) {
+            var emp = employees[i];
+            if (emp === playerUUID || emp === playerName) {
+                isEmployee = true;
+                break;
+            }
+        }
+    }
+    // Both owners and employees need modifyMode to edit, otherwise they can purchase as customers
+    var canEditShop = adminMode || ((isOwner || isEmployee) && modifyMode);
 
     if (canEditShop) {
         // Check if clicking a tab slot
@@ -1290,8 +1350,8 @@ function customGuiSlotClicked(event) {
                 // Sync earnings to world data for the block
                 if (lastNpc) {
                     var world = lastNpc.getWorld();
-                    // Credit earnings to previous renter if they stopped renting, otherwise current renter
-                    var targetUUID = rentalInfo.previousRenterUUID || rentalInfo.renterUUID;
+                    // Credit earnings to current renter (shop owner)
+                    var targetUUID = rentalInfo.renterUUID;
                     var pd = getPlayerData(world, targetUUID);
                     var npcPos3 = lastNpc.getPos();
                     var npcCoord3 = npcPos3.getX() + "," + npcPos3.getY() + "," + npcPos3.getZ();
@@ -1432,6 +1492,47 @@ function handleRentPayment(player, api, npcData, gui) {
     var world = player.getWorld();
     var playerUUID = player.getUUID();
 
+    // Check if player is an employee extending the owner's rent
+    var isEmployee = false;
+    var ownerUUID = rentalInfo.renterUUID;
+    if (ownerUUID && ownerUUID !== playerUUID) {
+        var pd = getPlayerData(world, ownerUUID);
+        var employees = pd.employees || [];
+        var playerUUID = player.getUUID();
+        var playerName = player.getName();
+        for (var i = 0; i < employees.length; i++) {
+            var emp = employees[i];
+            if (emp === playerUUID || emp === playerName) {
+                isEmployee = true;
+                break;
+            }
+        }
+    }
+
+    if (isEmployee && ownerUUID && !isExpired(rentalInfo)) {
+        // Employee is extending the owner's rent
+        rentalInfo.expiryDate = rentalInfo.expiryDate + (days * 24 * 60 * 60 * 1000);
+        player.message("\u00a7aExtended the shop rent by " + days + " day(s) for " + rentalInfo.renterName + "!");
+        
+        // Update world data with new expiry for the owner
+        var pd = getPlayerData(world, ownerUUID);
+        if (pd.ownedShops) {
+            var extPos = lastNpc.getPos();
+            var extCoord = extPos.getX() + "," + extPos.getY() + "," + extPos.getZ();
+            for (var i = 0; i < pd.ownedShops.length; i++) {
+                if (pd.ownedShops[i].npcCoord === extCoord) {
+                    pd.ownedShops[i].expiryDate = rentalInfo.expiryDate;
+                    break;
+                }
+            }
+        }
+        savePlayerData(world, ownerUUID, pd);
+        saveRentalInfo(npcData, rentalInfo);
+        skipSaveOnClose = true;
+        player.closeGui();
+        return;
+    }
+
     if (rentalInfo.renterUUID === playerUUID && !isExpired(rentalInfo)) {
         rentalInfo.expiryDate = rentalInfo.expiryDate + (days * 24 * 60 * 60 * 1000);
         player.message("\u00a7aExtended your rent by " + days + " day(s)!");
@@ -1468,10 +1569,9 @@ function handleRentPayment(player, api, npcData, gui) {
         
         // Register NPC in world data
         if (lastNpc) {
-            var npcName = lastNpc.getName();
             var npcDisplayName = lastNpc.getName();
             var pos = lastNpc.getPos();
-            registerNpc(world, lastNpc.getUUID(), npcName, npcDisplayName, pos);
+            registerNpc(world, lastNpc.getUUID(), npcDisplayName, pos);
         }
         
         // Track rental in world data
@@ -1503,6 +1603,7 @@ function handleRentPayment(player, api, npcData, gui) {
             npcUUID: lastNpc.getUUID(),
             npcCoord: npcCoord,
             npcName: lastNpc.getName(),
+            employees: [],
             rentedDate: nowTime,
             expiryDate: expiryTime,
             totalEarnings: 0,
