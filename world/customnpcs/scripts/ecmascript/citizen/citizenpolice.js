@@ -26,8 +26,9 @@ function init(e) {
         npc.getAi().setRetaliateType(0);
         npc.getStats().setMaxHealth(100);
 
-        var gun = npc.world.createItem("tacz:modern_kinetic_gun", 1);
-        gun.getNbt().putString("GunId", "cyber_armorer:ajax");
+    //    var gun = npc.world.createItem("tacz:modern_kinetic_gun", 1);
+     //   gun.getNbt().putString("GunId", "cyber_armorer:ajax");
+        var gun = npc.world.createItem("minecraft:bow", 1);
         npc.setMainhandItem(gun);
         npc.getInventory().setProjectile(npc.world.createItem("minecraft:gold_nugget", 1));
 
