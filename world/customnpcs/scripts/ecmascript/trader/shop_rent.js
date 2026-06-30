@@ -1573,6 +1573,25 @@ function handleRentPayment(player, api, npcData, gui) {
             registerNpc(world, lastNpc.getUUID(), npcDisplayName, pos);
         }
         
+        // Before cleanup, transfer any earnings from the previous renter's expired shop to their claimableCoins
+        if (rentalInfo.previousRenterUUID) {
+            var prevPd = getPlayerData(world, rentalInfo.previousRenterUUID);
+            var npcUUID = lastNpc.getUUID();
+            if (prevPd.expiredShops) {
+                for (var pi = 0; pi < prevPd.expiredShops.length; pi++) {
+                    if (prevPd.expiredShops[pi].npcUUID === npcUUID) {
+                        var earnings = prevPd.expiredShops[pi].totalEarnings || 0;
+                        if (earnings > 0) {
+                            prevPd.claimableCoins = (prevPd.claimableCoins || 0) + earnings;
+                            prevPd.expiredShops[pi].totalEarnings = 0;
+                            savePlayerData(world, rentalInfo.previousRenterUUID, prevPd);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        
         // Track rental in world data
         var pd = getPlayerData(world, playerUUID);
         if (!pd.ownedShops) pd.ownedShops = [];
