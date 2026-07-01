@@ -721,15 +721,26 @@ function nbtMatchesIgnoreDamageAndLore(playerStack, cfg) {
         var snbt = playerStack.getItemNbt().toJsonString();
         var cfgNbt = cfg.nbt || {};
   
-        if (snbt.indexOf('"id": "' + cfg.id + '"') === -1) return false;
+        // Check if the item ID exists in the SNBT (try both with and without space after colon)
+        var idPattern1 = '"id": "' + cfg.id + '"';
+        var idPattern2 = '"id":"' + cfg.id + '"';
+        if (snbt.indexOf(idPattern1) === -1 && snbt.indexOf(idPattern2) === -1) return false;
   
-        // For attachments, ensure we're matching the root item, not a gun with an attachment equipped
+        // For attachments, do a special check to ensure we're matching the root item, not a gun with an attachment equipped
         if (cfg.id === "tacz:attachment") {
-            var idPattern = '"id":"tacz:attachment"';
+            // Find the first "id": occurrence - for a standalone attachment, this should be the attachment itself
+            // For a nested attachment (in a gun), the first "id": is the gun's ID (tacz:modern_kinetic_gun)
             var firstIdIndex = snbt.indexOf('"id":');
-            var attachmentIdIndex = snbt.indexOf(idPattern);
-            // If the attachment ID is not at the first "id:" position, it's nested inside a gun
-            if (firstIdIndex !== attachmentIdIndex) return false;
+            if (firstIdIndex === -1) return false;
+            
+            // Check if the first ID is actually an attachment by looking at what comes after "id":
+            var afterFirstId = snbt.substring(firstIdIndex + 5); // Skip past '"id":'
+            // For an attachment, the next non-whitespace should be "tacz:attachment"
+            var trimmed = afterFirstId.trim();
+            // Check if it starts with "tacz:attachment" (with quotes) or tacz:attachment (without quotes)
+            var startsWithAttachment = trimmed.indexOf('"tacz:attachment"') === 0 || 
+                                       trimmed.indexOf('tacz:attachment') === 0;
+            if (!startsWithAttachment) return false;
         }
   
         if (cfgNbt.AttributeModifiers && cfgNbt.AttributeModifiers.length > 0) {
