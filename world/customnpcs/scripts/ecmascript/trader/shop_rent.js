@@ -272,16 +272,6 @@ function loadRentalInfo(npcData) {
         atomicSave(npcData, "RentalInfo", emptyInfo);
         return emptyInfo;
     }
-    // Verify this data belongs to this NPC by checking coordinates
-    if (parsed.npcCoord && lastNpc) {
-        var pos = lastNpc.getPos();
-        var currentCoord = pos.getX() + "," + pos.getY() + "," + pos.getZ();
-        if (parsed.npcCoord !== currentCoord) {
-            // Data belongs to a different NPC (shared stored data from duplication)
-            var emptyInfo = { renterName: "", renterUUID: "", rentedDate: 0, expiryDate: 0, rentCostPerDay: RENT_COST_PER_DAY, totalEarnings: 0, npcCoord: "" };
-            return emptyInfo;
-        }
-    }
     return parsed;
 }
 
