@@ -72,7 +72,7 @@ function init(event) {
         return;
     }
 
-    var npc = world.spawnClone(x, y, z, CLONE_ID, CLONE_NAME);
+    var npc = world.spawnClone(x, y+2, z, CLONE_ID, CLONE_NAME);
 
     // Lock the freshly spawned NPC to this player and restore its step.
     npc.storeddata.put(LOCK_NAME_KEY, player.getName());
