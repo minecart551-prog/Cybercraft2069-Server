@@ -7,7 +7,7 @@ var currentLeaderUUID = null; // used only for early-step (pre-lock) reset logic
 
 // Steps 0-3 are "early" steps — a different player clicking resets the tour.
 // From step 4 onward the tour is locked in and only the locked player can continue.
-var LOCKED_IN_STEP = 4;
+var LOCKED_IN_STEP = 3;
 
 // Step index that qualifies the clicking player (grants tourQualified=true) and
 // locks the NPC to them by name. This is index 3: "Let's now go to the second level..."
