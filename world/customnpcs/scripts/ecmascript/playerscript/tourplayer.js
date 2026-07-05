@@ -5,7 +5,7 @@
 
 var STEP_KEY = "tourStep";
 var LOCK_NAME_KEY = "lockedPlayerName";
-var EXISTING_NPC_SEARCH_RANGE = 10; // how far to check for an already-spawned guide
+var EXISTING_NPC_SEARCH_RANGE = 150; // how far to check for an already-spawned guide
 
 // The clone id/name used in world.spawnClone() — must match your existing
 // "Tour Guide" clone setup (id 3 in your original spawn call).
