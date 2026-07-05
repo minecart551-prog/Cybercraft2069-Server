@@ -125,7 +125,7 @@ marker-sets: {
         type: "poi"
         position: { x: 3148, y: -13, z: 628 }
         label: "Desert Tunnel"
-        icon: "assets/1f3dc.svg"
+        icon: "assets/1f3de.svg"
       }
       movie-theater: {
         type: "poi"
@@ -366,6 +366,3 @@ marker-sets: {
   # Please check out the wiki for information on how to configure this:
   # https://bluemap.bluecolored.de/wiki/customization/Markers.html
 }
-
-
-its only loading the first marker which is the desert tunell for some reason
