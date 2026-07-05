@@ -61,7 +61,7 @@ function init(event) {
             var candidate = nearbyNpcs[i];
             if (candidate.getName() === CLONE_NAME &&
                 candidate.storeddata.get(LOCK_NAME_KEY) === player.getName()) {
-               // existingNpc = candidate;
+                existingNpc = candidate;
                 break;
             }
         }
