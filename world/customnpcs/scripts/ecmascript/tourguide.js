@@ -18,6 +18,12 @@ var TOUR_QUALIFIED_KEY = "tourQualified";
 var LOCK_NAME_KEY = "lockedPlayerName";
 var STEP_KEY = "tourStep";
 
+// Duplicate detection — when a new clone spawns for a returning player, it
+// checks for an already-existing NPC with the same name and lock key, and
+// despawns itself if one is found (the surviving NPC was the "original").
+var CLONE_NAME = "Tour Guide";
+var DUPLICATE_SEARCH_RANGE = 150;
+
 // Leash / disconnect detection settings
 var LEASH_RANGE = 15;           // teleport locked player back if farther than this
 var MISSING_GRACE_TICKS = 10;  // ~3s at 20 tps before assuming they disconnected
@@ -144,11 +150,47 @@ function persistProgress(npc, player) {
     player.storeddata.put("tourZ", npc.getZ());
 }
 
+// ============================================================================
+// DUPLICATE DETECTION
+// ============================================================================
+// When a new clone is spawned for a returning player, check if another NPC
+// with the same name and LOCK_NAME_KEY already exists nearby. If it does,
+// this is the duplicate — despawn self. The surviving NPC was the original
+// that was already serving the player.
+// ============================================================================
+function checkForDuplicateAndDespawn(npc) {
+    var myName = npc.getName();
+    var myLock = npc.storeddata.get(LOCK_NAME_KEY);
+    // Only check duplicates for NPCs that have a lock key set
+    if (myLock === null || myLock === undefined) return false;
+
+    var world = npc.world;
+    var nearby = world.getNearbyEntities(npc.getPos(), DUPLICATE_SEARCH_RANGE, 2);
+    if (nearby === null || nearby === undefined) return false;
+
+    for (var i = 0; i < nearby.length; i++) {
+        var other = nearby[i];
+        // Skip self (some APIs include self in the result)
+        if (other.getUUID() === npc.getUUID()) continue;
+        if (other.getName() === myName) {
+            var otherLock = other.storeddata.get(LOCK_NAME_KEY);
+            if (otherLock === myLock) {
+                // Duplicate found — despawn self
+                npc.despawn();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 // Runs once when the NPC spawns (world load or a fresh spawnClone() for a
 // returning player). Everything here only needs to happen once, not on
 // every tick/interact — hence pulling it out into init().
 function init(e) {
     var npc = e.npc;
+    // If this is a duplicate of an already-existing locked guide, despawn immediately
+    if (checkForDuplicateAndDespawn(npc)) return;
     loadPersistedState(npc);
 }
 

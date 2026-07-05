@@ -53,25 +53,6 @@ function init(event) {
     player.setPosition(x, y, z);
 
     var world = player.world;
-    var nearbyNpcs = world.getNearbyEntities(player.getPos(), EXISTING_NPC_SEARCH_RANGE, 2); // 2 = npcs
-
-    var existingNpc = null;
-    if (nearbyNpcs !== null && nearbyNpcs !== undefined) {
-        for (var i = 0; i < nearbyNpcs.length; i++) {
-            var candidate = nearbyNpcs[i];
-            if (candidate.getName() === CLONE_NAME &&
-                candidate.storeddata.get(LOCK_NAME_KEY) === player.getName()) {
-                existingNpc = candidate;
-                break;
-            }
-        }
-    }
-
-    if (existingNpc !== null) {
-        player.message("§e[Tour Guide] Welcome back! Your guide is right here.");
-        return;
-    }
-
     var npc = world.spawnClone(x, y+2, z, CLONE_ID, CLONE_NAME);
 
     // Lock the freshly spawned NPC to this player and restore its step.
@@ -79,5 +60,8 @@ function init(event) {
     npc.storeddata.put(STEP_KEY, resumeStep);
     npc.reset();
 
+    // The NPC's own init() will check for duplicates and despawn if another
+    // guide with the same LOCK_NAME_KEY already exists nearby.
+    // If it does despawn, the player already has a guide nearby.
     player.message("§e[Tour Guide] Welcome back! Talk to me to continue your tour.");
 }
