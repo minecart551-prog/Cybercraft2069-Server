@@ -268,7 +268,7 @@ function interact(e) {
                     currentTourStep = 0;
                     currentLeaderName = null;
                     currentLeaderUUID = null;
-                    player.storeddata.put(STEP_KEY, null); // tour complete, clear resume data
+                    player.storeddata.put(STEP_KEY, 0); // tour complete, clear resume data
                     return;
                 }
             } else if (stop.coords) {

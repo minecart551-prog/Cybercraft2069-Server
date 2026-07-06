@@ -23,9 +23,14 @@ function init(event) {
     var player = event.player;
 
     var savedStep = player.storeddata.get(STEP_KEY);
-    if (savedStep === null || savedStep === undefined || savedStep <= 0) {
+    // storeddata.put(key, null) stores the literal string "null" in some APIs,
+    // so we must also check for that, empty string, and string "0".
+    if (savedStep === null || savedStep === undefined || savedStep === "null" || savedStep === "" || savedStep <= 0) {
         return; // no unfinished tour, nothing to do
     }
+    // Convert to number for numeric comparisons
+    savedStep = parseInt(savedStep, 10);
+    if (isNaN(savedStep) || savedStep <= 0) return;
 
     var x, y, z, resumeStep;
 
