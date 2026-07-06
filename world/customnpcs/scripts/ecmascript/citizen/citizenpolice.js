@@ -19,8 +19,7 @@ function init(e) {
     // --- Citizen faction ---
     npc.setFaction(17);
     npc.getAi().setAvoidsWater(true);
-    npc.getStats().setRespawnType(4);
-	npc.getStats().setRespawnTime(20);
+
     if (Math.random() < 0.09) {
         display.setSkinTexture("cyberpunkskins:textures/lcpd.png");
         display.setName("LCPD");
