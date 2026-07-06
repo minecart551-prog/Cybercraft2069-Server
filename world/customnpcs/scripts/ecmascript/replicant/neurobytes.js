@@ -5,6 +5,8 @@ function init(event){
      npc.getStats().getRanged().setStrength(12);
      npc.getInventory().setDropItem(0, item, 1);
      npc.getInventory().setExp(16,16);
+     npc.getStats().setRespawnType(4);
+     npc.getStats().setRespawnTime(1800);
 }
 
 function died(event) {
