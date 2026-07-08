@@ -152,9 +152,9 @@ function timer(event) {
         timerStr = ""
         phaseMsg = ""
     }
-    overlay.addLabel(2, timerStr, -120, -15)
-    overlay.addLabel(5, phaseMsg, -120, -5)
-    overlay.addLabel(7, "", -120, 5)
+    overlay.addLabel(2, timerStr, -157, -15)
+    overlay.addLabel(5, phaseMsg, -157, -5)
+    overlay.addLabel(7, "", -157, 5)
 
     // Show defuse countdown on HUD only for POLICE team
     if (g.phase === PHASE_BOMB_PLANTED && p.team === TEAM_POLICE) {
@@ -163,7 +163,7 @@ function timer(event) {
             var dInfo = defusingHUD[dhi]
             var dElapsed = (SYS.currentTimeMillis() - dInfo.startTime) / 1000
             var dRemaining = Math.max(0, Math.ceil((dInfo.defuseTime / 1000) - dElapsed))
-            overlay.addLabel(20, "§a§l" + dInfo.name + " §7defusing: §e" + dRemaining + "s left", -120, 20)
+            overlay.addLabel(20, "§a§l" + dInfo.name + " §7defusing: §e" + dRemaining + "s left", -157, 20)
             break  // only show first defuser
         }
     }
