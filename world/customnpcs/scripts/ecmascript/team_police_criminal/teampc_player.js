@@ -4,7 +4,7 @@
 // Attach to all players. Handles HUD, chat command .teampc, bomb enforcement,
 // and game round management.
 // Requires bombteam_config.js loaded FIRST.
-
+//-157
 
 var playerTimerId = 69421
 var dailyContribTimerId = 69422
@@ -108,7 +108,7 @@ function timer(event) {
 
     var overlay = api.createOverlay(OVERLAY_HUD)
     var teamStr = p.team === TEAM_POLICE ? "§bPolice" : (p.team === TEAM_CRIMINAL ? "§cCriminal" : "§7Spectator")
-    overlay.addLabel(1, teamStr, -120, -25)
+    overlay.addLabel(1, teamStr, -157, -25)
 
     var bombDeadline = -1
     if (g.phase === PHASE_ACTIVE) {
