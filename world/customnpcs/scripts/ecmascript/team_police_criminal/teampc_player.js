@@ -4,7 +4,7 @@
 // Attach to all players. Handles HUD, chat command .teampc, bomb enforcement,
 // and game round management.
 // Requires bombteam_config.js loaded FIRST.
-//-157
+//-159
 
 var playerTimerId = 69421
 var dailyContribTimerId = 69422
@@ -108,7 +108,7 @@ function timer(event) {
 
     var overlay = api.createOverlay(OVERLAY_HUD)
     var teamStr = p.team === TEAM_POLICE ? "§bPolice" : (p.team === TEAM_CRIMINAL ? "§cCriminal" : "§7Spectator")
-    overlay.addLabel(1, teamStr, -157, -25)
+    overlay.addLabel(1, teamStr, -159, -25)
 
     var bombDeadline = -1
     if (g.phase === PHASE_ACTIVE) {
@@ -152,9 +152,9 @@ function timer(event) {
         timerStr = ""
         phaseMsg = ""
     }
-    overlay.addLabel(2, timerStr, -157, -15)
-    overlay.addLabel(5, phaseMsg, -157, -5)
-    overlay.addLabel(7, "", -157, 5)
+    overlay.addLabel(2, timerStr, -159, -15)
+    overlay.addLabel(5, phaseMsg, -159, -5)
+    overlay.addLabel(7, "", -159, 5)
 
     // Show defuse countdown on HUD only for POLICE team
     if (g.phase === PHASE_BOMB_PLANTED && p.team === TEAM_POLICE) {
