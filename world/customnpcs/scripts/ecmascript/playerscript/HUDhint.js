@@ -16,6 +16,6 @@ function timer(event) {
     if (event.id !== hintTimerId) return
     var player = event.player; var api = event.API
     var overlay = api.createOverlay(OVERLAY_HINT)
-    overlay.addLabel(1, "\u00a7b.menu\u00a7f to open menu", -157, 80)
+    overlay.addLabel(1, "\u00a7b.menu\u00a7f to open menu", -157, 83)
     player.showOverlay(overlay)
 }
