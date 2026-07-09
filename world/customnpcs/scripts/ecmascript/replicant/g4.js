@@ -1,3 +1,5 @@
+var rewardItem = "coins:coal_coin";  
+var rewardCount = 16;
 
 var SKIN_URLS = [
     "https://www.minecraftskins.com/uploads/skins/2024/01/03/sniper-camerawoman-22229651.png?v951",
@@ -12,6 +14,7 @@ function init(event){
         var skinUrl = urls[Math.floor(Math.random() * urls.length)];
         npc.getDisplay().setSkinUrl(skinUrl);
     }
+        var item = npc.world.createItem(rewardItem, rewardCount);
     npc.getStats().setMaxHealth(400);
     npc.getStats().setRespawnType(3);
     npc.getStats().getRanged().setStrength(20);
