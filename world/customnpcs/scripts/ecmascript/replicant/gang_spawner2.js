@@ -17,7 +17,7 @@ var availableGangs = [
         loot: [
             { id: "coins:coal_coin",          count: 60,  weight: 100 },
             { id: "coins:emerald_coin",          count: 1,  weight: 100 },
-            { id: "minecraft:diamond",          count: 1,  weight: 10 }
+            { id: "minecraft:diamond",          count: 1,  weight: 20 }
         ]
     }
 ];
