@@ -3,7 +3,7 @@
 // ===============================
 
 // Configuration
-var RANGE = 30;                 // Range to check for nearby NPCs
+var RANGE = 50;                 // Range to check for nearby NPCs
 var SPAWN_MIN_RADIUS = 1;       // Minimum spawn distance from block
 var SPAWN_MAX_RADIUS = 1;       // Maximum spawn distance from block
 var EMPTY_CHANCE = 0.3;        // 25% chance the chest is empty on server restart
