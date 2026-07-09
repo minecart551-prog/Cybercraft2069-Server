@@ -2,9 +2,9 @@ var rewardItem = "coins:coal_coin";
 var rewardCount = 16;
 
 var SKIN_URLS = [
-    "https://www.minecraftskins.com/uploads/skins/2024/01/03/sniper-camerawoman-22229651.png?v951",
-    "https://www.minecraftskins.com/uploads/skins/2023/12/31/verona--rustage--22222709.png?v951",
-    "https://www.minecraftskins.com/uploads/skins/2023/04/19/sneaky-sniper-21529799.png?v951"
+    "https://www.minecraftskins.com/uploads/skins/2026/07/07/w-o-l-f-s-p-i-d-e-r---remake-24176795.png?v960",
+    "https://www.minecraftskins.com/uploads/skins/2026/07/03/cyber-spider-24168192.png?v960",
+    "https://www.minecraftskins.com/uploads/skins/2026/07/04/trixy-cyberpunk-24171551.png?v960"
 ];
 
 function init(event){
