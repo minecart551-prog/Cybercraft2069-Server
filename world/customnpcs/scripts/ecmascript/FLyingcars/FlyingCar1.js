@@ -523,98 +523,108 @@ function timer(event) {
 
     if (event.id == flightTimerId) {
         var riders = npc.getRiders();
-        var usingControl = false;
 
-        if (riders.length > 0) {
-            pl = riders[0];
-            if (hasFuel(npc)) {
-                usingControl = true;
-                fuelWarningSent = false;
-                flightTicks++;
-                if (flightTicks >= FUEL_CONSUME_INTERVAL) {
-                    consumeFuel(npc);
-                    flightTicks = 0;
-
-                    // Check fuel level and send warnings at thresholds
-                    var currentFuel = getFuelAmount(npc);
-                    if (currentFuel === 20 && !fuelWarning20) {
-                        pl.message("§e⚠ Warning: Only §620% fuel §eleft!");
-                        fuelWarning20 = true;
-                        fuelWarning10 = false;
-                        fuelWarning5 = false;
-                    } else if (currentFuel === 10 && !fuelWarning10) {
-                        pl.message("§6⚠ Warning: Only §c10% fuel §6left!");
-                        fuelWarning10 = true;
-                        fuelWarning5 = false;
-                    } else if (currentFuel === 5 && !fuelWarning5) {
-                        pl.message("§c⚠⚠ Critical: Only §45% fuel §cleft! Land now!");
-                        fuelWarning5 = true;
-                    }
-                }
-
-                // Track the rider's yaw so the NPC faces forward
-                rot = Number(pl.getRotation().toFixed(2));
-                if (rot < 0) rot += 360;
-                npcYaw = lerpAngle(npcYaw, rot, 0.2);
-                npc.setRotation(npcYaw);
-
-                // ===== Read key state from storeddata and apply motion =====
-                var yaw = pl.getRotation() * Math.PI / 180;
-
-                // Horizontal movement: W/A/S/D
-                var moveX = 0, moveZ = 0;
-
-                if (isKeyHeld(npc, 87)) { // W - Forward
-                    moveX += -Math.sin(yaw) * MOVEMENT_SPEED;
-                    moveZ += Math.cos(yaw) * MOVEMENT_SPEED;
-                }
-                if (isKeyHeld(npc, 83)) { // S - Backward
-                    moveX += Math.sin(yaw) * MOVEMENT_SPEED;
-                    moveZ += -Math.cos(yaw) * MOVEMENT_SPEED;
-                }
-                if (isKeyHeld(npc, 65)) { // A - Left
-                    moveX += -Math.sin(yaw - Math.PI / 2) * MOVEMENT_SPEED;
-                    moveZ += Math.cos(yaw - Math.PI / 2) * MOVEMENT_SPEED;
-                }
-                if (isKeyHeld(npc, 68)) { // D - Right
-                    moveX += -Math.sin(yaw + Math.PI / 2) * MOVEMENT_SPEED;
-                    moveZ += Math.cos(yaw + Math.PI / 2) * MOVEMENT_SPEED;
-                }
-
-                // Vertical movement: Space/V
-                var moveY = 0;
-                if (isKeyHeld(npc, 32)) { // Space - Up
-                    moveY = LIFT_SPEED;
-                }
-                if (isKeyHeld(npc, 86)) { // V - Down
-                    moveY = -SINK_SPEED;
-                }
-
-                // Smoothly interpolate towards target motion
-                motionX = lerp(motionX, moveX, 0.2);
-                motionY = lerp(motionY, moveY, 0.2);
-                motionZ = lerp(motionZ, moveZ, 0.2);
-
-            } else {
-                if (!fuelWarningSent) {
-                    pl.message("§cThe car ran out of fuel!");
-                    fuelWarningSent = true;
-                }
-            }
-        }
-
-        // If no rider or no flight control, gradually slow down
-        if (!usingControl) {
-            motionX = lerp(motionX, 0, decay);
-            motionY = lerp(motionY, 0, decay);
-            motionZ = lerp(motionZ, 0, decay);
-        }
+        // No one is riding — stop controlling motion entirely and let the
+        // car fall/behave under normal physics instead of slowly decaying.
         if (riders.length === 0) {
             flightTicks = 0;
             fuelWarningSent = false;
             fuelWarning20 = false;
             fuelWarning10 = false;
             fuelWarning5 = false;
+            motionX = 0;
+            motionY = 0;
+            motionZ = 0;
+            npc.timers.stop(flightTimerId);
+            return; // don't touch setMotion at all — normal gravity applies
+        }
+
+        var usingControl = false;
+        pl = riders[0];
+
+        if (hasFuel(npc)) {
+            usingControl = true;
+            fuelWarningSent = false;
+            flightTicks++;
+            if (flightTicks >= FUEL_CONSUME_INTERVAL) {
+                consumeFuel(npc);
+                flightTicks = 0;
+
+                // Check fuel level and send warnings at thresholds
+                var currentFuel = getFuelAmount(npc);
+                if (currentFuel === 20 && !fuelWarning20) {
+                    pl.message("§e⚠ Warning: Only §620% fuel §eleft!");
+                    fuelWarning20 = true;
+                    fuelWarning10 = false;
+                    fuelWarning5 = false;
+                } else if (currentFuel === 10 && !fuelWarning10) {
+                    pl.message("§6⚠ Warning: Only §c10% fuel §6left!");
+                    fuelWarning10 = true;
+                    fuelWarning5 = false;
+                } else if (currentFuel === 5 && !fuelWarning5) {
+                    pl.message("§c⚠⚠ Critical: Only §45% fuel §cleft! Land now!");
+                    fuelWarning5 = true;
+                }
+            }
+
+            // Track the rider's yaw so the NPC faces forward
+            rot = Number(pl.getRotation().toFixed(2));
+            if (rot < 0) rot += 360;
+            npcYaw = lerpAngle(npcYaw, rot, 0.2);
+            npc.setRotation(npcYaw);
+
+            // ===== Read key state from storeddata and apply motion =====
+            var yaw = pl.getRotation() * Math.PI / 180;
+
+            // Horizontal movement: W/A/S/D
+            var moveX = 0, moveZ = 0;
+
+            if (isKeyHeld(npc, 87)) { // W - Forward
+                moveX += -Math.sin(yaw) * MOVEMENT_SPEED;
+                moveZ += Math.cos(yaw) * MOVEMENT_SPEED;
+            }
+            if (isKeyHeld(npc, 83)) { // S - Backward
+                moveX += Math.sin(yaw) * MOVEMENT_SPEED;
+                moveZ += -Math.cos(yaw) * MOVEMENT_SPEED;
+            }
+            if (isKeyHeld(npc, 65)) { // A - Left
+                moveX += -Math.sin(yaw - Math.PI / 2) * MOVEMENT_SPEED;
+                moveZ += Math.cos(yaw - Math.PI / 2) * MOVEMENT_SPEED;
+            }
+            if (isKeyHeld(npc, 68)) { // D - Right
+                moveX += -Math.sin(yaw + Math.PI / 2) * MOVEMENT_SPEED;
+                moveZ += Math.cos(yaw + Math.PI / 2) * MOVEMENT_SPEED;
+            }
+
+            // Vertical movement: Space/V
+            var moveY = 0;
+            if (isKeyHeld(npc, 32)) { // Space - Up
+                moveY = LIFT_SPEED;
+            }
+            if (isKeyHeld(npc, 86)) { // V - Down
+                moveY = -SINK_SPEED;
+            }
+
+            // Smoothly interpolate towards target motion
+            motionX = lerp(motionX, moveX, 0.2);
+            motionY = lerp(motionY, moveY, 0.2);
+            motionZ = lerp(motionZ, moveZ, 0.2);
+
+        } else {
+            // Out of fuel — stop controlling motion entirely so the car
+            // drops immediately under normal physics, same as no-rider case.
+            if (!fuelWarningSent) {
+                pl.message("§cThe car ran out of fuel!");
+                fuelWarningSent = true;
+            }
+            motionX = 0;
+            motionY = 0;
+            motionZ = 0;
+            npc.setMotionX(0);
+            npc.setMotionY(0);
+            npc.setMotionZ(0);
+            npc.timers.stop(flightTimerId);
+            return; // let gravity take over; remount to regain control once refueled
         }
 
         // Apply motion
