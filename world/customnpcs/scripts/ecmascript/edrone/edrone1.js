@@ -3,6 +3,7 @@ function init(event) {
     npc.getAi().setNavigationType(1);
     npc.getStats().setMaxHealth(27);
     npc.getStats().getRanged().setStrength(3);
+    npc.getStats().setRespawnType(4);
     npc.getStats().setRespawnTime(1800);
     npc.getStats().getRanged().setDelay(7, 7);
     npc.getStats().getRanged().setBurstDelay(1);
