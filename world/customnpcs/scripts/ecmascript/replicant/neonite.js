@@ -16,6 +16,6 @@ function init(event){
      npc.getInventory().setDropItem(3, milk, 30);
      npc.getInventory().setDropItem(4, mug, 30);
      npc.getInventory().setExp(3,3);
-    npc.getStats().setRespawnType(4);
-    npc.getStats().setRespawnTime(1800);
+    npc.getStats().setRespawnType(0);
+
 }
