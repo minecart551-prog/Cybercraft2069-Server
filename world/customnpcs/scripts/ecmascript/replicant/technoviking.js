@@ -7,4 +7,6 @@ function init(event){
      npc.getStats().getRanged().setDelay(20, 20);
      npc.getStats().getRanged().setBurstDelay(1);
      npc.getInventory().setExp(8,8);
+	     npc.getStats().setRespawnType(4);
+    npc.getStats().setRespawnTime(1800);
 }

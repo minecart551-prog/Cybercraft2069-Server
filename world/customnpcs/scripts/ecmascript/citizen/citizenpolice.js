@@ -15,7 +15,8 @@ var isPolice = 1;
 function init(e) {
     var npc = e.npc;
     var display = npc.getDisplay();
-
+    npc.getStats().setRespawnType(4);
+    npc.getStats().setRespawnTime(1800);
     // --- Citizen faction ---
     npc.setFaction(17);
     npc.getAi().setAvoidsWater(true);
