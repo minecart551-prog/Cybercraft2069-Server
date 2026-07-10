@@ -1,5 +1,5 @@
 // ============================================================================
-// MENU — PLAYER SCRIPTs
+// MENU — PLAYER SCRIPTss
 // ============================================================================
 // Single source for ALL chat commands and ALL customGuiButton / customGuiClosed
 // handling across every GUI in the game. Other player scripts (teampc_player.js,
