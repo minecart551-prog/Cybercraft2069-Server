@@ -6,7 +6,7 @@ ServerEvents.tick(event => {
 
     if (server.tickCount % 1200 === 0) {
         server.runCommandSilent("memcheck");
-
+        server.runCommandSilent("save-all");
         try {
             let scoreboard = server.scoreboard;
             let objective = scoreboard.getObjective("allocated_pct");
