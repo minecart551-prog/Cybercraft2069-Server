@@ -1,0 +1,28 @@
+{
+  "repair_kits": [
+    {
+      "id": "cyber_repair_kit_1",
+      "repair_points": 50
+    },
+    {
+      "id": "cyber_repair_kit_2",
+      "repair_points": 100
+    },
+    {
+      "id": "cyber_repair_kit_3",
+      "repair_points": 150
+    },
+    {
+      "id": "cyber_repair_kit_4",
+      "repair_points": 200
+    },
+    {
+      "id": "cyber_repair_kit_5",
+      "repair_points": 500
+    },
+    {
+      "id": "cyber_repair_kit_6",
+      "repair_points": 1000
+    }
+  ]
+}

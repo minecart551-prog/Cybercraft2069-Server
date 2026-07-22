@@ -4,24 +4,28 @@
       "id": "basic_os",
       "name": "Basic Cyberware OS",
       "maxLoad": 100,
+      "durability": 500,
       "powers": ["speed", "jump"]
     },
     {
       "id": "advanced_os",
       "name": "Advanced Cyberware OS",
       "maxLoad": 160,
+      "durability": 800,
       "powers": ["speed", "jump", "resistance"]
     },
     {
       "id": "military_os",
       "name": "Military Cyberware OS",
       "maxLoad": 250,
+      "durability": 1,
       "powers": ["speed", "jump", "resistance", "strength"]
     },
     {
       "id": "sandevistan_warp_dancer",
       "name": "Sandevistan Warp Dancer",
       "maxLoad": 20,
+      "durability": 300,
       "powers": ["speed"],
       "powerAmplifiers": {
         "speed": 3.0
@@ -31,6 +35,7 @@
       "id": "sandevistan_zetatech",
       "name": "Zetatech Sandevistan",
       "maxLoad": 34,
+      "durability": 400,
       "powers": ["speed"],
       "powerAmplifiers": {
         "speed": 5.0
@@ -39,7 +44,8 @@
     {
       "id": "sandevistan_dynalar",
       "name": "Dynalar Sandevistan",
-      "maxLoad": 900,
+      "maxLoad": 50,
+      "durability": 500,
       "powers": ["speed"],
       "powerAmplifiers": {
         "speed": 8.0
@@ -49,6 +55,7 @@
       "id": "sandevistan_falcon",
       "name": "Sandevistan Falcon",
       "maxLoad": 68,
+      "durability": 600,
       "powers": ["speed"],
       "powerAmplifiers": {
         "speed": 10.0
@@ -58,6 +65,7 @@
       "id": "sandevistan_apogee",
       "name": "Sandevistan Apogee",
       "maxLoad": 90,
+      "durability": 800,
       "powers": ["speed"],
       "powerAmplifiers": {
         "speed": 12.0
@@ -66,27 +74,55 @@
   ],
   "components": [
     {
-      "id": "hydraulic_tendons",
-      "name": "Hydraulic Tendons",
-      "type": "legs",
+      "id": "clairvoyant",
+      "name": "Clairvoyant",
+      "type": "face",
+      "loadCost": 30,
+      "powers": ["night_vision"],
+      "duration": 300,
+      "cooldown": 600,
+      "maxDurability": 400,
+      "durabilityCost": 40,
+      "powerAmplifiers": {}
+    },
+    {
+      "id": "doomsayer",
+      "name": "Doomsayer",
+      "type": "face",
       "loadCost": 35,
-      "powers": ["jump"],
-      "duration": 600,
-      "cooldown": 300,
+      "powers": ["night_vision", "slow_falling"],
+      "duration": 300,
+      "cooldown": 600,
+      "maxDurability": 450,
+      "durabilityCost": 45,
+      "powerAmplifiers": {}
+    },
+    {
+      "id": "stalker",
+      "name": "Stalker",
+      "type": "face",
+      "loadCost": 32,
+      "powers": ["speed", "night_vision"],
+      "duration": 250,
+      "cooldown": 500,
+      "maxDurability": 400,
+      "durabilityCost": 40,
       "powerAmplifiers": {
-        "jump": 2.0
+        "speed": 1.5
       }
     },
     {
-      "id": "thermal_plating",
-      "name": "Thermal Plating",
-      "type": "armor",
+      "id": "the_oracle",
+      "name": "The Oracle",
+      "type": "face",
       "loadCost": 40,
-      "powers": ["fire_resistance", "resistance"],
-      "duration": 200,
-      "cooldown": 600,
+      "powers": ["night_vision", "slow_falling", "strength"],
+      "duration": 350,
+      "cooldown": 800,
+      "maxDurability": 600,
+      "durabilityCost": 60,
       "powerAmplifiers": {
-        "resistance": 2.0
+        "strength": 1.5
       }
     },
     {
@@ -97,56 +133,10 @@
       "powers": ["haste", "night_vision"],
       "duration": 200,
       "cooldown": 600,
+      "maxDurability": 500,
+      "durabilityCost": 50,
       "powerAmplifiers": {
         "haste": 1.5
-      }
-    },
-    {
-      "id": "impact_absorbers",
-      "name": "Impact Absorbers",
-      "type": "skeleton",
-      "loadCost": 45,
-      "powers": ["slow_falling", "resistance"],
-      "duration": 300,
-      "cooldown": 800,
-      "powerAmplifiers": {
-        "resistance": 1.5
-      }
-    },
-    {
-      "id": "adrenal_booster",
-      "name": "Adrenal Booster",
-      "type": "blood",
-      "loadCost": 30,
-      "powers": ["adrenaline"],
-      "duration": 100,
-      "cooldown": 400,
-      "powerAmplifiers": {
-        "adrenaline": 1.0
-      }
-    },
-    {
-      "id": "plasma_palm",
-      "name": "Plasma Palm",
-      "type": "hands",
-      "loadCost": 45,
-      "powers": ["strength", "fire_resistance"],
-      "duration": 150,
-      "cooldown": 500,
-      "powerAmplifiers": {
-        "strength": 2.0
-      }
-    },
-    {
-      "id": "gravity_stabilizer",
-      "name": "Gravity Stabilizer",
-      "type": "gravity",
-      "loadCost": 50,
-      "powers": ["slow_falling", "jump"],
-      "duration": 300,
-      "cooldown": 800,
-      "powerAmplifiers": {
-        "jump": 2.5
       }
     },
     {
@@ -157,44 +147,53 @@
       "powers": ["strength"],
       "duration": 300,
       "cooldown": 600,
+      "maxDurability": 500,
+      "durabilityCost": 50,
       "powerAmplifiers": {
         "strength": 3.0
       }
     },
     {
-      "id": "fortified_ankles",
-      "name": "Fortified Ankles",
-      "type": "legs",
-      "loadCost": 25,
-      "powers": ["jump"],
-      "duration": 700,
-      "cooldown": 300,
+      "id": "para_bellum",
+      "name": "Para Bellum",
+      "type": "arms",
+      "loadCost": 30,
+      "powers": ["strength", "haste"],
+      "duration": 200,
+      "cooldown": 500,
+      "maxDurability": 400,
+      "durabilityCost": 40,
       "powerAmplifiers": {
-        "jump": 3.0
+        "strength": 2.0,
+        "haste": 1.5
       }
     },
     {
-      "id": "reinforced_tendons",
-      "name": "Reinforced Tendons",
-      "type": "legs",
-      "loadCost": 28,
-      "powers": ["jump"],
-      "duration": 800,
-      "cooldown": 300,
+      "id": "plasma_palm",
+      "name": "Plasma Palm",
+      "type": "hands",
+      "loadCost": 45,
+      "powers": ["strength", "fire_resistance"],
+      "duration": 150,
+      "cooldown": 500,
+      "maxDurability": 400,
+      "durabilityCost": 50,
       "powerAmplifiers": {
-        "jump": 4
+        "strength": 2.0
       }
     },
     {
-      "id": "blood_pump",
-      "name": "Blood Pump",
+      "id": "adrenal_booster",
+      "name": "Adrenal Booster",
       "type": "blood",
       "loadCost": 30,
-      "powers": ["strength"],
+      "powers": ["adrenaline"],
       "duration": 100,
-      "cooldown": 600,
+      "cooldown": 400,
+      "maxDurability": 300,
+      "durabilityCost": 30,
       "powerAmplifiers": {
-        "strength": 1.5
+        "adrenaline": 1.0
       }
     },
     {
@@ -205,8 +204,95 @@
       "powers": ["adrenaline"],
       "duration": 200,
       "cooldown": 600,
+      "maxDurability": 450,
+      "durabilityCost": 45,
       "powerAmplifiers": {
         "adrenaline": 1.5
+      }
+    },
+    {
+      "id": "blood_pump",
+      "name": "Blood Pump",
+      "type": "blood",
+      "loadCost": 30,
+      "powers": ["strength"],
+      "duration": 100,
+      "cooldown": 600,
+      "maxDurability": 400,
+      "durabilityCost": 40,
+      "powerAmplifiers": {
+        "strength": 1.5
+      }
+    },
+    {
+      "id": "inmunosupresores",
+      "name": "Immunosuppressants",
+      "type": "blood",
+      "loadCost": 15,
+      "powers": ["adrenaline"],
+      "duration": 60,
+      "cooldown": 40,
+      "maxDurability": 200,
+      "durabilityCost": 20,
+      "powerAmplifiers": {
+        "adrenaline": 0.5
+      }
+    },
+    {
+      "id": "universal_booster",
+      "name": "Universal Booster",
+      "type": "blood",
+      "loadCost": 28,
+      "powers": ["speed", "haste"],
+      "duration": 150,
+      "cooldown": 400,
+      "maxDurability": 350,
+      "durabilityCost": 35,
+      "powerAmplifiers": {
+        "speed": 1.3,
+        "haste": 1.3
+      }
+    },
+    {
+      "id": "thermal_plating",
+      "name": "Thermal Plating",
+      "type": "armor",
+      "loadCost": 40,
+      "powers": ["fire_resistance", "resistance"],
+      "duration": 200,
+      "cooldown": 600,
+      "maxDurability": 500,
+      "durabilityCost": 50,
+      "powerAmplifiers": {
+        "resistance": 2.0
+      }
+    },
+    {
+      "id": "scarab",
+      "name": "Scarab",
+      "type": "armor",
+      "loadCost": 35,
+      "powers": ["resistance"],
+      "duration": 250,
+      "cooldown": 600,
+      "maxDurability": 500,
+      "durabilityCost": 50,
+      "powerAmplifiers": {
+        "resistance": 2.5
+      }
+    },
+    {
+      "id": "scar_coalescer",
+      "name": "Scar Coalescer",
+      "type": "armor",
+      "loadCost": 25,
+      "powers": ["resistance"],
+      "duration": 200,
+      "cooldown": 500,
+      "maxDurability": 350,
+      "durabilityCost": 35,
+      "powerAmplifiers": {
+        "resistance": 1.5
       }
     },
     {
@@ -217,6 +303,8 @@
       "powers": ["speed", "jump"],
       "duration": 200,
       "cooldown": 400,
+      "maxDurability": 350,
+      "durabilityCost": 35,
       "powerAmplifiers": {
         "speed": 1.2,
         "jump": 1.2
@@ -230,6 +318,8 @@
       "powers": ["strength"],
       "duration": 200,
       "cooldown": 400,
+      "maxDurability": 300,
+      "durabilityCost": 30,
       "powerAmplifiers": {
         "strength": 1.5
       }
@@ -242,6 +332,8 @@
       "powers": ["resistance", "slow_falling"],
       "duration": 300,
       "cooldown": 800,
+      "maxDurability": 600,
+      "durabilityCost": 75,
       "powerAmplifiers": {
         "resistance": 2.0
       }
@@ -254,8 +346,24 @@
       "powers": ["slow_falling", "jump"],
       "duration": 200,
       "cooldown": 400,
+      "maxDurability": 250,
+      "durabilityCost": 25,
       "powerAmplifiers": {
         "jump": 1.5
+      }
+    },
+    {
+      "id": "impact_absorbers",
+      "name": "Impact Absorbers",
+      "type": "skeleton",
+      "loadCost": 45,
+      "powers": ["slow_falling", "resistance"],
+      "duration": 300,
+      "cooldown": 800,
+      "maxDurability": 600,
+      "durabilityCost": 75,
+      "powerAmplifiers": {
+        "resistance": 1.5
       }
     },
     {
@@ -266,6 +374,8 @@
       "powers": ["strength", "resistance"],
       "duration": 250,
       "cooldown": 600,
+      "maxDurability": 500,
+      "durabilityCost": 50,
       "powerAmplifiers": {
         "strength": 1.8,
         "resistance": 1.5
@@ -279,45 +389,24 @@
       "powers": ["resistance"],
       "duration": 300,
       "cooldown": 800,
+      "maxDurability": 700,
+      "durabilityCost": 70,
       "powerAmplifiers": {
         "resistance": 3.0
       }
     },
     {
-      "id": "spring_joints",
-      "name": "Spring Joints",
-      "type": "legs",
-      "loadCost": 22,
-      "powers": ["jump"],
-      "duration": 150,
-      "cooldown": 300,
+      "id": "gravity_stabilizer",
+      "name": "Gravity Stabilizer",
+      "type": "gravity",
+      "loadCost": 50,
+      "powers": ["slow_falling", "jump"],
+      "duration": 300,
+      "cooldown": 800,
+      "maxDurability": 600,
+      "durabilityCost": 75,
       "powerAmplifiers": {
-        "jump": 1.8
-      }
-    },
-    {
-      "id": "scarab",
-      "name": "Scarab",
-      "type": "armor",
-      "loadCost": 35,
-      "powers": ["resistance"],
-      "duration": 250,
-      "cooldown": 600,
-      "powerAmplifiers": {
-        "resistance": 2.5
-      }
-    },
-    {
-      "id": "para_bellum",
-      "name": "Para Bellum",
-      "type": "arms",
-      "loadCost": 30,
-      "powers": ["strength", "haste"],
-      "duration": 200,
-      "cooldown": 500,
-      "powerAmplifiers": {
-        "strength": 2.0,
-        "haste": 1.5
+        "jump": 2.5
       }
     },
     {
@@ -328,89 +417,69 @@
       "powers": ["slow_falling", "jump"],
       "duration": 250,
       "cooldown": 600,
+      "maxDurability": 500,
+      "durabilityCost": 50,
       "powerAmplifiers": {
         "jump": 2.5
       }
     },
     {
-      "id": "universal_booster",
-      "name": "Universal Booster",
-      "type": "blood",
-      "loadCost": 28,
-      "powers": ["speed", "haste"],
-      "duration": 150,
-      "cooldown": 400,
-      "powerAmplifiers": {
-        "speed": 1.3,
-        "haste": 1.3
-      }
-    },
-    {
-      "id": "scar_coalescer",
-      "name": "Scar Coalescer",
-      "type": "armor",
+      "id": "fortified_ankles",
+      "name": "Fortified Ankles",
+      "type": "legs",
       "loadCost": 25,
-      "powers": ["resistance"],
+      "powers": ["jump"],
       "duration": 200,
-      "cooldown": 500,
+      "cooldown": 400,
+      "maxDurability": 300,
+      "durabilityCost": 25,
       "powerAmplifiers": {
-        "resistance": 1.5
+        "jump": 2.0
       }
     },
     {
-      "id": "clairvoyant",
-      "name": "Clairvoyant",
-      "type": "face",
-      "loadCost": 30,
-      "powers": ["night_vision"],
-      "duration": 300,
-      "cooldown": 600,
-      "powerAmplifiers": {}
-    },
-    {
-      "id": "doomsayer",
-      "name": "Doomsayer",
-      "type": "face",
+      "id": "hydraulic_tendons",
+      "name": "Hydraulic Tendons",
+      "type": "legs",
       "loadCost": 35,
-      "powers": ["night_vision", "slow_falling"],
-      "duration": 300,
+      "powers": ["speed", "jump"],
+      "duration": 200,
       "cooldown": 600,
-      "powerAmplifiers": {}
-    },
-    {
-      "id": "stalker",
-      "name": "Stalker",
-      "type": "face",
-      "loadCost": 32,
-      "powers": ["speed", "night_vision"],
-      "duration": 250,
-      "cooldown": 500,
+      "maxDurability": 500,
+      "durabilityCost": 50,
       "powerAmplifiers": {
-        "speed": 1.5
+        "speed": 1.5,
+        "jump": 2.0
       }
     },
     {
-      "id": "the_oracle",
-      "name": "The Oracle",
-      "type": "face",
-      "loadCost": 40,
-      "powers": ["night_vision", "slow_falling", "strength"],
-      "duration": 350,
-      "cooldown": 800,
+      "id": "reinforced_tendons",
+      "name": "Reinforced Tendons",
+      "type": "legs",
+      "loadCost": 28,
+      "powers": ["speed", "jump", "parkour"],
+      "duration": 500,
+      "cooldown": 0,
+      "maxDurability": 400,
+      "durabilityCost": 0,
       "powerAmplifiers": {
-        "strength": 1.5
+        "speed": 1.5,
+        "jump": 1.0
       }
     },
     {
-      "id": "inmunosupresores",
-      "name": "Immunosuppressants",
-      "type": "blood",
-      "loadCost": 15,
-      "powers": ["adrenaline"],
-      "duration": 60,
-      "cooldown": 40,
+      "id": "spring_joints",
+      "name": "Spring Joints",
+      "type": "legs",
+      "loadCost": 22,
+      "powers": ["jump", "parkour","speed","double_jump"],
+      "duration": 100,
+      "cooldown": 0,
+      "maxDurability": 100,
+      "durabilityCost": 30,
       "powerAmplifiers": {
-        "adrenaline": 0.5
+        "jump": 5,
+        "speed": 5
       }
     }
   ]
