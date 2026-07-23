@@ -18,7 +18,7 @@
       "id": "military_os",
       "name": "Military Cyberware OS",
       "maxLoad": 250,
-      "durability": 1,
+      "durability": 1200,
       "powers": ["speed", "jump", "resistance", "strength"]
     },
     {
@@ -295,19 +295,19 @@
         "resistance": 1.5
       }
     },
+//skeleton
     {
       "id": "bionic_joints",
       "name": "Bionic Joints",
       "type": "skeleton",
       "loadCost": 30,
-      "powers": ["speed", "jump"],
-      "duration": 200,
-      "cooldown": 400,
+      "powers": ["speed", "parkour"],
+      "duration": 500,
+      "cooldown": 100,
       "maxDurability": 350,
       "durabilityCost": 35,
       "powerAmplifiers": {
-        "speed": 1.2,
-        "jump": 1.2
+        "speed": 2
       }
     },
     {
@@ -423,14 +423,15 @@
         "jump": 2.5
       }
     },
+//legs
     {
       "id": "fortified_ankles",
       "name": "Fortified Ankles",
       "type": "legs",
       "loadCost": 25,
-      "powers": ["jump"],
-      "duration": 200,
-      "cooldown": 400,
+      "powers": ["jump","double_jump"],
+      "duration": 500,
+      "cooldown": 100,
       "maxDurability": 300,
       "durabilityCost": 25,
       "powerAmplifiers": {
@@ -471,15 +472,14 @@
       "id": "spring_joints",
       "name": "Spring Joints",
       "type": "legs",
-      "loadCost": 22,
-      "powers": ["jump", "parkour","speed","double_jump"],
-      "duration": 100,
+      "loadCost": 33,
+      "powers": ["jump", "parkour", "double_jump"],
+      "duration": 1000,
       "cooldown": 0,
       "maxDurability": 100,
-      "durabilityCost": 30,
+      "durabilityCost": 20,
       "powerAmplifiers": {
-        "jump": 5,
-        "speed": 5
+        "jump": 3
       }
     }
   ]
