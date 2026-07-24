@@ -19,7 +19,8 @@ function init(e) {
      npc.getStats().getRanged().setDelay(17, 17);
      npc.getStats().getRanged().setBurstDelay(1);
      npc.getInventory().setExp(3,3);
-    npc.getStats().setRespawnType(0);
+    npc.getStats().setRespawnType(3);
+    npc.getStats().setHealthRegen(0);
 }
 
 function tick(e) {
