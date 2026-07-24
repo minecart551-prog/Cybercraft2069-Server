@@ -10,7 +10,7 @@ var playerSugar = {}; // uuid -> true/undefined
 // Keep track so we don't scan a player more than once per detection
 var scannedPlayers = {}; // uuid -> true
 
-var isPolice = 1;
+var isPolice = 0;
 
 function init(e) {
     var npc = e.npc;
