@@ -102,16 +102,6 @@ function setSlotFromConfig(slot, cfg, player) {
     } catch(e) {}
 }
 
-// ========== Hotbar Full Check ==========
-function isHotbarFull(player) {
-    var inv = player.getInventory().getItems();
-    // Hotbar = slots 0–8
-    for (var i = 0; i < 8; i++) {
-        var s = inv[i];
-        if (!s || s.isEmpty()) return false;
-    }
-    return true;
-}
 
 // ========== Button Click ==========
 function customGuiButton(event) {
@@ -162,12 +152,6 @@ function customGuiSlotClicked(event) {
 
     // Must have at least one reward
     if ((!reward1 || reward1.isEmpty()) && (!reward2 || reward2.isEmpty())) return;
-
-    // Block trade if hotbar is full
-    if (isHotbarFull(player)) {
-        player.message("§cYour hotbar is full! Make some room before purchasing.");
-        return;
-    }
 
     var price = priceSlot.getStack();
     var inv   = player.getInventory().getItems();

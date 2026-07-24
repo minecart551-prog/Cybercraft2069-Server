@@ -653,7 +653,6 @@ function customGuiSlotClicked(event) {
         return;
     }
 
-// Block purchase if hotbar is full
 
 
         var playerCoins = countPlayerCoins(player);

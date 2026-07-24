@@ -347,17 +347,7 @@ function customGuiSlotClicked(event) {
         return;
     }
 
-// Block purchase if hotbar is full
-        var inv2 = player.getInventory();
-        var hotbarFull = true;
-        for (var h = 0; h < 9; h++) {
-            var hs = inv2.getSlot(h);
-            if (!hs || hs.isEmpty()) { hotbarFull = false; break; }
-        }
-        if (hotbarFull) {
-            player.message("§cYour hotbar is full! Make some room before purchasing.");
-            return;
-        }
+
 
         var playerCoins = countPlayerCoins(player);
         if (playerCoins < price) {
