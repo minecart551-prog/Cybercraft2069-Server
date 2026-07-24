@@ -37,6 +37,7 @@ var ADM_TF_SCAN_RANGE     = 1001;
 var ADM_TF_Y_TOLERANCE    = 1002;
 var ADM_BTN_SAVE          = 1003;
 var ADM_LBL_TITLE         = 1004;
+var ADM_TF_ALLOWED_CLONES = 1005;
 
 var COLS   = 2;
 var ROW_H  = 22;
@@ -57,6 +58,7 @@ var pendingSy           = 0;
 var pendingSz           = 0;
 var pendingTemplateName = "";
 var savedExcludeText    = "";   // persists the exclude field across GUI opens
+var allowedCloneNames   = [];   // admin-configured list of spawnable clone names (empty = all allowed)
 
 // FIX (bug 2): store the spawner pos object in interact() so findNearbyClones
 // can use it even after pendingNpc is cleared — world.createPos does not exist.
@@ -81,6 +83,10 @@ function loadConfig(npc) {
         if (range !== null && range !== undefined) OWNED_SEARCH_RANGE = parseInt(String(range));
         var tol = sd.get("yTolerance");
         if (tol !== null && tol !== undefined) OWNED_Y_TOLERANCE = parseInt(String(tol));
+        var allowed = sd.get("allowedClones");
+        if (allowed) {
+            allowedCloneNames = JSON.parse(String(allowed));
+        }
     } catch (err) {}
 }
 
@@ -116,8 +122,9 @@ function interact(e) {
         var nearbyClones = world.getNearbyEntities(pos, OWNED_SEARCH_RANGE, 2);
         var spawnerY = pos.getY();
         var cloneNames = {};
-        for (var t = 0; t < CLONE_TYPES.length; t++) {
-            cloneNames[CLONE_TYPES[t].name] = true;
+        var allowedTypes = getAllowedCloneTypes();
+        for (var t = 0; t < allowedTypes.length; t++) {
+            cloneNames[allowedTypes[t].name] = true;
         }
         var activeCount = 0;
         for (var i = 0; i < nearbyClones.length; i++) {
@@ -152,7 +159,7 @@ function interact(e) {
 
 function openAdminGui(player, api, npc) {
     var width  = 260;
-    var height = 180;
+    var height = 230;
 
     var gui = api.createCustomGui(GUI_ADMIN, width, height, false, player);
 
@@ -167,7 +174,15 @@ function openAdminGui(player, api, npc) {
     gui.addLabel(102, "§7Y Tolerance:", 15, 85, 120, 10);
     gui.addTextField(ADM_TF_Y_TOLERANCE, 140, 82, 100, 14).setText(String(OWNED_Y_TOLERANCE));
 
-    gui.addButton(ADM_BTN_SAVE, "§a§lSave", width / 2 - 40, 120, 80, 20);
+    gui.addLabel(103, "§7Allowed Clones (comma-separated, empty = all):", 15, 110, 230, 10);
+    var allowedText = allowedCloneNames.length > 0 ? allowedCloneNames.join(",") : "";
+    gui.addTextField(ADM_TF_ALLOWED_CLONES, 15, 123, 230, 14).setText(allowedText);
+
+    var namesList = [];
+    for (var i = 0; i < CLONE_TYPES.length; i++) { namesList.push(CLONE_TYPES[i].name); }
+    gui.addLabel(104, "§8Available: " + namesList.join(", "), 15, 140, 230, 10);
+
+    gui.addButton(ADM_BTN_SAVE, "§a§lSave", width / 2 - 40, 165, 80, 20);
 
     player.showCustomGui(gui);
 }
@@ -177,7 +192,8 @@ function openSpawnerGui(e) {
     var api    = e.API;
 
     var owned  = countOwnedClones(player, pendingWorld);
-    var rows   = Math.ceil(CLONE_TYPES.length / COLS);
+    var allowedTypes = getAllowedCloneTypes();
+    var rows   = Math.ceil(allowedTypes.length / COLS);
     var width  = LIST_X * 2 + COLS * COL_W;
     var height = LIST_Y + rows * ROW_H + 90;
 
@@ -187,8 +203,8 @@ function openSpawnerGui(e) {
     gui.addLabel(LBL_COUNT,    "§7Active clones: " + owned + " / " + MAX_CLONES, 15, 30, width - 30, 10);
     gui.addLabel(LBL_CURRENCY, "§6Wallet: §e" + fmt(countCoins(player)),         15, 44, width - 30, 10);
 
-    for (var i = 0; i < CLONE_TYPES.length; i++) {
-        var c   = CLONE_TYPES[i];
+    for (var i = 0; i < allowedTypes.length; i++) {
+        var c   = allowedTypes[i];
         var row = Math.floor(i / COLS);
         var col = i % COLS;
         var x   = LIST_X + col * COL_W;
@@ -219,10 +235,11 @@ function customGuiButton(e) {
         return;
     }
 
-    if (bid < BTN_CLONE_BASE || bid >= BTN_CLONE_BASE + CLONE_TYPES.length) return;
+    var allowedTypes = getAllowedCloneTypes();
+    if (bid < BTN_CLONE_BASE || bid >= BTN_CLONE_BASE + allowedTypes.length) return;
 
     var index     = bid - BTN_CLONE_BASE;
-    var cloneType = CLONE_TYPES[index];
+    var cloneType = allowedTypes[index];
 
     // ---- Read exclusion list from the text field (MUST come before payment) ----
     var excludeNames = [];
@@ -335,13 +352,28 @@ function handleAdminGuiButton(e) {
         OWNED_SEARCH_RANGE = scanRange;
         OWNED_Y_TOLERANCE  = yTol;
 
+        // Parse allowed clone names from text field
+        allowedCloneNames = [];
+        try {
+            var allowedRaw = gui.getComponent(ADM_TF_ALLOWED_CLONES).getText();
+            if (allowedRaw && allowedRaw.trim() !== "") {
+                var parts = allowedRaw.split(",");
+                for (var p = 0; p < parts.length; p++) {
+                    var nm = parts[p].trim();
+                    if (nm !== "") allowedCloneNames.push(nm);
+                }
+            }
+        } catch (err) {}
+
         if (pendingNpc) {
             pendingNpc.getStoreddata().put("maxClones", String(MAX_CLONES));
             pendingNpc.getStoreddata().put("scanRange", String(OWNED_SEARCH_RANGE));
             pendingNpc.getStoreddata().put("yTolerance", String(OWNED_Y_TOLERANCE));
+            pendingNpc.getStoreddata().put("allowedClones", JSON.stringify(allowedCloneNames));
         }
 
-        player.message("§aSettings saved! Max Clones: " + MAX_CLONES + ", Scan Range: " + OWNED_SEARCH_RANGE + ", Y Tolerance: " + OWNED_Y_TOLERANCE);
+        var allowedMsg = allowedCloneNames.length > 0 ? allowedCloneNames.join(", ") : "ALL (no restrictions)";
+        player.message("§aSettings saved! Max Clones: " + MAX_CLONES + ", Scan Range: " + OWNED_SEARCH_RANGE + ", Y Tolerance: " + OWNED_Y_TOLERANCE + ", Allowed Clones: " + allowedMsg);
     } catch (err) {
         player.message("§cError saving settings: " + err);
     }
@@ -419,10 +451,11 @@ function updateAllCloneSafelists(world, player, safeList) {
     var allNpcs = world.getNearbyEntities(pendingSpawnerPos, OWNED_SEARCH_RANGE, 2);
     var listStr = JSON.stringify(safeList);
 
-    // Build a lookup set of all valid clone template names
+    // Build a lookup set of allowed clone template names
     var cloneNames = {};
-    for (var t = 0; t < CLONE_TYPES.length; t++) {
-        cloneNames[CLONE_TYPES[t].name] = true;
+    var allowedTypes = getAllowedCloneTypes();
+    for (var t = 0; t < allowedTypes.length; t++) {
+        cloneNames[allowedTypes[t].name] = true;
     }
 
     for (var i = 0; i < allNpcs.length; i++) {
@@ -441,10 +474,11 @@ function countOwnedClones(player, world) {
     var nearby  = world.getNearbyEntities(pendingSpawnerPos, OWNED_SEARCH_RANGE, 2);
     var count   = 0;
 
-    // Build a lookup set of all valid clone template names
+    // Build a lookup set of allowed clone template names
     var cloneNames = {};
-    for (var t = 0; t < CLONE_TYPES.length; t++) {
-        cloneNames[CLONE_TYPES[t].name] = true;
+    var allowedTypes = getAllowedCloneTypes();
+    for (var t = 0; t < allowedTypes.length; t++) {
+        cloneNames[allowedTypes[t].name] = true;
     }
 
     for (var i = 0; i < nearby.length; i++) {
@@ -587,4 +621,20 @@ function fmt(cents) {
     var dollars = Math.floor(cents / 100);
     var c       = cents % 100;
     return "$" + dollars + "." + (c < 10 ? "0" + c : c);
+}
+
+// Returns the list of clone types the admin has allowed.
+// If allowedCloneNames is empty, all clone types are returned.
+function getAllowedCloneTypes() {
+    if (allowedCloneNames.length === 0) return CLONE_TYPES;
+    var allowed = [];
+    for (var i = 0; i < CLONE_TYPES.length; i++) {
+        for (var j = 0; j < allowedCloneNames.length; j++) {
+            if (CLONE_TYPES[i].name === allowedCloneNames[j]) {
+                allowed.push(CLONE_TYPES[i]);
+                break;
+            }
+        }
+    }
+    return allowed;
 }
