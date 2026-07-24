@@ -302,10 +302,10 @@
       "type": "skeleton",
       "loadCost": 30,
       "powers": ["speed", "parkour"],
-      "duration": 500,
-      "cooldown": 100,
-      "maxDurability": 350,
-      "durabilityCost": 35,
+      "duration": 2000,
+      "cooldown": 1000,
+      "maxDurability": 100,
+      "durabilityCost": 0,
       "powerAmplifiers": {
         "speed": 2
       }
@@ -329,13 +329,13 @@
       "name": "Epimorphic Skeleton",
       "type": "skeleton",
       "loadCost": 40,
-      "powers": ["resistance", "slow_falling"],
-      "duration": 300,
-      "cooldown": 800,
-      "maxDurability": 600,
-      "durabilityCost": 75,
+      "powers": ["speed","parkour"],
+      "duration": 1000,
+      "cooldown": 100,
+      "maxDurability": 100,
+      "durabilityCost": 10,
       "powerAmplifiers": {
-        "resistance": 2.0
+        "speed": 3.0
       }
     },
     {
@@ -430,12 +430,12 @@
       "type": "legs",
       "loadCost": 25,
       "powers": ["jump","double_jump"],
-      "duration": 500,
-      "cooldown": 100,
-      "maxDurability": 300,
-      "durabilityCost": 25,
+      "duration": 2000,
+      "cooldown": 1000,
+      "maxDurability": 100,
+      "durabilityCost": 0,
       "powerAmplifiers": {
-        "jump": 2.0
+        "jump": 1
       }
     },
     {
@@ -444,13 +444,13 @@
       "type": "legs",
       "loadCost": 35,
       "powers": ["speed", "jump"],
-      "duration": 200,
-      "cooldown": 600,
+      "duration": 1000,
+      "cooldown": 1,
       "maxDurability": 500,
       "durabilityCost": 50,
       "powerAmplifiers": {
         "speed": 1.5,
-        "jump": 2.0
+        "jump": 5
       }
     },
     {
@@ -458,14 +458,14 @@
       "name": "Reinforced Tendons",
       "type": "legs",
       "loadCost": 28,
-      "powers": ["speed", "jump", "parkour"],
+      "powers": ["speed", "jump"],
       "duration": 500,
       "cooldown": 0,
       "maxDurability": 400,
       "durabilityCost": 0,
       "powerAmplifiers": {
         "speed": 1.5,
-        "jump": 1.0
+        "jump": 5
       }
     },
     {
@@ -473,13 +473,13 @@
       "name": "Spring Joints",
       "type": "legs",
       "loadCost": 33,
-      "powers": ["jump", "parkour", "double_jump"],
+      "powers": ["jump", "double_jump"],
       "duration": 1000,
-      "cooldown": 0,
+      "cooldown": 100,
       "maxDurability": 100,
-      "durabilityCost": 20,
+      "durabilityCost": 6,
       "powerAmplifiers": {
-        "jump": 3
+        "jump": 5
       }
     }
   ]

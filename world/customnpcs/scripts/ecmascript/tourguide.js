@@ -51,7 +51,7 @@ var tourStops = [
     { msg: "§aGet a §eGlock17 §aand §e9mm §abullets and we'll continue" },
     { msg: "§aHere you can get more info about §eReplicants hunting §aand §erewards", path: [[2427, 42, 870],[2425, 42, 845]] },
     { msg: "§aReplicants also drop §eRestaurant Ingredients §athat you can use at Restaurant job" },
-    { msg: "§aIn here is a drones shop, you can hire them to assist you with hunting replicants", coords: [2432, 42, 833] },
+    { msg: "§aIn here is a drones shop, you can hire them to assist you with hunting replicants, in the back theres §eCreeperdoc §aas well for §ecyberwares", coords: [2432, 42, 833] },
     { msg: "§aOver here is a money exchange", path: [[2421, 42, 834],[2428, 42, 815]] },
     { msg: "§aYou can buy your apartments from faction owners here, or check §e#real-estate §aand message faction owners on discord for one.", coords: [2427, 42, 806] },
     { msg: "§aOver here is a cars shop", coords: [2427, 42, 806] },
@@ -192,6 +192,7 @@ function init(e) {
     // If this is a duplicate of an already-existing locked guide, despawn immediately
     if (checkForDuplicateAndDespawn(npc)) return;
     loadPersistedState(npc);
+    npc.getStats().setRespawnType(4);
 }
 
 function interact(e) {
