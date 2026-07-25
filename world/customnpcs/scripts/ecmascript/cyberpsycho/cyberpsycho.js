@@ -8,12 +8,95 @@ var DESPAWN_DISTANCE = 100;
 var LIFETIME_SECONDS = 300; // 5 minutes
 
 // ============================================================================
+// SNBT HELPERS - For creating complex items (guns, ammo, armor, etc.)
+// ============================================================================
+function snbtValue(v) {
+    if (v === null || v === undefined) return "0";
+    if (typeof v === "string" && v.charAt(0) === "[") return v;
+    if (typeof v === "string") return '"' + v.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"';
+    if (typeof v === "boolean") return v ? "1b" : "0b";
+    if (typeof v === "number") {
+        if (v === Math.floor(v)) return String(v);
+        return v + "d";
+    }
+    if (Array.isArray(v)) {
+        var parts = [];
+        for (var i = 0; i < v.length; i++) parts.push(snbtValue(v[i]));
+        return "[" + parts.join(",") + "]";
+    }
+    if (typeof v === "object") return snbtCompound(v);
+    return String(v);
+}
+
+function snbtCompound(obj) {
+    var parts = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            parts.push(key + ":" + snbtValue(obj[key]));
+        }
+    }
+    return "{" + parts.join(",") + "}";
+}
+
+function buildSnbt(cfg) {
+    var tagObj = cfg.nbt ? cfg.nbt : {};
+    var tag = JSON.parse(JSON.stringify(tagObj));
+    var tagParts = [];
+    for (var key in tag) {
+        if (!tag.hasOwnProperty(key)) continue;
+        if (key === "AttributeModifiers") {
+            var modParts = [];
+            var mods = tag[key];
+            for (var m = 0; m < mods.length; m++) {
+                modParts.push(snbtCompound(mods[m]));
+            }
+            tagParts.push("AttributeModifiers:[" + modParts.join(",") + "]");
+        } else if (key === "display") {
+            var dispParts = [];
+            var disp = tag[key];
+            for (var dk in disp) {
+                if (!disp.hasOwnProperty(dk)) continue;
+                if (dk === "Lore") {
+                    var loreParts = [];
+                    for (var li = 0; li < disp[dk].length; li++) {
+                        loreParts.push('"' + String(disp[dk][li]).replace(/\\/g,"\\\\").replace(/"/g,'\\"') + '"');
+                    }
+                    dispParts.push("Lore:[" + loreParts.join(",") + "]");
+                } else {
+                    dispParts.push(dk + ":" + snbtValue(disp[dk]));
+                }
+            }
+            tagParts.push("display:{" + dispParts.join(",") + "}");
+        } else {
+            tagParts.push(key + ":" + snbtValue(tag[key]));
+        }
+    }
+    var count = cfg.count || 1;
+    return '{id:"' + cfg.id + '",Count:' + count + 'b,tag:{' + tagParts.join(",") + '}}';
+}
+
+function createItemFromConfig(npc, cfg) {
+    var api = npc.world;
+    var snbt = buildSnbt(cfg);
+    return api.createItemFromNbt(api.stringToNbt(snbt));
+}
+
+// ============================================================================
 // AREA CONFIGURATION - Define different stat profiles for different areas
+// ============================================================================
+// handItem/drops format: { id: "item:id", count: 1, nbt: { key: value } }
+// nbt supports full SNBT: strings, numbers, arrays, nested objects
+//   e.g. guns:  { id: "tacz:modern_kinetic_gun", nbt: { GunId: "cyber_armorer:unity", HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI" } }
+//   e.g. ammo:  { id: "tacz:ammo", nbt: { AmmoId: "tacz:9mm" } }
+//   e.g. armor: { id: "minecraft:iron_helmet", nbt: { Damage: 0, AttributeModifiers: [{...}] } }
+// Drops: { slot: 0-8, id, count, chance: 1-100 }
 // ============================================================================
 var AREA_STATS = {
     "A": {
         name: "Downtown",
         health: 100,
+        healthRegen: 1,
+        combatRegen: 0,
         damage: 8,
         speed: 3.5,
         rangedStrength: 10,
@@ -21,11 +104,22 @@ var AREA_STATS = {
         rangedRange: 25,
         rangedDelay: 20,
         skinTexture: "cyberpunkskins:textures/b/b01.png",
-        displayName: "Cyberpsycho Alpha"
+        displayName: "Cyberpsycho Alpha",
+        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "tacz:vector45" } },
+        projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
+        drops: [
+            { slot: 0, id: "coins:coal_coin", count: 1, chance: 50 },
+            { slot: 1, id: "tacz:ammo", count: 10, nbt: { AmmoId: "tacz:9mm" }, chance: 25 },
+            { slot: 2, id: "minecraft:ender_pearl", count: 1, chance: 10 }
+        ],
+        expMin: 10,
+        expMax: 20
     },
     "B": {
         name: "Industrial",
         health: 150,
+        healthRegen: 2,
+        combatRegen: 1,
         damage: 12,
         speed: 3.0,
         rangedStrength: 15,
@@ -33,11 +127,23 @@ var AREA_STATS = {
         rangedRange: 30,
         rangedDelay: 15,
         skinTexture: "cyberpunkskins:textures/b/b02.png",
-        displayName: "Cyberpsycho Beta"
+        displayName: "Cyberpsycho Beta",
+        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 30, GunFireMode: "AUTO", GunId: "cyber_armorer:saratoga" } },
+        projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
+        drops: [
+            { slot: 0, id: "coins:coal_coin", count: 2, chance: 60 },
+            { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 30 },
+            { slot: 2, id: "coins:emerald_coin", count: 1, chance: 10 },
+            { slot: 3, id: "tacz:attachment", count: 1, nbt: { AttachmentId: "tacz:sight_sro_dot" }, chance: 5 }
+        ],
+        expMin: 20,
+        expMax: 40
     },
     "C": {
         name: "Slums",
         health: 200,
+        healthRegen: 3,
+        combatRegen: 2,
         damage: 18,
         speed: 2.5,
         rangedStrength: 20,
@@ -45,7 +151,19 @@ var AREA_STATS = {
         rangedRange: 35,
         rangedDelay: 10,
         skinTexture: "cyberpunkskins:textures/b/b03.png",
-        displayName: "Cyberpsycho Gamma"
+        displayName: "Cyberpsycho Gamma",
+        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 8, GunFireMode: "SEMI", GunId: "cyber_armorer:m2038_the_headsman" } },
+        projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:12g" } },
+        drops: [
+            { slot: 0, id: "coins:coal_coin", count: 4, chance: 75 },
+            { slot: 1, id: "coins:emerald_coin", count: 1, chance: 20 },
+            { slot: 2, id: "tacz:ammo", count: 10, nbt: { AmmoId: "tacz:12g" }, chance: 40 },
+            { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 4, GunFireMode: "SEMI", GunId: "cyber_armorer:carnage" }, chance: 3 },
+            { slot: 4, id: "minecraft:ender_pearl", count: 2, chance: 20 },
+            { slot: 5, id: "tacz:attachment", count: 1, nbt: { AttachmentId: "tacz:light_extended_mag_1" }, chance: 8 }
+        ],
+        expMin: 30,
+        expMax: 60
     }
 };
 
@@ -88,18 +206,39 @@ function init(e) {
     npc.getAi().setAvoidsWater(true);
     npc.getAi().setRetaliateType(1);
     npc.getStats().setMaxHealth(currentStats.health);
-    npc.getStats().setHealthRegen(1);
+    npc.getStats().setHealthRegen(currentStats.healthRegen);
+    npc.getStats().setCombatRegen(currentStats.combatRegen);
     npc.getAi().setWalkingSpeed(currentStats.speed);
     
     // Set appearance
     npc.getDisplay().setSkinTexture(currentStats.skinTexture);
     npc.getDisplay().setName(currentStats.displayName);
     
-    // Equip with ranged weapon
-    var gun = npc.world.createItem("tacz:modern_kinetic_gun", 1);
-    gun.getNbt().putString("GunId", "tacz:vector45");
-    npc.setMainhandItem(gun);
-    npc.getInventory().setProjectile(npc.world.createItem("minecraft:gold_nugget", 1));
+    // Equip hand item
+    if (currentStats.handItem) {
+        var gun = createItemFromConfig(npc, currentStats.handItem);
+        npc.setMainhandItem(gun);
+    }
+    
+    // Set projectile
+    if (currentStats.projectile) {
+        var proj = createItemFromConfig(npc, currentStats.projectile);
+        npc.getInventory().setProjectile(proj);
+    }
+    
+    // Set inventory drops
+    if (currentStats.drops) {
+        for (var i = 0; i < currentStats.drops.length; i++) {
+            var drop = currentStats.drops[i];
+            var dropItem = createItemFromConfig(npc, drop);
+            npc.getInventory().setDropItem(drop.slot, dropItem, drop.chance);
+        }
+    }
+    
+    // Set experience drop
+    if (currentStats.expMin !== undefined && currentStats.expMax !== undefined) {
+        npc.getInventory().setExp(currentStats.expMin, currentStats.expMax);
+    }
     
     // Set ranged combat stats
     npc.getStats().getRanged().setStrength(currentStats.rangedStrength);
