@@ -8,89 +8,9 @@ var DESPAWN_DISTANCE = 100;
 var LIFETIME_SECONDS = 300; // 5 minutes
 
 // ============================================================================
-// SNBT HELPERS - For creating complex items (guns, ammo, armor, etc.)
-// ============================================================================
-function snbtValue(v) {
-    if (v === null || v === undefined) return "0";
-    if (typeof v === "string" && v.charAt(0) === "[") return v;
-    if (typeof v === "string") return '"' + v.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"';
-    if (typeof v === "boolean") return v ? "1b" : "0b";
-    if (typeof v === "number") {
-        if (v === Math.floor(v)) return String(v);
-        return v + "d";
-    }
-    if (Array.isArray(v)) {
-        var parts = [];
-        for (var i = 0; i < v.length; i++) parts.push(snbtValue(v[i]));
-        return "[" + parts.join(",") + "]";
-    }
-    if (typeof v === "object") return snbtCompound(v);
-    return String(v);
-}
-
-function snbtCompound(obj) {
-    var parts = [];
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            parts.push(key + ":" + snbtValue(obj[key]));
-        }
-    }
-    return "{" + parts.join(",") + "}";
-}
-
-function buildSnbt(cfg) {
-    var tagObj = cfg.nbt ? cfg.nbt : {};
-    var tag = JSON.parse(JSON.stringify(tagObj));
-    var tagParts = [];
-    for (var key in tag) {
-        if (!tag.hasOwnProperty(key)) continue;
-        if (key === "AttributeModifiers") {
-            var modParts = [];
-            var mods = tag[key];
-            for (var m = 0; m < mods.length; m++) {
-                modParts.push(snbtCompound(mods[m]));
-            }
-            tagParts.push("AttributeModifiers:[" + modParts.join(",") + "]");
-        } else if (key === "display") {
-            var dispParts = [];
-            var disp = tag[key];
-            for (var dk in disp) {
-                if (!disp.hasOwnProperty(dk)) continue;
-                if (dk === "Lore") {
-                    var loreParts = [];
-                    for (var li = 0; li < disp[dk].length; li++) {
-                        loreParts.push('"' + String(disp[dk][li]).replace(/\\/g,"\\\\").replace(/"/g,'\\"') + '"');
-                    }
-                    dispParts.push("Lore:[" + loreParts.join(",") + "]");
-                } else {
-                    dispParts.push(dk + ":" + snbtValue(disp[dk]));
-                }
-            }
-            tagParts.push("display:{" + dispParts.join(",") + "}");
-        } else {
-            tagParts.push(key + ":" + snbtValue(tag[key]));
-        }
-    }
-    var count = cfg.count || 1;
-    return '{id:"' + cfg.id + '",Count:' + count + 'b,tag:{' + tagParts.join(",") + '}}';
-}
-
-function createItemFromConfig(npc, cfg) {
-    var api = npc.world;
-    var snbt = buildSnbt(cfg);
-    return api.createItemFromNbt(api.stringToNbt(snbt));
-}
-
-// ============================================================================
 // AREA CONFIGURATION - Define different stat profiles for different areas
 // ============================================================================
-// handItem/drops format: { id: "item:id", count: 1, nbt: { key: value } }
-// nbt supports full SNBT: strings, numbers, arrays, nested objects
-//   e.g. guns:  { id: "tacz:modern_kinetic_gun", nbt: { GunId: "cyber_armorer:unity", HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI" } }
-//   e.g. ammo:  { id: "tacz:ammo", nbt: { AmmoId: "tacz:9mm" } }
-//   e.g. armor: { id: "minecraft:iron_helmet", nbt: { Damage: 0, AttributeModifiers: [{...}] } }
-// Drops: { slot: 0-8, id, count, chance: 1-100 }
-// ============================================================================
+
 var AREA_STATS = {
     "A": {
         name: "Downtown",
@@ -365,4 +285,79 @@ function died(e) {
 
 function randomFrom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
+}
+
+
+// ============================================================================
+// SNBT HELPERS - For creating complex items (guns, ammo, armor, etc.)
+// ============================================================================
+function snbtValue(v) {
+    if (v === null || v === undefined) return "0";
+    if (typeof v === "string" && v.charAt(0) === "[") return v;
+    if (typeof v === "string") return '"' + v.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"';
+    if (typeof v === "boolean") return v ? "1b" : "0b";
+    if (typeof v === "number") {
+        if (v === Math.floor(v)) return String(v);
+        return v + "d";
+    }
+    if (Array.isArray(v)) {
+        var parts = [];
+        for (var i = 0; i < v.length; i++) parts.push(snbtValue(v[i]));
+        return "[" + parts.join(",") + "]";
+    }
+    if (typeof v === "object") return snbtCompound(v);
+    return String(v);
+}
+
+function snbtCompound(obj) {
+    var parts = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            parts.push(key + ":" + snbtValue(obj[key]));
+        }
+    }
+    return "{" + parts.join(",") + "}";
+}
+
+function buildSnbt(cfg) {
+    var tagObj = cfg.nbt ? cfg.nbt : {};
+    var tag = JSON.parse(JSON.stringify(tagObj));
+    var tagParts = [];
+    for (var key in tag) {
+        if (!tag.hasOwnProperty(key)) continue;
+        if (key === "AttributeModifiers") {
+            var modParts = [];
+            var mods = tag[key];
+            for (var m = 0; m < mods.length; m++) {
+                modParts.push(snbtCompound(mods[m]));
+            }
+            tagParts.push("AttributeModifiers:[" + modParts.join(",") + "]");
+        } else if (key === "display") {
+            var dispParts = [];
+            var disp = tag[key];
+            for (var dk in disp) {
+                if (!disp.hasOwnProperty(dk)) continue;
+                if (dk === "Lore") {
+                    var loreParts = [];
+                    for (var li = 0; li < disp[dk].length; li++) {
+                        loreParts.push('"' + String(disp[dk][li]).replace(/\\/g,"\\\\").replace(/"/g,'\\"') + '"');
+                    }
+                    dispParts.push("Lore:[" + loreParts.join(",") + "]");
+                } else {
+                    dispParts.push(dk + ":" + snbtValue(disp[dk]));
+                }
+            }
+            tagParts.push("display:{" + dispParts.join(",") + "}");
+        } else {
+            tagParts.push(key + ":" + snbtValue(tag[key]));
+        }
+    }
+    var count = cfg.count || 1;
+    return '{id:"' + cfg.id + '",Count:' + count + 'b,tag:{' + tagParts.join(",") + '}}';
+}
+
+function createItemFromConfig(npc, cfg) {
+    var api = npc.world;
+    var snbt = buildSnbt(cfg);
+    return api.createItemFromNbt(api.stringToNbt(snbt));
 }
