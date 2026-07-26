@@ -44,8 +44,6 @@ var TIER_COLORS = {
     "S3": "§d",  // Pink/Light Purple
     "S4": "§5"   // Purple
 };
-var SPAWN_DISTANCE_MIN = 20;
-var SPAWN_DISTANCE_MAX = 40;
 var SPAWN_RANGE_MAX = 150;  // Max distance from player to nearest spawn coord (blocks)
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
@@ -122,13 +120,10 @@ function timer(e) {
         var spawnCoord = findClosestSpawnPoint(player);
         if (!spawnCoord) continue;
 
-        // Calculate spawn position (offset from spawn coord)
-        var angle = Math.random() * Math.PI * 2;
-        var distance = SPAWN_DISTANCE_MIN + Math.random() * (SPAWN_DISTANCE_MAX - SPAWN_DISTANCE_MIN);
-
-        var spawnX = spawnCoord.x + Math.cos(angle) * distance;
+        // Spawn at the exact spawn coordinate
+        var spawnX = spawnCoord.x;
         var spawnY = spawnCoord.y;
-        var spawnZ = spawnCoord.z + Math.sin(angle) * distance;
+        var spawnZ = spawnCoord.z;
 
         spawnY = findGroundLevel(world, spawnX, spawnY, spawnZ);
 
