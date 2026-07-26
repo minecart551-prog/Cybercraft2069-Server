@@ -1,6 +1,6 @@
 // ===============================================================
-// CYBERPSYCHO - Hostile NPC that hunts players at night
-// Spawned by cyberpsycho_spawner.js
+// SERIAL KILLER - Hostile NPC that hunts players at night
+// Spawned by serialkiller_spawner.js
 // Tier (S1-S4) is looked up from the nightly area assignment
 // ===============================================================
 
@@ -161,8 +161,8 @@ function init(e) {
     var tier = "S1"; // fallback default
     try {
         var sd = npc.getWorld().getStoreddata();
-        if (sd.has("cyberpsycho_tiers")) {
-            var assignment = JSON.parse(sd.get("cyberpsycho_tiers"));
+        if (sd.has("serialkiller_tiers")) {
+            var assignment = JSON.parse(sd.get("serialkiller_tiers"));
             tier = assignment[currentArea] || "S1";
         }
     } catch (err) {}

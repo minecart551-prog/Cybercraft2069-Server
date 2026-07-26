@@ -1,6 +1,6 @@
 // ===============================================================
-// CYBERPSYCHO SPAWNER - Scripted Block
-// Spawns cyberpsychos near online players at night
+// SERIAL KILLER SPAWNER - Scripted Block
+// Spawns serial killers near online players at night
 // Each night randomly assigns tiers S1-S4 to areas A-D
 // ===============================================================
 
@@ -55,19 +55,25 @@ var SAFE_ZONES = [
 // SPAWN SETTINGS
 // ============================================================================
 var TIERS = ["S1", "S2", "S3", "S4"];
+var TIER_COLORS = {
+    "S1": "§b",  // Cyan
+    "S2": "§e",  // Yellow
+    "S3": "§d",  // Pink/Light Purple
+    "S4": "§5"   // Purple
+};
 var SPAWN_DISTANCE_MIN = 20;
 var SPAWN_DISTANCE_MAX = 40;
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
 var SPAWN_CHANCE = 0.3;
-var CYBERPSYCHO_NPC_NAME = "Cyberpsycho";
+var SERIALKILLER_NPC_NAME = "SerialKiller";
 
 // ============================================================================
 // STATE TRACKING
 // ============================================================================
 var playerSpawnedTonight = {};
 var lastNightCheck = 0;
-var nightAssigned = false; // Has the tier assignment happened this night
+var nightAssigned = false;
 
 // ============================================================================
 // INITIALIZATION
@@ -91,7 +97,6 @@ function timer(e) {
 
     // Check if it's night time
     if (!isNight(world)) {
-        // Reset at dawn
         if (lastNightCheck !== 0) {
             playerSpawnedTonight = {};
             lastNightCheck = 0;
@@ -144,8 +149,13 @@ function timer(e) {
         spawnY = findGroundLevel(world, spawnX, spawnY, spawnZ);
 
         try {
-            world.spawnClone(Math.floor(spawnX), Math.floor(spawnY), Math.floor(spawnZ), 3, CYBERPSYCHO_NPC_NAME);
+            world.spawnClone(Math.floor(spawnX), Math.floor(spawnY), Math.floor(spawnZ), 3, SERIALKILLER_NPC_NAME);
             playerSpawnedTonight[uuid] = true;
+
+            // Send tier-colored warning message to the player
+            var tier = getTierForArea(spawnCoord.area);
+            var color = TIER_COLORS[tier] || "§f";
+            player.message("§4§l[!] " + color + tier + " §4§ldetected near you");
         } catch (err) {
             // Spawn failed, skip
         }
@@ -156,7 +166,6 @@ function timer(e) {
 // TIER ASSIGNMENT - Shuffle S1-S4 across areas A-D
 // ============================================================================
 function assignTiers() {
-    // Fisher-Yates shuffle of tiers
     var shuffled = TIERS.slice();
     for (var i = shuffled.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -164,7 +173,6 @@ function assignTiers() {
         shuffled[i] = shuffled[j];
         shuffled[j] = temp;
     }
-    // assignment = { "A": "S2", "B": "S1", "C": "S4", "D": "S3" }
     var assignment = {};
     for (var i = 0; i < AREAS.length; i++) {
         assignment[AREAS[i]] = shuffled[i];
@@ -173,14 +181,38 @@ function assignTiers() {
 }
 
 // ============================================================================
-// BROADCAST - Send assignment to all players
+// GET TIER FOR AREA - Read from stored assignment
+// ============================================================================
+function getTierForArea(area) {
+    try {
+        var world = getWorld();
+        if (!world) return "S1";
+        var sd = world.getStoreddata();
+        if (sd.has("serialkiller_tiers")) {
+            var assignment = JSON.parse(sd.get("serialkiller_tiers"));
+            return assignment[area] || "S1";
+        }
+    } catch (err) {}
+    return "S1";
+}
+
+function getWorld() {
+    try {
+        var block = getSpawnerBlock();
+        if (block) return block.getWorld();
+    } catch (err) {}
+    return null;
+}
+
+// ============================================================================
+// BROADCAST - Send colored assignment to all players
 // ============================================================================
 function broadcastAssignment(world, assignment) {
-    var msg = "§4§lSerial Killer Area: §c"
-        + "A:" + assignment["A"] + "  "
-        + "B:" + assignment["B"] + "  "
-        + "C:" + assignment["C"] + "  "
-        + "D:" + assignment["D"];
+    var msg = "§4§lSerial Killer Area: "
+        + "§cA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
+        + "§cB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
+        + "§cC:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
+        + "§cD:" + TIER_COLORS[assignment["D"]] + assignment["D"];
     var players = world.getAllPlayers();
     for (var i = 0; i < players.length; i++) {
         players[i].message(msg);
@@ -188,11 +220,11 @@ function broadcastAssignment(world, assignment) {
 }
 
 // ============================================================================
-// STORE ASSIGNMENT - Save to world stored data for cyberpsycho.js to read
+// STORE ASSIGNMENT - Save to world stored data for serialkiller.js to read
 // ============================================================================
 function storeAssignment(world, assignment) {
     var sd = world.getStoreddata();
-    sd.put("cyberpsycho_tiers", JSON.stringify(assignment));
+    sd.put("serialkiller_tiers", JSON.stringify(assignment));
 }
 
 // ============================================================================
