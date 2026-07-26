@@ -17,6 +17,7 @@ var COIN_DENOMINATIONS = [
 
 var CLONE_TYPES = [
     { tab: 5, name: "M1", displayName: "§9M1", price: 8 },
+    { tab: 5, name: "M2", displayName: "§eM2", price: 46 },
     { tab: 5, name: "M3", displayName: "§bM3", price: 230 },
     { tab: 5, name: "M4", displayName: "§dM4", price: 1400 }
 ];

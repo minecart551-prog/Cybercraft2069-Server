@@ -11,16 +11,14 @@ var SCAN_RANGE = 25;
 
 function init(e) {
     var npc = e.npc;
-     npc.getDisplay().setName("M1");
-     npc.getDisplay().setSkinUrl("https://www.minecraftskins.com/uploads/skins/2025/08/19/cyborg-teenager--nuclear--23480372.png?v961");
-     npc.setFaction(27);
-     npc.getStats().setMaxHealth(20);
-     npc.getStats().getRanged().setStrength(3);
-     npc.getStats().getRanged().setDelay(17, 17);
+     npc.getStats().setMaxHealth(55);
+     npc.getStats().getRanged().setStrength(6);
+     npc.getStats().getRanged().setAccuracy(85);
+     npc.getStats().getRanged().setDelay(20, 20);
      npc.getStats().getRanged().setBurstDelay(1);
-     npc.getInventory().setExp(3,3);
-    npc.getStats().setRespawnType(3);
-    npc.getStats().setHealthRegen(0);
+     npc.getInventory().setExp(8,8);
+     npc.getStats().setRespawnType(3);
+     npc.setFaction(27);
 }
 
 function tick(e) {
