@@ -8,7 +8,7 @@ var SPAWNER_TIMER_ID = 1;
 var CHECK_INTERVAL = 200; // Check every 10 seconds (200 ticks at 20 TPS)
 
 // ============================================================================
-// AREAS - Spawn coordinates per area
+// AREAS - Spawn coordinates per a
 // ============================================================================
 var AREAS = ["A", "B", "C", "D"];
 

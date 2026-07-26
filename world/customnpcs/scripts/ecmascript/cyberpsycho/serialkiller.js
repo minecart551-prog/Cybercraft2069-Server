@@ -332,75 +332,26 @@ function randomFrom(arr) {
 }
 
 // ============================================================================
-// SNBT HELPERS - For creating complex items (guns, ammo, armor, etc.)
+// ITEM CREATOR - Creates items with NBT from config objects
 // ============================================================================
-function snbtValue(v) {
-    if (v === null || v === undefined) return "0";
-    if (typeof v === "string" && v.charAt(0) === "[") return v;
-    if (typeof v === "string") return '"' + v.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"';
-    if (typeof v === "boolean") return v ? "1b" : "0b";
-    if (typeof v === "number") {
-        if (v === Math.floor(v)) return String(v);
-        return v + "d";
-    }
-    if (Array.isArray(v)) {
-        var parts = [];
-        for (var i = 0; i < v.length; i++) parts.push(snbtValue(v[i]));
-        return "[" + parts.join(",") + "]";
-    }
-    if (typeof v === "object") return snbtCompound(v);
-    return String(v);
-}
-
-function snbtCompound(obj) {
-    var parts = [];
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            parts.push(key + ":" + snbtValue(obj[key]));
-        }
-    }
-    return "{" + parts.join(",") + "}";
-}
-
-function buildSnbt(cfg) {
-    var tagObj = cfg.nbt ? cfg.nbt : {};
-    var tag = JSON.parse(JSON.stringify(tagObj));
-    var tagParts = [];
-    for (var key in tag) {
-        if (!tag.hasOwnProperty(key)) continue;
-        if (key === "AttributeModifiers") {
-            var modParts = [];
-            var mods = tag[key];
-            for (var m = 0; m < mods.length; m++) {
-                modParts.push(snbtCompound(mods[m]));
-            }
-            tagParts.push("AttributeModifiers:[" + modParts.join(",") + "]");
-        } else if (key === "display") {
-            var dispParts = [];
-            var disp = tag[key];
-            for (var dk in disp) {
-                if (!disp.hasOwnProperty(dk)) continue;
-                if (dk === "Lore") {
-                    var loreParts = [];
-                    for (var li = 0; li < disp[dk].length; li++) {
-                        loreParts.push('"' + String(disp[dk][li]).replace(/\\/g,"\\\\").replace(/"/g,'\\"') + '"');
-                    }
-                    dispParts.push("Lore:[" + loreParts.join(",") + "]");
-                } else {
-                    dispParts.push(dk + ":" + snbtValue(disp[dk]));
-                }
-            }
-            tagParts.push("display:{" + dispParts.join(",") + "}");
-        } else {
-            tagParts.push(key + ":" + snbtValue(tag[key]));
-        }
-    }
-    var count = cfg.count || 1;
-    return '{id:"' + cfg.id + '",Count:' + count + 'b,tag:{' + tagParts.join(",") + '}}';
-}
+// Format: { id: "item:id", count: 1, nbt: { key: value } }
+// NBT values: numbers become putInteger/putDouble, strings become putString
+// ============================================================================
 
 function createItemFromConfig(npc, cfg) {
-    var api = npc.world;
-    var snbt = buildSnbt(cfg);
-    return api.createItemFromNbt(api.stringToNbt(snbt));
+    var item = npc.world.createItem(cfg.id, cfg.count || 1);
+    if (cfg.nbt) {
+        var nbt = item.getNbt();
+        for (var key in cfg.nbt) {
+            if (!cfg.nbt.hasOwnProperty(key)) continue;
+            var val = cfg.nbt[key];
+            if (typeof val === "number") {
+                if (val === Math.floor(val)) nbt.putInteger(key, val);
+                else nbt.putDouble(key, val);
+            } else {
+                nbt.putString(key, String(val));
+            }
+        }
+    }
+    return item;
 }
