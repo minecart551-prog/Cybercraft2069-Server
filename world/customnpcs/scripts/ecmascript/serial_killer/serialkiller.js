@@ -344,13 +344,7 @@ function createItemFromConfig(npc, cfg) {
         var nbt = item.getNbt();
         for (var key in cfg.nbt) {
             if (!cfg.nbt.hasOwnProperty(key)) continue;
-            var val = cfg.nbt[key];
-            if (typeof val === "number") {
-                if (val === Math.floor(val)) nbt.putInteger(key, val);
-                else nbt.putDouble(key, val);
-            } else {
-                nbt.putString(key, String(val));
-            }
+            nbt.putString(key, String(cfg.nbt[key]));
         }
     }
     return item;
