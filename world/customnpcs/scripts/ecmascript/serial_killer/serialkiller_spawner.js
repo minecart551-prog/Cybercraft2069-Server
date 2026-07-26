@@ -46,6 +46,7 @@ var TIER_COLORS = {
 };
 var SPAWN_DISTANCE_MIN = 20;
 var SPAWN_DISTANCE_MAX = 40;
+var SPAWN_RANGE_MAX = 150;  // Max distance from player to nearest spawn coord (blocks)
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
 var SPAWN_CHANCE = 0.3;
@@ -244,6 +245,8 @@ function findClosestSpawnPoint(player) {
             closestCoord = coord;
         }
     }
+    // Don't spawn if player is too far from all spawn points
+    if (!closestCoord || closestDist > SPAWN_RANGE_MAX) return null;
     return closestCoord;
 }
 
