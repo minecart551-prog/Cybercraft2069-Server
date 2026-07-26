@@ -14,41 +14,24 @@ var AREAS = ["A", "B", "C", "D"];
 
 var SPAWN_COORDINATES = [
     // Area A - Downtown
-    { x: 2380, y: 43, z: 955, area: "A" },
-    { x: 2400, y: 43, z: 970, area: "A" },
-    { x: 2360, y: 43, z: 940, area: "A" },
-    { x: 2390, y: 43, z: 960, area: "A" },
-    { x: 2370, y: 43, z: 950, area: "A" },
+    { x: 2361, y: -53, z: 146, area: "A" },
 
     // Area B - Industrial
-    { x: 2450, y: 43, z: 900, area: "B" },
-    { x: 2470, y: 43, z: 920, area: "B" },
-    { x: 2430, y: 43, z: 880, area: "B" },
-    { x: 2460, y: 43, z: 910, area: "B" },
-    { x: 2440, y: 43, z: 890, area: "B" },
+    { x: 5, y: 7, z: 6, area: "B" },
+
 
     // Area C - Slums
-    { x: 2500, y: 43, z: 850, area: "C" },
-    { x: 2520, y: 43, z: 870, area: "C" },
-    { x: 2480, y: 43, z: 830, area: "C" },
-    { x: 2510, y: 43, z: 860, area: "C" },
-    { x: 2490, y: 43, z: 840, area: "C" },
+    { x: 5, y: 5, z: 5, area: "C" },
 
     // Area D - Outskirts
-    { x: 2350, y: 43, z: 820, area: "D" },
-    { x: 2370, y: 43, z: 800, area: "D" },
-    { x: 2330, y: 43, z: 840, area: "D" },
-    { x: 2360, y: 43, z: 810, area: "D" },
-    { x: 2340, y: 43, z: 830, area: "D" }
+    { x: 0, y: 0, z: 0, area: "D" },
 ];
 
 // ============================================================================
 // SAFE ZONES - Players in these zones won't be targeted
 // ============================================================================
 var SAFE_ZONES = [
-    { x: 2464, z: 853, radius: 50 },   // Lobby area
-    { x: 2374, z: 951, radius: 30 },   // Police spawn
-    { x: 2498, z: 903, radius: 30 }    // Criminal spawn
+    { x: 0, z: 1, radius: 7 }   // Lobby area
 ];
 
 // ============================================================================
