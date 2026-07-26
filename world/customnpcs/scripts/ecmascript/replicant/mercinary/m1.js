@@ -13,7 +13,7 @@ function init(e) {
     var npc = e.npc;
      npc.getDisplay().setName("M1");
      npc.getDisplay().setSkinUrl("https://www.minecraftskins.com/uploads/skins/2025/08/19/cyborg-teenager--nuclear--23480372.png?v961");
-     npc.setFaction(31);
+     npc.setFaction(27);
      npc.getStats().setMaxHealth(20);
      npc.getStats().getRanged().setStrength(3);
      npc.getStats().getRanged().setDelay(17, 17);
