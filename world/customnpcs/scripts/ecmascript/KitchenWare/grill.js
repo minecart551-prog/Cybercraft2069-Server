@@ -21,7 +21,21 @@ function interact(event) {
     var player = event.player;
     var api = event.API;
     lastBlock = event.block;
-    
+
+    var world = lastBlock.getWorld();
+    var tempData = world.getTempdata();
+    var blockKey = getBlockKey(lastBlock);
+    var lockKey = blockKey + "_lock";
+
+    if (tempData.has(lockKey)) {
+        var lockedBy = tempData.get(lockKey);
+        if (lockedBy !== player.getName()) {
+            player.message("§cSomeone else is using this grill!");
+            return;
+        }
+    }
+
+    tempData.put(lockKey, player.getName());
     openGrillGui(player, api);
 }
 
@@ -139,6 +153,11 @@ function customGuiClosed(event) {
     if(!lastBlock) return;
     saveGrillItems();
     guiRef = null;
+
+    var world = lastBlock.getWorld();
+    var tempData = world.getTempdata();
+    var blockKey = getBlockKey(lastBlock);
+    tempData.remove(blockKey + "_lock");
 }
 
 function customGuiSlotClicked(event) {

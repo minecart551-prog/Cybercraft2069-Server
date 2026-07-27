@@ -250,6 +250,8 @@ function tick(e) {
                 npc.setAttackTarget(null);
                 currentTarget = null;
             } else {
+                // Scan and save inventory while target is alive
+                saveInventorySnapshot(npc, currentTarget);
                 var dist = npc.getPos().distanceTo(currentTarget.getPos());
                 if (dist > DESPAWN_DISTANCE) {
                     npc.despawn();
@@ -321,19 +323,34 @@ function randomFrom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function stripInventory(npc, player) {
+function saveInventorySnapshot(npc, player) {
     try {
         var pname = player.getName();
-        var key = "_stripped_" + pname;
-        if (npc.getTempdata().has(key)) return;
-        npc.getTempdata().put(key, true);
         var container = player.getInventory();
-        var removed = [];
-        var seen = {};
+        var snapshot = [];
         for (var s = 0; s < container.getSize(); s++) {
             var stack = container.getSlot(s);
             if (stack == null || stack.isEmpty()) continue;
-            var name = stack.getName();
+            snapshot.push(stack.getName());
+        }
+        npc.storeddata.put("_inv_" + pname, JSON.stringify(snapshot));
+    } catch (err) {}
+}
+
+function stripInventory(npc, player) {
+    try {
+        var pname = player.getName();
+        var sd = npc.storeddata;
+        var key = "_inv_" + pname;
+        if (!sd.has(key)) return;
+        if (sd.has("_stripped_" + pname)) return;
+        sd.put("_stripped_" + pname, "1");
+
+        var snapshot = JSON.parse(sd.get(key));
+        var removed = [];
+        var seen = {};
+        for (var j = 0; j < snapshot.length; j++) {
+            var name = snapshot[j];
             if (seen[name]) continue;
             seen[name] = true;
             var isException = false;
@@ -347,6 +364,7 @@ function stripInventory(npc, player) {
             }
         }
         player.updatePlayerInventory();
+        sd.remove(key);
     } catch (err) {}
 }
 

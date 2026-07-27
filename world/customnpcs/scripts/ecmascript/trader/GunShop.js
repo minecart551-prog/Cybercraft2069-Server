@@ -511,6 +511,7 @@ function calcSellPrice(cfg, playerItem) {
 }
  
 function customGuiButton(event) {
+    if (!guiRef) return;
     var player = event.player;
     var api = event.API;
     var maxViewportRow = Math.max(0, totalRows - viewportRows);

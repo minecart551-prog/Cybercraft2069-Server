@@ -51,7 +51,7 @@ var CONFIG_SHOP_ITEMS = [
 ],
 //Skeleton
 [
-{ id: "cyberwarecore:bionic_joints", count: 1, price: 100},
+{ id: "cyberwarecore:titanium_bones", count: 1, price: 100},
 ],
 //Leg
 [
