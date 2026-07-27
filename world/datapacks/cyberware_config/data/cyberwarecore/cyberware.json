@@ -297,17 +297,16 @@
     },
 //skeleton
     {
-      "id": "bionic_joints",
-      "name": "Bionic Joints",
+      "id": "titanium_bones",
+      "name": "Titanium Bones",
       "type": "skeleton",
       "loadCost": 30,
-      "powers": ["speed", "parkour"],
+      "powers": ["parkour"],
       "duration": 2000,
       "cooldown": 1000,
       "maxDurability": 100,
       "durabilityCost": 0,
       "powerAmplifiers": {
-        "speed": 2
       }
     },
     {
@@ -341,13 +340,13 @@
     {
       "id": "hollow_bones",
       "name": "Hollow Bones",
-      "type": "skeleton",
-      "loadCost": 20,
-      "powers": ["slow_falling", "jump"],
-      "duration": 200,
-      "cooldown": 400,
-      "maxDurability": 250,
-      "durabilityCost": 25,
+      "type": "legs",
+      "loadCost": 25,
+      "powers": ["jump","double_jump"],
+      "duration": 2000,
+      "cooldown": 1000,
+      "maxDurability": 100,
+      "durabilityCost": 0,
       "powerAmplifiers": {
         "jump": 1.5
       }
