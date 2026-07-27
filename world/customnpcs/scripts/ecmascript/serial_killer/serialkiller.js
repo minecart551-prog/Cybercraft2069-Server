@@ -164,7 +164,7 @@ function init(e) {
     // Apply stats based on tier
     npc.setFaction(17); // Hostile faction
     npc.getAi().setAvoidsWater(true);
-    npc.getAi().setRetaliateType(1);
+    npc.getAi().setRetaliateType(0);
     npc.getStats().setMaxHealth(currentStats.health);
     npc.getStats().setHealthRegen(currentStats.healthRegen);
     npc.getStats().setCombatRegen(currentStats.combatRegen);

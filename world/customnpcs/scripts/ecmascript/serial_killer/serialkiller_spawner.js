@@ -5,7 +5,8 @@
 // ===============================================================
 
 var SPAWNER_TIMER_ID = 1;
-var CHECK_INTERVAL = 20; // 20 CNPC ticks = 200 Minecraft ticks = 10 seconds
+var CHECK_INTERVAL = 20;  // 20 CNPC ticks = 200 MC ticks = 10 seconds (CNPC tick = 10 MC ticks)
+var SPAWN_WINDOW = 40;    // Time window (ticks) around each scheduled slot to fire
 
 // ============================================================================
 // AREAS - Spawn coordinates per a
@@ -48,13 +49,13 @@ var SPAWN_RANGE_MAX = 150;  // Max distance from player to nearest spawn coord (
 var KILLS_PER_PLAYER = 5;  // Number of serial killers per player per night
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
-var SPAWN_CHANCE = 0.3;
 var SERIALKILLER_NPC_NAME = "SerialKiller";
 
 // ============================================================================
 // STATE TRACKING
 // ============================================================================
-var playerSpawnedTonight = {};
+var playerSpawnedTonight = {};   // { uuid: count }
+var playerSchedule = {};         // { uuid: [tick1, tick2, ...] }
 var lastNightCheck = 0;
 var nightAssigned = false;
 
@@ -82,16 +83,19 @@ function timer(e) {
     if (!isNight(world)) {
         if (lastNightCheck !== 0) {
             playerSpawnedTonight = {};
+            playerSchedule = {};
             lastNightCheck = 0;
             nightAssigned = false;
         }
         return;
     }
 
-    // New night cycle - assign tiers and broadcast
     var currentTime = world.getTime();
+
+    // New night cycle - reset state and assign tiers
     if (lastNightCheck === 0 || currentTime < NIGHT_START) {
         playerSpawnedTonight = {};
+        playerSchedule = {};
         lastNightCheck = currentTime;
         nightAssigned = false;
     }
@@ -104,40 +108,50 @@ function timer(e) {
         nightAssigned = true;
     }
 
-    // Get all online players
+    // Build schedule for any player that doesn't have one yet
     var onlinePlayers = world.getAllPlayers();
-    if (onlinePlayers.length === 0) return;
+    for (var i = 0; i < onlinePlayers.length; i++) {
+        var uuid = onlinePlayers[i].getUUID();
+        if (!playerSchedule[uuid]) {
+            playerSchedule[uuid] = generateSpawnTimes(KILLS_PER_PLAYER);
+        }
+    }
 
     // Process each online player
     for (var i = 0; i < onlinePlayers.length; i++) {
         var player = onlinePlayers[i];
         var uuid = player.getUUID();
+        var count = playerSpawnedTonight[uuid] || 0;
 
-        if ((playerSpawnedTonight[uuid] || 0) >= KILLS_PER_PLAYER) continue;
+        // Already hit limit for this night
+        if (count >= KILLS_PER_PLAYER) continue;
         if (isInSafeZone(player)) continue;
-        if (Math.random() > SPAWN_CHANCE) continue;
 
-        // Find closest spawn coordinate to player
-        var spawnCoord = findClosestSpawnPoint(player);
-        if (!spawnCoord) continue;
+        var schedule = playerSchedule[uuid];
+        // No schedule or all slots consumed
+        if (!schedule || count >= schedule.length) continue;
 
-        // Spawn at the exact spawn coordinate
-        var spawnX = spawnCoord.x;
-        var spawnY = spawnCoord.y;
-        var spawnZ = spawnCoord.z;
+        // Check if current time is within window of the next scheduled slot
+        var nextSlot = schedule[count];
+        if (currentTime >= nextSlot - SPAWN_WINDOW && currentTime <= nextSlot + SPAWN_WINDOW) {
+            // Find closest spawn coordinate to player
+            var spawnCoord = findClosestSpawnPoint(player);
+            if (!spawnCoord) continue;
 
-        spawnY = findGroundLevel(world, spawnX, spawnY, spawnZ);
+            var spawnX = spawnCoord.x;
+            var spawnY = findGroundLevel(world, spawnX, spawnCoord.y, spawnCoord.z);
+            var spawnZ = spawnCoord.z;
 
-        try {
-            world.spawnClone(Math.floor(spawnX), Math.floor(spawnY), Math.floor(spawnZ), 3, SERIALKILLER_NPC_NAME);
-            playerSpawnedTonight[uuid] = (playerSpawnedTonight[uuid] || 0) + 1;
+            try {
+                world.spawnClone(Math.floor(spawnX), Math.floor(spawnY), Math.floor(spawnZ), 3, SERIALKILLER_NPC_NAME);
+                playerSpawnedTonight[uuid] = count + 1;
 
-            // Send tier-colored warning message to the player
-            var tier = getTierForArea(spawnCoord.area);
-            var color = TIER_COLORS[tier] || "§f";
-            player.message("§4§l[!] " + color + tier + " §4§ldetected near you");
-        } catch (err) {
-            // Spawn failed, skip
+                var tier = getTierForArea(spawnCoord.area);
+                var color = TIER_COLORS[tier] || "§f";
+                player.message("§4§l[!] " + color + tier + " §4§ldetected near you");
+            } catch (err) {
+                // Spawn failed, don't count it — will retry next cycle
+            }
         }
     }
 }
@@ -158,6 +172,19 @@ function assignTiers() {
         assignment[AREAS[i]] = shuffled[i];
     }
     return assignment;
+}
+
+// ============================================================================
+// GENERATE SPAWN TIMES - Random tick positions across the night window
+// ============================================================================
+function generateSpawnTimes(count) {
+    var nightLength = NIGHT_END - NIGHT_START;
+    var times = [];
+    for (var i = 0; i < count; i++) {
+        times.push(NIGHT_START + Math.floor(Math.random() * nightLength));
+    }
+    times.sort(function(a, b) { return a - b; });
+    return times;
 }
 
 // ============================================================================
@@ -189,10 +216,10 @@ function getWorld() {
 // ============================================================================
 function broadcastAssignment(world, assignment) {
     var msg = "§4§lSerial Killer Area: "
-        + "A:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
-        + "B:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
-        + "C:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
-        + "D:" + TIER_COLORS[assignment["D"]] + assignment["D"];
+        + "§fA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
+        + "§fB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
+        + "§fC:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
+        + "§fD:" + TIER_COLORS[assignment["D"]] + assignment["D"];
     var players = world.getAllPlayers();
     for (var i = 0; i < players.length; i++) {
         players[i].message(msg);
