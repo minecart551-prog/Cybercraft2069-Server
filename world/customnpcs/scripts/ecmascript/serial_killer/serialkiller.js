@@ -7,6 +7,7 @@
 var targetPlayer = null;
 var DESPAWN_DISTANCE = 100;
 var LIFETIME_SECONDS = 300; // 5 minutes
+var EXCEPTIONS = ["minecraft:netherite_sword", "tacz:modern_kinetic_gun"];
 
 
 
@@ -229,6 +230,7 @@ function init(e) {
     npc.storeddata.put("_area", currentArea);
     npc.storeddata.put("_tier", currentTier);
 
+
     // Scan for nearby players immediately
     scanForTarget(npc);
 }
@@ -255,6 +257,7 @@ function tick(e) {
     if (currentTarget) {
         try {
             if (!currentTarget.isAlive()) {
+                stripInventory(npc, currentTarget);
                 npc.setAttackTarget(null);
                 currentTarget = null;
             } else {
@@ -321,14 +324,37 @@ function detectArea(x, z) {
     return closestArea;
 }
 
-function died(e) {
-    var npc = e.npc;
-    var area = npc.storeddata.get("_area");
-    var tier = npc.storeddata.get("_tier");
-}
-
 function randomFrom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function stripInventory(npc, player) {
+    try {
+        var pname = player.getName();
+        var key = "_stripped_" + pname;
+        if (npc.getTempdata().has(key)) return;
+        npc.getTempdata().put(key, true);
+        var container = player.getInventory();
+        var removed = [];
+        var seen = {};
+        for (var s = 0; s < container.getSize(); s++) {
+            var stack = container.getSlot(s);
+            if (stack == null || stack.isEmpty()) continue;
+            var name = stack.getName();
+            if (seen[name]) continue;
+            seen[name] = true;
+            var isException = false;
+            for (var ex = 0; ex < EXCEPTIONS.length; ex++) {
+                if (name === EXCEPTIONS[ex]) { isException = true; break; }
+            }
+            if (!isException) {
+                var freshItem = npc.getWorld().createItem(name, 1);
+                player.removeAllItems(freshItem);
+                removed.push(name);
+            }
+        }
+        player.updatePlayerInventory();
+    } catch (err) {}
 }
 
 // ============================================================================
