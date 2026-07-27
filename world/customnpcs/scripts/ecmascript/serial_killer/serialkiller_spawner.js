@@ -12,20 +12,20 @@ var CHECK_INTERVAL = 20; // 20 CNPC ticks = 200 Minecraft ticks = 10 seconds
 // ============================================================================
 var AREAS = ["A", "B", "C", "D"];
 
-var SPAWN_COORDINATES = [
-    // Area A - Downtown
-    { x: 2361, y: -53, z: 146, area: "A" },
-
-    // Area B - Industrial
-    { x: 5, y: 7, z: 6, area: "B" },
-
-
-    // Area C - Slums
-    { x: 5, y: 5, z: 5, area: "C" },
-
-    // Area D - Outskirts
-    { x: 0, y: 0, z: 0, area: "D" },
-];
+var SPAWN_COORDINATES = {
+    "A": [
+        { x: 2361, y: -53, z: 146 }
+    ],
+    "B": [
+        { x: 5, y: 7, z: 6 }
+    ],
+    "C": [
+        { x: 5, y: 5, z: 5 }
+    ],
+    "D": [
+        { x: 0, y: 0, z: 0 }
+    ]
+};
 
 // ============================================================================
 // SAFE ZONES - Players in these zones won't be targeted
@@ -233,12 +233,15 @@ function findClosestSpawnPoint(player) {
     var pz = playerPos.getZ();
     var closestCoord = null;
     var closestDist = 99999;
-    for (var i = 0; i < SPAWN_COORDINATES.length; i++) {
-        var coord = SPAWN_COORDINATES[i];
-        var dist = Math.sqrt(Math.pow(px - coord.x, 2) + Math.pow(pz - coord.z, 2));
-        if (dist < closestDist) {
-            closestDist = dist;
-            closestCoord = coord;
+    for (var area in SPAWN_COORDINATES) {
+        var coords = SPAWN_COORDINATES[area];
+        for (var i = 0; i < coords.length; i++) {
+            var coord = coords[i];
+            var dist = Math.sqrt(Math.pow(px - coord.x, 2) + Math.pow(pz - coord.z, 2));
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestCoord = { x: coord.x, y: coord.y, z: coord.z, area: area };
+            }
         }
     }
     // Don't spawn if player is too far from all spawn points

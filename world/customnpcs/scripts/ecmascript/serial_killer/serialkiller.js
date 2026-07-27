@@ -12,29 +12,13 @@ var EXCEPTIONS = ["minecraft:netherite_sword", "tacz:modern_kinetic_gun"];
 
 
 // ============================================================================
-// AREA DETECTION - Reference points per area (used to detect which area an NPC spawned in)
+// AREA DETECTION - Bounding boxes per area (minX, minZ, maxX, maxZ)
 // ============================================================================
-var AREA_SPAWN_POINTS = {
-    "A": [
-        { x: 2380, z: 955 },
-        { x: 2400, z: 970 },
-        { x: 2360, z: 940 }
-    ],
-    "B": [
-        { x: 2450, z: 900 },
-        { x: 2470, z: 920 },
-        { x: 2430, z: 880 }
-    ],
-    "C": [
-        { x: 2500, z: 850 },
-        { x: 2520, z: 870 },
-        { x: 2480, z: 830 }
-    ],
-    "D": [
-        { x: 2350, z: 820 },
-        { x: 2370, z: 800 },
-        { x: 2330, z: 840 }
-    ]
+var AREA_BOUNDS = {
+    "A": { minX: 1911, minZ: 1135, maxX: 2980, maxZ: 2253 },
+    "B": { minX: 1866, minZ: -15, maxX: 2719, maxZ: 541 },
+    "C": { minX: 1821, minZ: -1405, maxX: 2798, maxZ: -35 },
+    "D": { minX: 532, minZ: -1446, maxX: 1821, maxZ: 85 }
 };
 
 // ============================================================================
@@ -311,22 +295,26 @@ function scanForTarget(npc) {
 }
 
 function detectArea(x, z) {
-    var closestArea = "A";
-    var closestDist = 99999;
-
-    for (var area in AREA_SPAWN_POINTS) {
-        var points = AREA_SPAWN_POINTS[area];
-        for (var i = 0; i < points.length; i++) {
-            var point = points[i];
-            var dist = Math.sqrt(Math.pow(x - point.x, 2) + Math.pow(z - point.z, 2));
-            if (dist < closestDist) {
-                closestDist = dist;
-                closestArea = area;
-            }
+    for (var area in AREA_BOUNDS) {
+        var b = AREA_BOUNDS[area];
+        if (x >= b.minX && x <= b.maxX && z >= b.minZ && z <= b.maxZ) {
+            return area;
         }
     }
-
-    return closestArea;
+    // Outside all areas - find nearest by center point
+    var nearest = "A";
+    var nearestDist = 99999;
+    for (var area in AREA_BOUNDS) {
+        var b = AREA_BOUNDS[area];
+        var cx = (b.minX + b.maxX) / 2;
+        var cz = (b.minZ + b.maxZ) / 2;
+        var dist = Math.sqrt(Math.pow(x - cx, 2) + Math.pow(z - cz, 2));
+        if (dist < nearestDist) {
+            nearestDist = dist;
+            nearest = area;
+        }
+    }
+    return nearest;
 }
 
 function randomFrom(arr) {
