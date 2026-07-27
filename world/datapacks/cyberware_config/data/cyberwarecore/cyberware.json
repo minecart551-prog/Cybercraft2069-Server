@@ -382,17 +382,17 @@
       }
     },
     {
-      "id": "titanium_bones",
-      "name": "Titanium Bones",
+      "id": "bionic_joints",
+      "name": "Bionic Joints",
       "type": "skeleton",
-      "loadCost": 45,
-      "powers": ["resistance"],
-      "duration": 300,
-      "cooldown": 800,
-      "maxDurability": 700,
-      "durabilityCost": 70,
+      "loadCost": 30,
+      "powers": ["speed", "parkour"],
+      "duration": 2000,
+      "cooldown": 1000,
+      "maxDurability": 100,
+      "durabilityCost": 0,
       "powerAmplifiers": {
-        "resistance": 3.0
+        "speed": 2
       }
     },
     {
