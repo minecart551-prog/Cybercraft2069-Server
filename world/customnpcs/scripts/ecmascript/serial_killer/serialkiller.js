@@ -359,7 +359,8 @@ function stripInventory(npc, player) {
 
 function createItemFromConfig(npc, cfg) {
     if (cfg.snbt) {
-        return npc.world.createItemFromNbt(api.stringToNbt(cfg.snbt));
+        var nbtApi = Packages.noppes.npcs.api.NpcAPI.Instance();
+        return npc.world.createItemFromNbt(nbtApi.stringToNbt(cfg.snbt));
     }
     var item = npc.world.createItem(cfg.id, cfg.count || 1);
     if (cfg.nbt) {

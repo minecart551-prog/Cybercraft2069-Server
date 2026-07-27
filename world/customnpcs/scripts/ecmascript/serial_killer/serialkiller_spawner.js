@@ -14,7 +14,7 @@ var AREAS = ["A", "B", "C", "D"];
 
 var SPAWN_COORDINATES = {
     "A": [
-        { x: 2361, y: -53, z: 146 }
+        { x: 2361, y: -52, z: 146 }
     ],
     "B": [
         { x: 5, y: 7, z: 6 }
@@ -45,7 +45,7 @@ var TIER_COLORS = {
     "S4": "§5"   // Purple
 };
 var SPAWN_RANGE_MAX = 150;  // Max distance from player to nearest spawn coord (blocks)
-var KILLS_PER_PLAYER = 1;  // Number of serial killers per player per night
+var KILLS_PER_PLAYER = 5;  // Number of serial killers per player per night
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
 var SPAWN_CHANCE = 0.3;
