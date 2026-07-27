@@ -49,99 +49,104 @@ var AREA_SPAWN_POINTS = {
 // ============================================================================
 var TIER_STATS = {
     "S1": {
-        name: "Tier 1",
-        health: 80,
-        healthRegen: 0,
-        combatRegen: 0,
-        damage: 6,
-        speed: 3.0,
-        rangedStrength: 8,
-        rangedAccuracy: 50,
-        rangedRange: 20,
-        rangedDelay: 25,
-        skinTexture: "cyberpunkskins:textures/b/b01.png",
-        displayName: "Psycho S1",
-        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "tacz:glock_17" } },
+        name: "Tier 4",
+        health: 200,
+        healthRegen: 3,
+        combatRegen: 3,
+        speed: 6.0,
+        rangedStrength: 33,
+        rangedAccuracy: 95,
+        rangedRange: 100,
+        rangedDelay: 15,
+        skinTexture: "cyberpunkskins:textures/technoviking.png",
+        displayName: "S4",
+        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
         projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
         drops: [
-            { slot: 0, id: "coins:stone_coin", count: 3, chance: 60 },
-            { slot: 1, id: "tacz:ammo", count: 5, nbt: { AmmoId: "tacz:9mm" }, chance: 30 }
+            { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 60 },
+            { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" }, chance: 10 },
+            { slot: 6, snbt: '{id:"minecraft:diamond_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;472918365,-183756592,938475610,-561029384]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
+            { slot: 7, snbt: '{id:"minecraft:diamond_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:39.0,Operation:0,Name:"generic.armor",UUID:"[I;-609243745,817364920,-274918365,193746582]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
+            { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
+            { slot: 9, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
         ],
-        expMin: 5,
-        expMax: 10
+        expMin: 8,
+        expMax: 8
     },
     "S2": {
-        name: "Tier 2",
-        health: 150,
-        healthRegen: 1,
-        combatRegen: 0,
-        damage: 10,
-        speed: 3.5,
-        rangedStrength: 12,
-        rangedAccuracy: 65,
-        rangedRange: 25,
-        rangedDelay: 18,
-        skinTexture: "cyberpunkskins:textures/b/b05.png",
-        displayName: "Psycho S2",
-        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 17, GunFireMode: "SEMI", GunId: "cyber_armorer:unity" } },
+        name: "Tier 4",
+        health: 200,
+        healthRegen: 3,
+        combatRegen: 3,
+        speed: 6.0,
+        rangedStrength: 33,
+        rangedAccuracy: 95,
+        rangedRange: 100,
+        rangedDelay: 15,
+        skinTexture: "cyberpunkskins:textures/technoviking.png",
+        displayName: "S4",
+        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
         projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
         drops: [
-            { slot: 0, id: "coins:coal_coin", count: 1, chance: 50 },
-            { slot: 1, id: "tacz:ammo", count: 10, nbt: { AmmoId: "tacz:9mm" }, chance: 35 },
-            { slot: 2, id: "minecraft:ender_pearl", count: 1, chance: 10 }
+            { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 60 },
+            { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" }, chance: 10 },
+            { slot: 6, snbt: '{id:"minecraft:diamond_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;472918365,-183756592,938475610,-561029384]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
+            { slot: 7, snbt: '{id:"minecraft:diamond_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:39.0,Operation:0,Name:"generic.armor",UUID:"[I;-609243745,817364920,-274918365,193746582]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
+            { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
+            { slot: 9, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
         ],
-        expMin: 15,
-        expMax: 25
+        expMin: 8,
+        expMax: 8
     },
     "S3": {
-        name: "Tier 3",
-        health: 250,
-        healthRegen: 2,
-        combatRegen: 1,
-        damage: 16,
-        speed: 3.5,
-        rangedStrength: 18,
-        rangedAccuracy: 75,
-        rangedRange: 30,
-        rangedDelay: 12,
-        skinTexture: "cyberpunkskins:textures/b/b10.png",
-        displayName: "Psycho S3",
-        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 30, GunFireMode: "AUTO", GunId: "cyber_armorer:saratoga" } },
+        name: "Tier 4",
+        health: 200,
+        healthRegen: 3,
+        combatRegen: 3,
+        speed: 6.0,
+        rangedStrength: 33,
+        rangedAccuracy: 95,
+        rangedRange: 100,
+        rangedDelay: 15,
+        skinTexture: "cyberpunkskins:textures/technoviking.png",
+        displayName: "S4",
+        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
         projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
         drops: [
-            { slot: 0, id: "coins:coal_coin", count: 2, chance: 65 },
-            { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 40 },
-            { slot: 2, id: "coins:emerald_coin", count: 1, chance: 8 },
-            { slot: 3, id: "tacz:attachment", count: 1, nbt: { AttachmentId: "tacz:sight_sro_dot" }, chance: 5 }
+            { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 60 },
+            { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" }, chance: 10 },
+            { slot: 6, snbt: '{id:"minecraft:diamond_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;472918365,-183756592,938475610,-561029384]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
+            { slot: 7, snbt: '{id:"minecraft:diamond_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:39.0,Operation:0,Name:"generic.armor",UUID:"[I;-609243745,817364920,-274918365,193746582]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
+            { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
+            { slot: 9, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
         ],
-        expMin: 30,
-        expMax: 50
+        expMin: 8,
+        expMax: 8
     },
     "S4": {
         name: "Tier 4",
-        health: 400,
+        health: 200,
         healthRegen: 3,
-        combatRegen: 2,
-        damage: 22,
-        speed: 4.0,
-        rangedStrength: 25,
-        rangedAccuracy: 85,
-        rangedRange: 35,
-        rangedDelay: 8,
-        skinTexture: "cyberpunkskins:textures/b/b20.png",
-        displayName: "Psycho S4",
-        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 8, GunFireMode: "SEMI", GunId: "cyber_armorer:m2038_the_headsman" } },
-        projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:12g" } },
+        combatRegen: 3,
+        speed: 6.0,
+        rangedStrength: 33,
+        rangedAccuracy: 95,
+        rangedRange: 100,
+        rangedDelay: 15,
+        skinTexture: "cyberpunkskins:textures/technoviking.png",
+        displayName: "S4",
+        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
+        projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
         drops: [
-            { slot: 0, id: "coins:coal_coin", count: 4, chance: 75 },
-            { slot: 1, id: "coins:emerald_coin", count: 1, chance: 20 },
-            { slot: 2, id: "tacz:ammo", count: 10, nbt: { AmmoId: "tacz:12g" }, chance: 45 },
-            { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 4, GunFireMode: "SEMI", GunId: "cyber_armorer:carnage" }, chance: 3 },
-            { slot: 4, id: "minecraft:ender_pearl", count: 2, chance: 20 },
-            { slot: 5, id: "tacz:attachment", count: 1, nbt: { AttachmentId: "tacz:light_extended_mag_1" }, chance: 8 }
+            { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 60 },
+            { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" }, chance: 10 },
+            { slot: 6, snbt: '{id:"minecraft:diamond_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;472918365,-183756592,938475610,-561029384]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
+            { slot: 7, snbt: '{id:"minecraft:diamond_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:39.0,Operation:0,Name:"generic.armor",UUID:"[I;-609243745,817364920,-274918365,193746582]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
+            { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
+            { slot: 9, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
         ],
-        expMin: 50,
-        expMax: 80
+        expMin: 8,
+        expMax: 8
     }
 };
 
@@ -360,11 +365,14 @@ function stripInventory(npc, player) {
 // ============================================================================
 // ITEM CREATOR - Creates items with NBT from config objects
 // ============================================================================
-// Format: { id: "item:id", count: 1, nbt: { key: value } }
-// NBT values: numbers become putInteger/putDouble, strings become putString
+// Simple format: { id: "item:id", count: 1, nbt: { key: value } }
+// SNBT format:   { snbt: '{id:"item:id",Count:1b,tag:{...}}' }  (for complex NBT)
 // ============================================================================
 
 function createItemFromConfig(npc, cfg) {
+    if (cfg.snbt) {
+        return npc.world.createItemFromNbt(api.stringToNbt(cfg.snbt));
+    }
     var item = npc.world.createItem(cfg.id, cfg.count || 1);
     if (cfg.nbt) {
         var nbt = item.getNbt();

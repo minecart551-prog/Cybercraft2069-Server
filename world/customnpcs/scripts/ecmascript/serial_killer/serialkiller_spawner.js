@@ -5,7 +5,7 @@
 // ===============================================================
 
 var SPAWNER_TIMER_ID = 1;
-var CHECK_INTERVAL = 200; // Check every 10 seconds (200 ticks at 20 TPS)
+var CHECK_INTERVAL = 20; // 20 CNPC ticks = 200 Minecraft ticks = 10 seconds
 
 // ============================================================================
 // AREAS - Spawn coordinates per a
@@ -45,6 +45,7 @@ var TIER_COLORS = {
     "S4": "§5"   // Purple
 };
 var SPAWN_RANGE_MAX = 150;  // Max distance from player to nearest spawn coord (blocks)
+var KILLS_PER_PLAYER = 1;  // Number of serial killers per player per night
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
 var SPAWN_CHANCE = 0.3;
@@ -112,7 +113,7 @@ function timer(e) {
         var player = onlinePlayers[i];
         var uuid = player.getUUID();
 
-        if (playerSpawnedTonight[uuid]) continue;
+        if ((playerSpawnedTonight[uuid] || 0) >= KILLS_PER_PLAYER) continue;
         if (isInSafeZone(player)) continue;
         if (Math.random() > SPAWN_CHANCE) continue;
 
@@ -129,7 +130,7 @@ function timer(e) {
 
         try {
             world.spawnClone(Math.floor(spawnX), Math.floor(spawnY), Math.floor(spawnZ), 3, SERIALKILLER_NPC_NAME);
-            playerSpawnedTonight[uuid] = true;
+            playerSpawnedTonight[uuid] = (playerSpawnedTonight[uuid] || 0) + 1;
 
             // Send tier-colored warning message to the player
             var tier = getTierForArea(spawnCoord.area);
@@ -188,10 +189,10 @@ function getWorld() {
 // ============================================================================
 function broadcastAssignment(world, assignment) {
     var msg = "§4§lSerial Killer Area: "
-        + "§cA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
-        + "§cB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
-        + "§cC:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
-        + "§cD:" + TIER_COLORS[assignment["D"]] + assignment["D"];
+        + "A:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
+        + "B:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
+        + "C:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
+        + "D:" + TIER_COLORS[assignment["D"]] + assignment["D"];
     var players = world.getAllPlayers();
     for (var i = 0; i < players.length; i++) {
         players[i].message(msg);
