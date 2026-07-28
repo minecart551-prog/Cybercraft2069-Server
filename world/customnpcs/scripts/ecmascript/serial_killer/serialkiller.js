@@ -7,7 +7,18 @@
 var targetPlayer = null;
 var DESPAWN_DISTANCE = 100;
 var LIFETIME_SECONDS = 300; // 5 minutes
-var EXCEPTIONS = ["minecraft:netherite_sword", "tacz:modern_kinetic_gun"];
+var EXCEPTIONS = [      "minecraft:fishing_rod",
+                        "lockandblock:key",
+                        "yuushya:package_0",
+                        "automobility:automobile",
+                        "minecraft:written_book",
+                        "automobility:automobile_engine",
+                        "automobility:automobile_frame",
+                        "automobility:automobile_wheel",
+                        "automobility:crowbar",
+                        "minecraft:stick",
+                        "armourers_workshop:skin",
+                        "lockandblock:keycard"];
 
 
 
@@ -239,6 +250,19 @@ function tick(e) {
         }
     }
 
+    // Scan nearby players — strip dead ones, target alive ones
+    var pos = npc.getPos();
+    var nearby = world.getNearbyEntities(pos, 50, 1);
+    var hasAliveTarget = false;
+    for (var i = 0; i < nearby.length; i++) {
+        var player = nearby[i];
+        if (!player.isAlive()) {
+            stripInventory(npc, player);
+        } else {
+            hasAliveTarget = true;
+        }
+    }
+
     // Get current target
     var currentTarget = npc.getAttackTarget();
 
@@ -250,8 +274,6 @@ function tick(e) {
                 npc.setAttackTarget(null);
                 currentTarget = null;
             } else {
-                // Scan and save inventory while target is alive
-                saveInventorySnapshot(npc, currentTarget);
                 var dist = npc.getPos().distanceTo(currentTarget.getPos());
                 if (dist > DESPAWN_DISTANCE) {
                     npc.despawn();
@@ -323,34 +345,19 @@ function randomFrom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function saveInventorySnapshot(npc, player) {
-    try {
-        var pname = player.getName();
-        var container = player.getInventory();
-        var snapshot = [];
-        for (var s = 0; s < container.getSize(); s++) {
-            var stack = container.getSlot(s);
-            if (stack == null || stack.isEmpty()) continue;
-            snapshot.push(stack.getName());
-        }
-        npc.storeddata.put("_inv_" + pname, JSON.stringify(snapshot));
-    } catch (err) {}
-}
-
 function stripInventory(npc, player) {
     try {
         var pname = player.getName();
-        var sd = npc.storeddata;
-        var key = "_inv_" + pname;
-        if (!sd.has(key)) return;
-        if (sd.has("_stripped_" + pname)) return;
-        sd.put("_stripped_" + pname, "1");
-
-        var snapshot = JSON.parse(sd.get(key));
+        var key = "_stripped_" + pname;
+        if (npc.getTempdata().has(key)) return;
+        npc.getTempdata().put(key, true);
+        var container = player.getInventory();
         var removed = [];
         var seen = {};
-        for (var j = 0; j < snapshot.length; j++) {
-            var name = snapshot[j];
+        for (var s = 0; s < container.getSize(); s++) {
+            var stack = container.getSlot(s);
+            if (stack == null || stack.isEmpty()) continue;
+            var name = stack.getName();
             if (seen[name]) continue;
             seen[name] = true;
             var isException = false;
@@ -364,7 +371,6 @@ function stripInventory(npc, player) {
             }
         }
         player.updatePlayerInventory();
-        sd.remove(key);
     } catch (err) {}
 }
 
