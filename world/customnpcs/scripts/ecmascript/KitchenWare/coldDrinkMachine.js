@@ -179,6 +179,7 @@ function customGuiClosed(event) {
 }
 
 function drawSlotHighlight(x, y) {
+    if (!guiRef) return;
     x = x - 1;
     y = y - 1;
     
@@ -198,6 +199,7 @@ function drawSlotHighlight(x, y) {
 }
 
 function customGuiSlotClicked(event) {
+    if (!guiRef) return;
     var clickedSlot = event.slot;
     var stack = event.stack;
     var player = event.player;

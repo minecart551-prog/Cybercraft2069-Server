@@ -161,6 +161,7 @@ function customGuiClosed(event) {
 }
 
 function customGuiSlotClicked(event) {
+    if (!guiRef) return;
     var clickedSlot = event.slot;
     var stack = event.stack;
     var player = event.player;
