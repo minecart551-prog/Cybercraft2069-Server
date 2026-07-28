@@ -239,7 +239,7 @@ function storeAssignment(world, assignment) {
 // ============================================================================
 function isNight(world) {
     var time = world.getTime();
-    return time >= NIGHT_START || time <= NIGHT_END;
+    return time >= NIGHT_START && time <= NIGHT_END;
 }
 
 function isInSafeZone(player) {
