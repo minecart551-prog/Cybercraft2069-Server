@@ -46,7 +46,7 @@ TUTORIAL_TOPICS[TU_TOPICS.BASIC] = {
         "\u00a7b\ud83d\udecf \u00a7fSave spawn at any \u00a7eBed\u00a7f (Train Stations)",
         "\u00a7a\ud83c\udf5f \u00a7fBuy food from \u00a7evending machines\u00a7f in city",
         "\u00a7b/unstuckme\u00a7f to unstuck",
-        "\u00a7b/spawnme\u00a7f to get back to spawn (only work 3 times)"
+        "\u00a7b/spawnme\u00a7f to get back to spawn (only work 3 times)",
         "\u00a7b/sethome\u00a7f to set home location",
         "\u00a7b/home\u00a7f to teleport to home (3 uses per server restart)",
     ]
