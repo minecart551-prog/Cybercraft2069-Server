@@ -219,6 +219,7 @@ var SERIALKILLER_NPC_NAME = "SerialKiller";
 // ============================================================================
 var playerSpawnedTonight = {};   // { uuid: count }
 var playerSchedule = {};         // { uuid: [tick1, tick2, ...] }
+var playersNotifiedTonight = {}; // { uuid: true }
 var lastNightCheck = 0;
 var nightAssigned = false;
 
@@ -247,6 +248,7 @@ function timer(e) {
         if (lastNightCheck !== 0) {
             playerSpawnedTonight = {};
             playerSchedule = {};
+            playersNotifiedTonight = {};
             lastNightCheck = 0;
             nightAssigned = false;
         }
@@ -259,6 +261,7 @@ function timer(e) {
     if (lastNightCheck === 0 || currentTime < NIGHT_START) {
         playerSpawnedTonight = {};
         playerSchedule = {};
+        playersNotifiedTonight = {};
         lastNightCheck = currentTime;
         nightAssigned = false;
     }
@@ -277,6 +280,19 @@ function timer(e) {
         var uuid = onlinePlayers[i].getUUID();
         if (!playerSchedule[uuid]) {
             playerSchedule[uuid] = generateSpawnTimes(KILLS_PER_PLAYER);
+        }
+    }
+
+    // Notify players who haven't received tonight's assignment yet
+    for (var i = 0; i < onlinePlayers.length; i++) {
+        var player = onlinePlayers[i];
+        var uuid = player.getUUID();
+        if (!playersNotifiedTonight[uuid]) {
+            var msg = buildAssignmentMessage(world);
+            if (msg) {
+                player.message(msg);
+                playersNotifiedTonight[uuid] = true;
+            }
         }
     }
 
@@ -386,6 +402,22 @@ function broadcastAssignment(world, assignment) {
     var players = world.getAllPlayers();
     for (var i = 0; i < players.length; i++) {
         players[i].message(msg);
+        playersNotifiedTonight[players[i].getUUID()] = true;
+    }
+}
+
+function buildAssignmentMessage(world) {
+    try {
+        var sd = world.getStoreddata();
+        if (!sd.has("serialkiller_tiers")) return null;
+        var assignment = JSON.parse(sd.get("serialkiller_tiers"));
+        return "§4§lSerial Killer Area: "
+            + "§fA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
+            + "§fB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
+            + "§fC:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
+            + "§fD:" + TIER_COLORS[assignment["D"]] + assignment["D"];
+    } catch (err) {
+        return null;
     }
 }
 
