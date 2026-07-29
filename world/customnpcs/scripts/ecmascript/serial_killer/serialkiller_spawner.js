@@ -306,7 +306,7 @@ function timer(e) {
             var spawnZ = spawnCoord.z;
 
             try {
-                world.spawnClone(Math.floor(spawnX), Math.floor(spawnY), Math.floor(spawnZ), 3, SERIALKILLER_NPC_NAME);
+                world.spawnClone(Math.floor(spawnX), Math.floor(spawnY)+2, Math.floor(spawnZ), 3, SERIALKILLER_NPC_NAME);
                 playerSpawnedTonight[uuid] = count + 1;
 
                 var tier = getTierForArea(spawnCoord.area);
