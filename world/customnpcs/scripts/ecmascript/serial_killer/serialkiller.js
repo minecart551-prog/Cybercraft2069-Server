@@ -371,6 +371,7 @@ function stripInventory(npc, player) {
             }
         }
         player.updatePlayerInventory();
+        npc.despawn();
     } catch (err) {}
 }
 
