@@ -53,7 +53,7 @@ var TIER_STATS = {
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
-        skinTexture: "cyberpunkskins:textures/technoviking.png",
+        skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
         projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
@@ -78,7 +78,7 @@ var TIER_STATS = {
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
-        skinTexture: "cyberpunkskins:textures/technoviking.png",
+        skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
         projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
@@ -103,7 +103,7 @@ var TIER_STATS = {
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
-        skinTexture: "cyberpunkskins:textures/technoviking.png",
+        skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
         projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
@@ -128,7 +128,7 @@ var TIER_STATS = {
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
-        skinTexture: "cyberpunkskins:textures/technoviking.png",
+        skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
         projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
@@ -182,7 +182,7 @@ function init(e) {
     npc.getAi().setWalkingSpeed(currentStats.speed);
 
     // Set appearance
-    npc.getDisplay().setSkinTexture(currentStats.skinTexture);
+    npc.getDisplay().setSkinUrl(currentStats.skinTexture);
     npc.getDisplay().setName(currentStats.displayName);
 
     // Equip hand item
