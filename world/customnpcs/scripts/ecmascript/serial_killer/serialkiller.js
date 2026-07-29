@@ -18,7 +18,9 @@ var EXCEPTIONS = [      "minecraft:fishing_rod",
                         "automobility:crowbar",
                         "minecraft:stick",
                         "armourers_workshop:skin",
-                        "lockandblock:keycard"];
+                         "lockandblock:keycard"];
+var NIGHT_START = 13000;
+var NIGHT_END = 23000;
 
 
 
@@ -238,6 +240,13 @@ function init(e) {
 function tick(e) {
     var npc = e.npc;
     var world = npc.getWorld();
+
+    // Despawn during daytime
+    var time = world.getTime();
+    if (time >= NIGHT_END || time < NIGHT_START) {
+        npc.despawn();
+        return;
+    }
 
     // Check lifetime
     var birthStr = npc.storeddata.get("_birth");
