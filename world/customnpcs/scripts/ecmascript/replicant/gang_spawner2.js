@@ -19,7 +19,14 @@ var availableGangs = [
             { id: "coins:emerald_coin",          count: 1,  weight: 100 },
             { id: "minecraft:diamond",          count: 1,  weight: 20 }
         ]
-    }
+    },
+        {
+            tab: 1, name: "G3", count: 5,
+            loot: [
+                { id: "coins:coal_coin",          count: 25,  weight: 100 },
+                { id: "minecraft:gold_ingot",          count: 1,  weight: 50 }
+            ]
+        }
 ];
 
 // Chest GUI template variables
