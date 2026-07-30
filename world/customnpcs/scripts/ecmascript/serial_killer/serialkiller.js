@@ -55,6 +55,7 @@ var TIER_STATS = {
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
+        rangedSpeed: 40,
         skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
@@ -80,6 +81,7 @@ var TIER_STATS = {
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
+        rangedSpeed: 40,
         skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
@@ -105,6 +107,7 @@ var TIER_STATS = {
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
+        rangedSpeed: 40,
         skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
@@ -130,6 +133,7 @@ var TIER_STATS = {
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
+        rangedSpeed: 40,
         skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
@@ -220,7 +224,7 @@ function init(e) {
     npc.getStats().getRanged().setDelay(currentStats.rangedDelay, currentStats.rangedDelay);
     npc.getStats().getRanged().setBurstDelay(1);
     npc.getStats().getRanged().setHasGravity(false);
-    npc.getStats().getRanged().setSpeed(40);
+    npc.getStats().getRanged().setSpeed(currentStats.rangedSpeed);
     npc.getStats().setAggroRange(currentStats.rangedRange);
     npc.getStats().getRanged().setSound(0, "customnpcs:gun.pistol.shot");
     npc.getStats().getRanged().setSound(1, "");
