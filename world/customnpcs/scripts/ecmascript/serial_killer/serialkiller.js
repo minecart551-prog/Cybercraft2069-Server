@@ -28,10 +28,10 @@ var NIGHT_END = 23000;
 // AREA DETECTION - Bounding boxes per area (minX, minZ, maxX, maxZ)
 // ============================================================================
 var AREA_BOUNDS = {
-    "A": { minX: 1911, minZ: 1135, maxX: 2980, maxZ: 2253 },
-    "B": { minX: 1866, minZ: -15, maxX: 2719, maxZ: 541 },
-    "C": { minX: 1821, minZ: -1405, maxX: 2798, maxZ: -35 },
-    "D": { minX: 532, minZ: -1446, maxX: 1821, maxZ: 85 }
+    "D": { minX: 1911, minZ: 1135, maxX: 2980, maxZ: 2253 },
+    "C": { minX: 1866, minZ: -15, maxX: 2719, maxZ: 541 },
+    "B": { minX: 1821, minZ: -1405, maxX: 2798, maxZ: -35 },
+    "A": { minX: 532, minZ: -1446, maxX: 1821, maxZ: 85 }
 };
 
 // ============================================================================
