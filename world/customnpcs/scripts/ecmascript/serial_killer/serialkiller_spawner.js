@@ -229,7 +229,8 @@ function getWorld() {
 // BROADCAST - Send colored assignment to all players
 // ============================================================================
 function broadcastAssignment(world, assignment) {
-    var msg = "§4§lSerial Killer Area: "
+    var msg = "§4§lWatch out for Serial Killers on street at night!\n"
+        + "§4§lSerial Killer Area: "
         + "§fA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
         + "§fB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
         + "§fC:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
@@ -246,7 +247,8 @@ function buildAssignmentMessage(world) {
         var sd = world.getStoreddata();
         if (!sd.has("serialkiller_tiers")) return null;
         var assignment = JSON.parse(sd.get("serialkiller_tiers"));
-        return "§4§lSerial Killer Area: "
+        return "§4§lWatch out for Serial Killers on street at night!\n"
+            + "§4§lSerial Killer Area: "
             + "§fA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
             + "§fB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
             + "§fC:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
