@@ -314,10 +314,10 @@ function tick(e) {
     }
 
     // Navigate toward target player
-    if (currentTarget) {
-        var tPos = currentTarget.getPos();
-        npc.navigateTo(tPos.getX(), tPos.getY(), tPos.getZ(), 1);
-    }
+   // if (currentTarget) {
+   //     var tPos = currentTarget.getPos();
+   //     npc.navigateTo(tPos.getX(), tPos.getY(), tPos.getZ(), 1);
+   // }
 
     // If no target, scan for new target
     if (!currentTarget) {
