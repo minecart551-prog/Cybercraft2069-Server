@@ -94,20 +94,20 @@ var TIER_STATS = {
             { slot: 8, snbt: '{id:"minecraft:chainmail_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:6.0,Operation:0,Name:"generic.armor",UUID:"[I;650941737,-1901506567,-1582766196,1857334701]",AttributeName:"generic.armor",Slot:"legs"},{Amount:3.0,Operation:0,Name:"generic.armor_toughness",UUID:"[I;-865580501,1016744579,-1206154126,-1400343339]",AttributeName:"generic.armor_toughness",Slot:"legs"}]}}', chance: 6 },
             { slot: 9, snbt: '{id:"minecraft:chainmail_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:3.0,Operation:0,Name:"generic.armor",UUID:"[I;1624854239,-1370865197,-1979221776,1862783941]",AttributeName:"generic.armor",Slot:"feet"},{Amount:3.0,Operation:0,Name:"generic.armor_toughness",UUID:"[I;996174618,-1532542096,-1324170079,1457612765]",AttributeName:"generic.armor_toughness",Slot:"feet"}]}}', chance: 8 }
         ],
-        expMin: 8,
-        expMax: 8
+        expMin: 20,
+        expMax: 20
     },
     "S3": {
         name: "S3",
-        health: 200,
+        health: 140,
         healthRegen: 3,
         combatRegen: 3,
         speed: 6.0,
-        rangedStrength: 33,
+        rangedStrength: 60,
         rangedAccuracy: 95,
         rangedRange: 100,
-        rangedDelay: 15,
-        rangedSpeed: 40,
+        rangedDelay: 30,
+        rangedSpeed: 50,
         skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
         displayName: "S4",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 6, GunFireMode: "SEMI", GunId: "tacz:m700" } },
@@ -120,8 +120,8 @@ var TIER_STATS = {
             { slot: 8, snbt: '{id:"minecraft:iron_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:15.0,Operation:0,Name:"generic.armor",UUID:"[I;135791113,-975318642,864209753,-509182736]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
             { slot: 9, snbt: '{id:"minecraft:iron_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:11.0,Operation:0,Name:"generic.armor",UUID:"[I;-741852963,159357258,-258147963,753951456]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
         ],
-        expMin: 8,
-        expMax: 8
+        expMin: 50,
+        expMax: 50
     },
     "S4": {
         name: "Tier 4",
@@ -146,8 +146,8 @@ var TIER_STATS = {
             { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
             { slot: 9, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
         ],
-        expMin: 8,
-        expMax: 8
+        expMin: 100,
+        expMax: 100
     }
 };
 
