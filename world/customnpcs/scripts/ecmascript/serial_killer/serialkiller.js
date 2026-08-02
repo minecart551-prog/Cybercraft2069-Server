@@ -46,23 +46,23 @@ var AREA_BOUNDS = {
 // ============================================================================
 var TIER_STATS = {
     "S1": {
-        name: "Tier 4",
-        health: 200,
-        healthRegen: 3,
-        combatRegen: 3,
+        name: "S1",
+        health: 50,
+        healthRegen: 1,
+        combatRegen: 2,
         speed: 6.0,
-        rangedStrength: 33,
+        rangedStrength: 12,
         rangedAccuracy: 95,
         rangedRange: 100,
         rangedDelay: 15,
         rangedSpeed: 40,
         skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/12/16/tattered-cyborg-23723445.png?v964",
-        displayName: "S4",
-        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" } },
+        displayName: "S1",
+        handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "tacz:cz75" } },
         projectile: { id: "tacz:ammo", count: 1, nbt: { AmmoId: "tacz:9mm" } },
         drops: [
-            { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 60 },
-            { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" }, chance: 10 },
+            { slot: 1, id: "tacz:ammo", count: 30, nbt: { AmmoId: "tacz:9mm" }, chance: 80 },
+            { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "tacz:cz75" }, chance: 100 },
             { slot: 6, snbt: '{id:"minecraft:diamond_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;472918365,-183756592,938475610,-561029384]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
             { slot: 7, snbt: '{id:"minecraft:diamond_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:39.0,Operation:0,Name:"generic.armor",UUID:"[I;-609243745,817364920,-274918365,193746582]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
             { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
@@ -72,7 +72,7 @@ var TIER_STATS = {
         expMax: 8
     },
     "S2": {
-        name: "Tier 4",
+        name: "S2",
         health: 200,
         healthRegen: 3,
         combatRegen: 3,
@@ -98,7 +98,7 @@ var TIER_STATS = {
         expMax: 8
     },
     "S3": {
-        name: "Tier 4",
+        name: "S3",
         health: 200,
         healthRegen: 3,
         combatRegen: 3,
