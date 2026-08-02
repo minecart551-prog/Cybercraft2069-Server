@@ -164,7 +164,7 @@ function init(e) {
     var pos = npc.getPos();
     var spawnX = pos.getX();
     var spawnZ = pos.getZ();
-
+    npc.getAi().setReturnsHome(false);
     // Detect which area we spawned in
     currentArea = detectArea(spawnX, spawnZ);
 
@@ -316,7 +316,7 @@ function tick(e) {
     // Navigate toward target player
     if (currentTarget) {
         var tPos = currentTarget.getPos();
-        npc.navigateTo(tPos.getX(), tPos.getY(), tPos.getZ(), 3);
+        npc.navigateTo(tPos.getX(), tPos.getY(), tPos.getZ(), 1);
     }
 
     // If no target, scan for new target
