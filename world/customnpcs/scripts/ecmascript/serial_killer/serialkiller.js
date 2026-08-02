@@ -299,6 +299,12 @@ function tick(e) {
         }
     }
 
+    // Only attack players, never other NPCs
+    if (currentTarget && currentTarget.getType() != 1) {
+        npc.setAttackTarget(null);
+        currentTarget = null;
+    }
+
     // If no target, scan for new target
     if (!currentTarget) {
         scanForTarget(npc);
