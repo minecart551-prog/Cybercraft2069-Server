@@ -36,7 +36,7 @@ var AREA_BOUNDS = {
 
 // ============================================================================
 // TIER STATS - Define stat profiles per tier (S1-S4)
-// Tiers are randomly assigned to areas each night by cyberpsycho_spawner.js
+// Tiers are randomly assigned to areas each night by serialkiller_spawner.js
 // ============================================================================
 // handItem/drops format: { id: "item:id", count: 1, nbt: { key: value } }
 // nbt supports full SNBT: strings, numbers, arrays, nested objects
@@ -239,7 +239,10 @@ function init(e) {
 
     // Scan for nearby players immediately
     scanForTarget(npc);
-    npc.say("I'm comming for u heehhee");
+    var nearbyPlayers = npc.getWorld().getNearbyEntities(npc.getPos(), 50, 1);
+    for (var i = 0; i < nearbyPlayers.length; i++) {
+        nearbyPlayers[i].message("§4§lI'm coming for you heehhee");
+    }
 }
 
 function tick(e) {
@@ -304,6 +307,12 @@ function tick(e) {
     if (currentTarget && currentTarget.getType() != 1) {
         npc.setAttackTarget(null);
         currentTarget = null;
+    }
+
+    // Navigate toward target player
+    if (currentTarget) {
+        var tPos = currentTarget.getPos();
+        npc.navigateTo(tPos.getX(), tPos.getY(), tPos.getZ(), currentStats.speed);
     }
 
     // If no target, scan for new target

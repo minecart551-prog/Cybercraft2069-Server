@@ -9,7 +9,7 @@ var CHECK_INTERVAL = 20;  // 20 CNPC ticks = 200 MC ticks = 10 seconds (CNPC tic
 var SPAWN_WINDOW = 40;    // Time window (ticks) around each scheduled slot to fire
 
 // ============================================================================
-// AREAS - Spawn coordinates per area (kept for reference, no longer used)
+// AREAS - Area keys for tier assignment
 // ============================================================================
 var AREAS = ["A", "B", "C", "D"];
 
@@ -343,17 +343,4 @@ function isInSafeZoneNPC(x, z) {
         if (dist <= zone.radius) return true;
     }
     return false;
-}
-
-function findGroundLevel(world, x, y, z) {
-    var checkY = Math.floor(y);
-    var maxSearch = 20;
-    for (var i = 0; i < maxSearch; i++) {
-        try {
-            var block = world.getBlock(Math.floor(x), checkY, Math.floor(z));
-            if (block && block.isSolid()) return checkY + 1;
-        } catch (err) {}
-        checkY--;
-    }
-    return Math.floor(y);
 }
