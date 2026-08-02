@@ -254,6 +254,18 @@ function interact(e) {
             if (existing !== null && existing !== undefined) {
                 player.storeddata.put(TOUR_QUALIFIED_KEY, 1);
             }
+            var carrotItem = npc.world.createItem("minecraft:carrot", 1);
+            var carrotCount = player.getInventory().count(carrotItem, true, true);
+            if (carrotCount > 0) {
+                var inv = player.getInventory();
+                for (var slot = 0; slot < inv.getSize(); slot++) {
+                    var item = inv.getSlot(slot);
+                    if (item != null && item.getName() == "minecraft:carrot") {
+                        inv.setSlot(slot, null);
+                        break;
+                    }
+                }
+            }
             lockToPlayer(npc, player);
         }
 
