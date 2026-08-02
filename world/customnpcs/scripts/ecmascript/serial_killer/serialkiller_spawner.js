@@ -9,186 +9,18 @@ var CHECK_INTERVAL = 20;  // 20 CNPC ticks = 200 MC ticks = 10 seconds (CNPC tic
 var SPAWN_WINDOW = 40;    // Time window (ticks) around each scheduled slot to fire
 
 // ============================================================================
-// AREAS - Spawn coordinates per a
+// AREAS - Spawn coordinates per area (kept for reference, no longer used)
 // ============================================================================
 var AREAS = ["A", "B", "C", "D"];
 
-var SPAWN_COORDINATES = {
-    "A": [
-
-    ],
-    "B": [
-        { x: 2685, y: -50, z: -122 },
-        { x: 2558, y: -53, z: -54 },
-        { x: 2486, y: -53, z: -151 },
-        { x: 2419, y: -53, z: -145 },
-        { x: 2290, y: -53, z: -100 },
-        { x: 2358, y: -53, z: -123 },
-        { x: 2208, y: -53, z: -186 },
-        { x: 2193, y: -53, z: -74 },
-        { x: 2085, y: -53, z: -55 },
-        { x: 2042, y: -53, z: -186 },
-        { x: 2015, y: -52, z: -130 },
-        { x: 2149, y: -52, z: -143 },
-        { x: 1962, y: -53, z: -75 },
-        { x: 1956, y: -53, z: -195 },
-        { x: 1889, y: -53, z: -182 },
-        { x: 1872, y: -53, z: -99 },
-        { x: 1900, y: -53, z: -271 },
-        { x: 1938, y: -53, z: -284 },
-        { x: 1927, y: -53, z: -381 },
-        { x: 1924, y: -53, z: -479 },
-        { x: 2076, y: -53, z: -540 },
-        { x: 1965, y: -53, z: -541 },
-        { x: 2116, y: -53, z: -456 },
-        { x: 2209, y: -53, z: -451 },
-        { x: 2274, y: -53, z: -434 },
-        { x: 2399, y: -53, z: -433 },
-        { x: 2499, y: -53, z: -433 },
-        { x: 2548, y: -53, z: -462 },
-        { x: 2617, y: -53, z: -503 },
-        { x: 2589, y: -53, z: -369 },
-        { x: 2595, y: -53, z: -262 },
-        { x: 2474, y: -52, z: -320 },
-        { x: 2414, y: -52, z: -324 },
-        { x: 2341, y: -52, z: -298 },
-        { x: 2280, y: -52, z: -330 },
-        { x: 2210, y: -53, z: -303 },
-        { x: 2149, y: -53, z: -298 },
-        { x: 2080, y: -53, z: -313 },
-        { x: 2019, y: -53, z: -338 },
-        { x: 1959, y: -53, z: -351 },
-        { x: 2078, y: -43, z: -561 },
-        { x: 1958, y: -53, z: -681 },
-        { x: 1930, y: -47, z: -618 },
-        { x: 1862, y: -53, z: -627 },
-        { x: 1945, y: -53, z: -839 },
-        { x: 2018, y: -53, z: -957 },
-        { x: 2063, y: -53, z: -1038 },
-        { x: 2114, y: -43, z: -959 },
-        { x: 2050, y: -39, z: -772 },
-        { x: 2135, y: -43, z: -622 },
-        { x: 2154, y: -53, z: -730 },
-        { x: 2142, y: -43, z: -841 },
-        { x: 2194, y: -43, z: -925 },
-        { x: 2259, y: -53, z: -979 },
-        { x: 2334, y: -53, z: -1012 },
-        { x: 2478, y: -53, z: -1001 },
-        { x: 2559, y: -53, z: -949 },
-        { x: 2612, y: -53, z: -886 },
-        { x: 2623, y: -53, z: -737 },
-        { x: 2613, y: -53, z: -592 },
-        { x: 2544, y: -53, z: -552 },
-        { x: 2487, y: -53, z: -519 },
-        { x: 2335, y: -53, z: -528 },
-        { x: 2250, y: -53, z: -546 },
-        { x: 2194, y: -53, z: -622 },
-        { x: 2135, y: -43, z: -683 },
-        { x: 2249, y: -43, z: -791 },
-        { x: 2264, y: -42, z: -836 },
-        { x: 2257, y: -43, z: -867 },
-        { x: 2339, y: -53, z: -893 },
-        { x: 2363, y: -53, z: -916 },
-        { x: 2441, y: -53, z: -914 },
-        { x: 2511, y: -53, z: -860 },
-        { x: 2533, y: -53, z: -783 },
-        { x: 2517, y: -53, z: -694 },
-        { x: 2444, y: -53, z: -625 },
-        { x: 2325, y: -53, z: -631 },
-        { x: 2258, y: -43, z: -660 },
-        { x: 2233, y: -43, z: -696 }
-    ],
-    "C": [
-        { x: 2591, y: -53, z: 479 },
-        { x: 2725, y: -52, z: 473 },
-        { x: 2458, y: -53, z: 465 },
-        { x: 2321, y: -53, z: 484 },
-        { x: 2196, y: -53, z: 493 },
-        { x: 2055, y: -53, z: 501 },
-        { x: 2032, y: -53, z: 402 },
-        { x: 2174, y: -53, z: 428 },
-        { x: 2184, y: -53, z: 321 },
-        { x: 2033, y: -46, z: 318 },
-        { x: 2172, y: -53, z: 303 },
-        { x: 2214, y: -53, z: 295 },
-        { x: 2302, y: -53, z: 299 },
-        { x: 2423, y: -53, z: 275 },
-        { x: 2492, y: -53, z: 275 },
-        { x: 2584, y: -53, z: 292 },
-        { x: 2617, y: -53, z: 252 },
-        { x: 2709, y: -53, z: 236 },
-        { x: 2719, y: -53, z: 470 },
-        { x: 2686, y: -53, z: 68 },
-        { x: 2598, y: -52, z: 72 },
-        { x: 2479, y: -53, z: 75 },
-        { x: 2354, y: -53, z: 55 },
-        { x: 2290, y: -53, z: 94 },
-        { x: 2207, y: -53, z: 64 },
-        { x: 2151, y: -53, z: 63 },
-        { x: 2075, y: -53, z: 57 },
-        { x: 2039, y: -53, z: 114 },
-        { x: 1944, y: -53, z: 257 },
-        { x: 2040, y: -53, z: 124 },
-        { x: 1944, y: -52, z: 77 },
-        { x: 2054, y: -53, z: 7 }
-    ],
-    "D": [
-        { x: 2587, y: -53, z: 2148 },
-        { x: 2504, y: -53, z: 2144 },
-        { x: 2478, y: -52, z: 2142 },
-        { x: 2348, y: -46, z: 2141 },
-        { x: 2298, y: -46, z: 2147 },
-        { x: 2187, y: -42, z: 2147 },
-        { x: 2212, y: -53, z: 2058 },
-        { x: 2163, y: -53, z: 2059 },
-        { x: 2099, y: -53, z: 2058 },
-        { x: 2070, y: -53, z: 2061 },
-        { x: 2007, y: -53, z: 2062 },
-        { x: 2046, y: -53, z: 2001 },
-        { x: 2073, y: -53, z: 1972 },
-        { x: 2213, y: -53, z: 2060 },
-        { x: 2160, y: -53, z: 2056 },
-        { x: 2302, y: -53, z: 2053 },
-        { x: 2429, y: -53, z: 2051 },
-        { x: 2569, y: -53, z: 2038 },
-        { x: 2605, y: -53, z: 2018 },
-        { x: 2669, y: -45, z: 2047 },
-        { x: 2685, y: -46, z: 1955 },
-        { x: 2483, y: -53, z: 1860 },
-        { x: 2418, y: -53, z: 1851 },
-        { x: 2327, y: -53, z: 1828 },
-        { x: 2218, y: -53, z: 1828 },
-        { x: 2167, y: -53, z: 1819 },
-        { x: 2040, y: -53, z: 1784 },
-        { x: 2055, y: -53, z: 1684 },
-        { x: 2084, y: -53, z: 1618 },
-        { x: 2182, y: -53, z: 1631 },
-        { x: 2298, y: -53, z: 1596 },
-        { x: 2436, y: -53, z: 1601 },
-        { x: 2560, y: -53, z: 1627 },
-        { x: 2602, y: -53, z: 1597 },
-        { x: 2707, y: -53, z: 1633 },
-        { x: 2706, y: -48, z: 1539 },
-        { x: 2563, y: -53, z: 1470 },
-        { x: 2444, y: -51, z: 1411 },
-        { x: 2340, y: -53, z: 1449 },
-        { x: 2298, y: -53, z: 1438 },
-        { x: 2183, y: -53, z: 1450 },
-        { x: 2075, y: -53, z: 1450 },
-        { x: 2042, y: -53, z: 1369 },
-        { x: 2290, y: -53, z: 1383 },
-        { x: 2310, y: -53, z: 1402 },
-        { x: 2576, y: -53, z: 1398 },
-        { x: 2699, y: -47, z: 1406 },
-        { x: 2704, y: -49, z: 1306 },
-        { x: 2565, y: -53, z: 1295 },
-        { x: 2466, y: -53, z: 1279 },
-        { x: 2318, y: -53, z: 1284 },
-        { x: 2201, y: -53, z: 1251 },
-        { x: 2061, y: -53, z: 1279 },
-        { x: 2060, y: -53, z: 1205 },
-        { x: 2746, y: -51, z: 1212 }
-    ]
+// ============================================================================
+// AREA BOUNDS - Used to detect which area an NPC is in for tier assignment
+// ============================================================================
+var AREA_BOUNDS = {
+    "A": { minX: 532, minZ: -1446, maxX: 1821, maxZ: 85 },
+    "B": { minX: 1821, minZ: -1405, maxX: 2798, maxZ: -35 },
+    "C": { minX: 1866, minZ: -15, maxX: 2719, maxZ: 541 },
+    "D": { minX: 1911, minZ: 1135, maxX: 2980, maxZ: 2253 }
 };
 
 // ============================================================================
@@ -208,7 +40,6 @@ var TIER_COLORS = {
     "S3": "§d",  // Pink/Light Purple
     "S4": "§5"   // Purple
 };
-var SPAWN_RANGE_MAX = 150;  // Max distance from player to nearest spawn coord (blocks)
 var KILLS_PER_PLAYER = 5;  // Number of serial killers per player per night
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
@@ -313,19 +144,23 @@ function timer(e) {
         // Check if current time is within window of the next scheduled slot
         var nextSlot = schedule[count];
         if (currentTime >= nextSlot - SPAWN_WINDOW && currentTime <= nextSlot + SPAWN_WINDOW) {
-            // Find closest spawn coordinate to player
-            var spawnCoord = findClosestSpawnPoint(player);
-            if (!spawnCoord) continue;
+            // Find random NPC near player
+            var npcPos = findRandomNearbyNPC(player, world);
+            if (!npcPos) continue;
 
-            var spawnX = spawnCoord.x;
-            var spawnY = findGroundLevel(world, spawnX, spawnCoord.y, spawnCoord.z);
-            var spawnZ = spawnCoord.z;
+            var spawnX = npcPos.x;
+            var spawnY = npcPos.y;
+            var spawnZ = npcPos.z;
+
+            // Determine area from NPC position
+            var area = detectArea(spawnX, spawnZ);
+            if (!area) continue;
 
             try {
                 world.spawnClone(Math.floor(spawnX), Math.floor(spawnY)+2, Math.floor(spawnZ), 3, SERIALKILLER_NPC_NAME);
                 playerSpawnedTonight[uuid] = count + 1;
 
-                var tier = getTierForArea(spawnCoord.area);
+                var tier = getTierForArea(area);
                 var color = TIER_COLORS[tier] || "§f";
                 player.message("§4§l[!] " + color + tier + " §4§ldetected near you");
             } catch (err) {
@@ -449,26 +284,63 @@ function isInSafeZone(player) {
     return false;
 }
 
-function findClosestSpawnPoint(player) {
-    var playerPos = player.getPos();
-    var px = playerPos.getX();
-    var pz = playerPos.getZ();
-    var closestCoord = null;
-    var closestDist = 99999;
-    for (var area in SPAWN_COORDINATES) {
-        var coords = SPAWN_COORDINATES[area];
-        for (var i = 0; i < coords.length; i++) {
-            var coord = coords[i];
-            var dist = Math.sqrt(Math.pow(px - coord.x, 2) + Math.pow(pz - coord.z, 2));
-            if (dist < closestDist) {
-                closestDist = dist;
-                closestCoord = { x: coord.x, y: coord.y, z: coord.z, area: area };
-            }
+function detectArea(x, z) {
+    for (var area in AREA_BOUNDS) {
+        var b = AREA_BOUNDS[area];
+        if (x >= b.minX && x <= b.maxX && z >= b.minZ && z <= b.maxZ) {
+            return area;
         }
     }
-    // Don't spawn if player is too far from all spawn points
-    if (!closestCoord || closestDist > SPAWN_RANGE_MAX) return null;
-    return closestCoord;
+    return null;
+}
+
+function findRandomNearbyNPC(player, world) {
+    var pos = player.getPos();
+    var px = pos.getX();
+    var py = pos.getY();
+    var pz = pos.getZ();
+    var minRange = 15;
+    var maxRange = 60;
+
+    var nearby = world.getNearbyEntities(pos, maxRange, 2); // 2 = NPCs
+    if (!nearby || nearby.length === 0) return null;
+
+    var candidates = [];
+    for (var i = 0; i < nearby.length; i++) {
+        var npc = nearby[i];
+        var npcPos = npc.getPos();
+        var nx = npcPos.getX();
+        var ny = npcPos.getY();
+        var nz = npcPos.getZ();
+
+        var dx = px - nx;
+        var dy = py - ny;
+        var dz = pz - nz;
+        var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        if (dist < minRange || dist > maxRange) continue;
+
+        // Skip NPCs in safe zone
+        if (isInSafeZoneNPC(nx, nz)) continue;
+
+        // Skip NPCs outside all defined areas
+        if (!detectArea(nx, nz)) continue;
+
+        candidates.push({ x: nx, y: ny, z: nz });
+    }
+
+    if (candidates.length === 0) return null;
+
+    return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function isInSafeZoneNPC(x, z) {
+    for (var i = 0; i < SAFE_ZONES.length; i++) {
+        var zone = SAFE_ZONES[i];
+        var dist = Math.sqrt(Math.pow(x - zone.x, 2) + Math.pow(z - zone.z, 2));
+        if (dist <= zone.radius) return true;
+    }
+    return false;
 }
 
 function findGroundLevel(world, x, y, z) {
