@@ -316,7 +316,7 @@ function tick(e) {
     // Navigate toward target player
     if (currentTarget) {
         var tPos = currentTarget.getPos();
-        npc.navigateTo(tPos.getX(), tPos.getY(), tPos.getZ(), currentStats.speed);
+        npc.navigateTo(tPos.getX(), tPos.getY(), tPos.getZ(), 3);
     }
 
     // If no target, scan for new target
