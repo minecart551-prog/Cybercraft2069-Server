@@ -9,6 +9,10 @@ var DESPAWN_DISTANCE = 100;
 var LIFETIME_SECONDS = 300; // 5 minutes
 var EXCEPTIONS = [      "minecraft:fishing_rod",
                         "lockandblock:key",
+                        "cyberwarecore:cyberware_scanner",
+                        "cyberwarecore:basic_os",
+                        "cyberwarecore:titanium_bones",
+                        "cyberwarecore:fortified_ankles",
                         "yuushya:package_0",
                         "automobility:automobile",
                         "minecraft:written_book",
