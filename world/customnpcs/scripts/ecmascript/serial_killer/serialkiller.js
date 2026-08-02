@@ -230,7 +230,7 @@ function init(e) {
     npc.getStats().getRanged().setSound(1, "");
     npc.getStats().getRanged().setSound(2, "tacz:target_block_hit");
     npc.getStats().getRanged().setMeleeRange(4);
-
+    npc.getAi().setWalkingSpeed(currentStats.speed);
     // Store birth timestamp and area for lifetime/despawn checks
     npc.storeddata.put("_birth", "" + Math.floor(Date.now() / 1000));
     npc.storeddata.put("_area", currentArea);
