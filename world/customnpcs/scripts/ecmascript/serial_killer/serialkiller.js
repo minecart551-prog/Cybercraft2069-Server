@@ -63,10 +63,10 @@ var TIER_STATS = {
         drops: [
             { slot: 1, id: "tacz:ammo", count: 30, nbt: { AmmoId: "tacz:9mm" }, chance: 80 },
             { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "tacz:cz75" }, chance: 100 },
-            { slot: 6, snbt: '{id:"minecraft:diamond_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;472918365,-183756592,938475610,-561029384]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
-            { slot: 7, snbt: '{id:"minecraft:diamond_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:39.0,Operation:0,Name:"generic.armor",UUID:"[I;-609243745,817364920,-274918365,193746582]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
-            { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
-            { slot: 9, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
+            { slot: 6, snbt: '{id:"minecraft:leather_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:2.0,Operation:0,Slot:"head",UUID:"[I;1276935719,2101628065,-2062805011,-1388635]",AttributeName:"generic.armor",Name:"generic.armor"}]}}', chance: 8 },
+            { slot: 7, snbt: '{id:"minecraft:leather_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:6.0,Operation:0,Slot:"chest",UUID:"[I;66453,79497593,-201178,-16957605]",AttributeName:"generic.armor",Name:"generic.armor"}]}}', chance: 5 },
+            { slot: 8, snbt: '{id:"minecraft:leather_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:5.0,Operation:0,Slot:"legs",UUID:"[I;1393173916,1759135223,-1879342790,-508144820]",AttributeName:"generic.armor",Name:"generic.armor"}]}}', chance: 6 },
+            { slot: 9, snbt: '{id:"minecraft:leather_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:2.0,Operation:0,Slot:"feet",UUID:"[I;-1305545332,996295294,-1733047031,531723401]",AttributeName:"generic.armor",Name:"generic.armor"}]}}', chance: 8 }
         ],
         expMin: 8,
         expMax: 8
@@ -89,10 +89,10 @@ var TIER_STATS = {
         drops: [
             { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 60 },
             { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" }, chance: 10 },
-            { slot: 6, snbt: '{id:"minecraft:diamond_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;472918365,-183756592,938475610,-561029384]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
-            { slot: 7, snbt: '{id:"minecraft:diamond_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:39.0,Operation:0,Name:"generic.armor",UUID:"[I;-609243745,817364920,-274918365,193746582]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
-            { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
-            { slot: 9, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
+            { slot: 6, snbt: '{id:"minecraft:chainmail_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:3.0,Operation:0,Name:"generic.armor",UUID:"[I;1962758238,-402895587,-1157109447,1225991700]",AttributeName:"generic.armor",Slot:"head"},{Amount:3.0,Operation:0,Name:"generic.armor_toughness",UUID:"[I;-1942079108,914771463,-1608237363,1151659171]",AttributeName:"generic.armor_toughness",Slot:"head"}]}}', chance: 8 },
+            { slot: 7, snbt: '{id:"minecraft:chainmail_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:8.0,Operation:0,Name:"generic.armor",UUID:"[I;2082959146,1448298836,-2088010816,-866068823]",AttributeName:"generic.armor",Slot:"chest"},{Amount:3.0,Operation:0,Name:"generic.armor_toughness",UUID:"[I;-734355839,1568492182,-1279907194,-1996913419]",AttributeName:"generic.armor_toughness",Slot:"chest"}]}}', chance: 5 },
+            { slot: 8, snbt: '{id:"minecraft:chainmail_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:6.0,Operation:0,Name:"generic.armor",UUID:"[I;650941737,-1901506567,-1582766196,1857334701]",AttributeName:"generic.armor",Slot:"legs"},{Amount:3.0,Operation:0,Name:"generic.armor_toughness",UUID:"[I;-865580501,1016744579,-1206154126,-1400343339]",AttributeName:"generic.armor_toughness",Slot:"legs"}]}}', chance: 6 },
+            { slot: 9, snbt: '{id:"minecraft:chainmail_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:3.0,Operation:0,Name:"generic.armor",UUID:"[I;1624854239,-1370865197,-1979221776,1862783941]",AttributeName:"generic.armor",Slot:"feet"},{Amount:3.0,Operation:0,Name:"generic.armor_toughness",UUID:"[I;996174618,-1532542096,-1324170079,1457612765]",AttributeName:"generic.armor_toughness",Slot:"feet"}]}}', chance: 8 }
         ],
         expMin: 8,
         expMax: 8
@@ -115,10 +115,10 @@ var TIER_STATS = {
         drops: [
             { slot: 1, id: "tacz:ammo", count: 20, nbt: { AmmoId: "tacz:9mm" }, chance: 60 },
             { slot: 3, id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 11, GunFireMode: "SEMI", GunId: "cyber_armorer:unity_cheetah" }, chance: 10 },
-            { slot: 6, snbt: '{id:"minecraft:diamond_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;472918365,-183756592,938475610,-561029384]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
-            { slot: 7, snbt: '{id:"minecraft:diamond_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:39.0,Operation:0,Name:"generic.armor",UUID:"[I;-609243745,817364920,-274918365,193746582]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
-            { slot: 8, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
-            { slot: 9, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
+            { slot: 6, snbt: '{id:"minecraft:iron_helmet",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:11.0,Operation:0,Name:"generic.armor",UUID:"[I;819273645,-564738291,271828182,-314159265]",AttributeName:"generic.armor",Slot:"head"}]}}', chance: 8 },
+            { slot: 7, snbt: '{id:"minecraft:iron_chestplate",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:24.0,Operation:0,Name:"generic.armor",UUID:"[I;-192837465,918273645,-135792468,246813579]",AttributeName:"generic.armor",Slot:"chest"}]}}', chance: 5 },
+            { slot: 8, snbt: '{id:"minecraft:iron_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:15.0,Operation:0,Name:"generic.armor",UUID:"[I;135791113,-975318642,864209753,-509182736]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 6 },
+            { slot: 9, snbt: '{id:"minecraft:iron_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:11.0,Operation:0,Name:"generic.armor",UUID:"[I;-741852963,159357258,-258147963,753951456]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 8 }
         ],
         expMin: 8,
         expMax: 8
