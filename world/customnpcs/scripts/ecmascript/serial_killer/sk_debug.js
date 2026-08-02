@@ -35,7 +35,7 @@ function init(e) {
     ranged.setSpeed(RANGED_SPEED);
 
     npc.getInventory().setExp(EXP_MIN, EXP_MAX);
-    npc.setSpeed(SPEED);
+    npc.getAi().setWalkingSpeed(SPEED);
     npc.setName(DISPLAY_NAME);
 
     // Skin
