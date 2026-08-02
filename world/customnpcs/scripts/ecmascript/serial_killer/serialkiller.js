@@ -239,6 +239,7 @@ function init(e) {
 
     // Scan for nearby players immediately
     scanForTarget(npc);
+    npc.say("I'm comming for u heehhee");
 }
 
 function tick(e) {
