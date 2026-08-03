@@ -211,6 +211,7 @@ var CONFIG_SHOP_ITEMS = [
 { id: "tacz:ammo", count: 10, price: 50, nbt: {"AmmoId": "cyber_armorer:bullet_pistol"}, lore: [] },
 { id: "tacz:attachment", count: 1, price: 600, nbt: {"AttachmentId": "cyber_armorer:sight_04"}, lore: [] },
     null,null,
+],
 ];
 
 
