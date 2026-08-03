@@ -6,7 +6,7 @@
 
 var SPAWNER_TIMER_ID = 1;
 var CHECK_INTERVAL = 20;  // 20 CNPC ticks = 200 MC ticks = 10 seconds (CNPC tick = 10 MC ticks)
-var SPAWN_WINDOW = 40;    // Time window (ticks) around each scheduled slot to fire
+var SPAWN_WINDOW = 120;    // Time window (ticks) around each scheduled slot to fire
 
 // ============================================================================
 // AREAS - Area keys for tier assignment
