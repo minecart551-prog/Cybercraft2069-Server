@@ -28,7 +28,7 @@ ServerEvents.tick(event => {
     }
 
     // Force night time to 13200 once when night starts to trigger serial killer announcements
-    if (server.tickCount % 200 === 0) {
+    if (server.tickCount % 100 === 0) {
         let world = server.overworld();
         let time = world.getDayTime() % 24000;
         if (time >= 13000 && time <= 23000) {
