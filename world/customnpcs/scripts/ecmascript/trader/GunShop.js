@@ -16,7 +16,7 @@ var CONFIG_TAB_ICONS = [
     { id: "tacz:attachment", nbt: {"AttachmentId": "tacz:sight_sro_dot"} },
     { id: "tacz:attachment", nbt: {"AttachmentId": "tacz:light_extended_mag_1"} },
     { id: "tacz:attachment", nbt: {"AttachmentId": "tacz:laser_compact"} },
-
+    { id: "decocraft:pc_tower_black"},
 ];
 
 var CONFIG_TAB_NAMES = [
@@ -31,7 +31,7 @@ var CONFIG_TAB_NAMES = [
     "Scope",
     "Mag",
     "Lasers",
-    "Tab 11",
+    "Sets",
 ];
 
 var CONFIG_TAB_ROWS = [
@@ -173,6 +173,44 @@ var CONFIG_SHOP_ITEMS = [
 { id: "tacz:attachment", count: 1, price: 50, nbt: {"AttachmentId": "tacz:laser_lopro"}, lore: [] },
 { id: "tacz:attachment", count: 1, price: 35, nbt: {"AttachmentId": "tacz:laser_nightstick"}, lore: [] },
 ],
+    // Tab 11 — Sets
+[
+    // Row 1 — CZ75 Set
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 100, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 16, "GunFireMode": "AUTO", "GunId": "tacz:cz75"}, lore: [] },
+{ id: "minecraft:leather_helmet", count: 1, price: 15, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 2.0, "Operation": 0, "Slot": "head", "UUID": "[I;1276935719,2101628065,-2062805011,-1388635]", "AttributeName": "generic.armor", "Name": "generic.armor"}]}, lore: [] },
+{ id: "minecraft:leather_chestplate", count: 1, price: 50, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 6.0, "Operation": 0, "Slot": "chest", "UUID": "[I;66453,79497593,-201178,-16957605]", "AttributeName": "generic.armor", "Name": "generic.armor"}]}, lore: [] },
+{ id: "minecraft:leather_leggings", count: 1, price: 40, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 5.0, "Operation": 0, "Slot": "legs", "UUID": "[I;1393173916,1759135223,-1879342790,-508144820]", "AttributeName": "generic.armor", "Name": "generic.armor"}]}, lore: [] },
+{ id: "minecraft:leather_boots", count: 1, price: 15, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 2.0, "Operation": 0, "Slot": "feet", "UUID": "[I;-1305545332,996295294,-1733047031,531723401]", "AttributeName": "generic.armor", "Name": "generic.armor"}]}, lore: [] },
+{ id: "tacz:ammo", count: 10, price: 1, nbt: {"AmmoId": "tacz:9mm"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 20, nbt: {"AttachmentId": "tacz:sight_sro_dot"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 20, nbt: {"AttachmentId": "tacz:light_extended_mag_1"}, lore: [] },
+    null,
+    // Row 2 — SCAR-H Set
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 20, "GunFireMode": "AUTO", "GunId": "tacz:scar_h"}, lore: [] },
+{ id: "minecraft:chainmail_helmet", count: 1, price: 50, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 3.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;1962758238,-402895587,-1157109447,1225991700]", "AttributeName": "generic.armor", "Slot": "head"}, {"Amount": 3.0, "Operation": 0, "Name": "generic.armor_toughness", "UUID": "[I;-1942079108,914771463,-1608237363,1151659171]", "AttributeName": "generic.armor_toughness", "Slot": "head"}]}, lore: [] },
+{ id: "minecraft:chainmail_chestplate", count: 1, price: 100, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 8.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;2082959146,1448298836,-2088010816,-866068823]", "AttributeName": "generic.armor", "Slot": "chest"}, {"Amount": 3.0, "Operation": 0, "Name": "generic.armor_toughness", "UUID": "[I;-734355839,1568492182,-1279907194,-1996913419]", "AttributeName": "generic.armor_toughness", "Slot": "chest"}]}, lore: [] },
+{ id: "minecraft:chainmail_leggings", count: 1, price: 90, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 6.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;650941737,-1901506567,-1582766196,1857334701]", "AttributeName": "generic.armor", "Slot": "legs"}, {"Amount": 3.0, "Operation": 0, "Name": "generic.armor_toughness", "UUID": "[I;-865580501,1016744579,-1206154126,-1400343339]", "AttributeName": "generic.armor_toughness", "Slot": "legs"}]}, lore: [] },
+{ id: "minecraft:chainmail_boots", count: 1, price: 50, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 3.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;1624854239,-1370865197,-1979221776,1862783941]", "AttributeName": "generic.armor", "Slot": "feet"}, {"Amount": 3.0, "Operation": 0, "Name": "generic.armor_toughness", "UUID": "[I;996174618,-1532542096,-1324170079,1457612765]", "AttributeName": "generic.armor_toughness", "Slot": "feet"}]}, lore: [] },
+{ id: "tacz:ammo", count: 10, price: 10, nbt: {"AmmoId": "tacz:308"}, lore: [] },
+    null,null,null,
+    // Row 3 — M700 Set
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 2000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 6, "GunFireMode": "SEMI", "GunId": "tacz:m700"}, lore: [] },
+{ id: "minecraft:iron_helmet", count: 1, price: 800, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 11.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;819273645,-564738291,271828182,-314159265]", "AttributeName": "generic.armor", "Slot": "head"}]}, lore: [] },
+{ id: "minecraft:iron_chestplate", count: 1, price: 2100, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 24.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;-192837465,918273645,-135792468,246813579]", "AttributeName": "generic.armor", "Slot": "chest"}]}, lore: [] },
+{ id: "minecraft:iron_leggings", count: 1, price: 1300, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 15.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;135791113,-975318642,864209753,-509182736]", "AttributeName": "generic.armor", "Slot": "legs"}]}, lore: [] },
+{ id: "minecraft:iron_boots", count: 1, price: 800, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 11.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;-741852963,159357258,-258147963,753951456]", "AttributeName": "generic.armor", "Slot": "feet"}]}, lore: [] },
+{ id: "tacz:ammo", count: 10, price: 100, nbt: {"AmmoId": "tacz:30_06"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 60, nbt: {"AttachmentId": "tacz:scope_acog_ta31"}, lore: [] },
+    null,null,
+    // Row 4 — Cheetah Set
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 10000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:unity_cheetah"}, lore: [] },
+{ id: "minecraft:diamond_helmet", count: 1, price: 4000, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 18.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;472918365,-183756592,938475610,-561029384]", "AttributeName": "generic.armor", "Slot": "head"}]}, lore: [] },
+{ id: "minecraft:diamond_chestplate", count: 1, price: 8000, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 39.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;-609243745,817364920,-274918365,193746582]", "AttributeName": "generic.armor", "Slot": "chest"}]}, lore: [] },
+{ id: "minecraft:diamond_leggings", count: 1, price: 4000, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 25.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;358474619,-920183746,647382915,-183746590]", "AttributeName": "generic.armor", "Slot": "legs"}]}, lore: [] },
+{ id: "minecraft:diamond_boots", count: 1, price: 3000, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 18.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;-847362915,244918375,-519283746,736491820]", "AttributeName": "generic.armor", "Slot": "feet"}]}, lore: [] },
+{ id: "tacz:ammo", count: 10, price: 50, nbt: {"AmmoId": "cyber_armorer:bullet_pistol"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 600, nbt: {"AttachmentId": "cyber_armorer:sight_04"}, lore: [] },
+    null,null,
 ];
 
 
