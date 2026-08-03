@@ -61,6 +61,8 @@ function init(e) {
     var block = e.block;
     block.timers.forceStart(SPAWNER_TIMER_ID, CHECK_INTERVAL, true);
     playerSpawnedTonight = {};
+    playerSchedule = {};
+    playersNotifiedTonight = {};
     lastNightCheck = 0;
     nightAssigned = false;
 }
