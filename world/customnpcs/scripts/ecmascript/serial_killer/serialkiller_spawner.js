@@ -101,7 +101,6 @@ function timer(e) {
 
     // Assign tiers to areas once per night
     if (!nightAssigned) {
-        block.executeCommand("time set 13200");
         var assignment = assignTiers();
         broadcastAssignment(world, assignment);
         storeAssignment(world, assignment);
