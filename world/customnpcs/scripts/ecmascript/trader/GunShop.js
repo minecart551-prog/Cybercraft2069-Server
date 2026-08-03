@@ -677,7 +677,7 @@ function customGuiSlotClicked(event) {
             if (stackSize <= packSize) {
                 inv.setSlot(foundSlot, null);
             } else {
-                foundStack.setStackSize(stackSize - packSize);
+                safeSetStackSize(player, inv, foundSlot, foundStack, stackSize - packSize);
             }
             var sellPrice = Math.max(0, Math.floor((cfg.price || 0) * (1 - SELL_LOSS_PERCENTAGE)));
             giveCoins(player, sellPrice);
@@ -692,7 +692,7 @@ function customGuiSlotClicked(event) {
             if (stackSize <= 1) {
                 inv.setSlot(foundSlot, null);
             } else {
-                foundStack.setStackSize(stackSize - 1);
+                safeSetStackSize(player, inv, foundSlot, foundStack, stackSize - 1);
             }
 
             // For armor, show durability percentage
@@ -791,6 +791,20 @@ function nbtMatchesIgnoreDamageAndLore(playerStack, cfg) {
     }
 }
  
+function safeSetStackSize(player, inv, slotIndex, stack, newSize) {
+    try {
+        stack.setStackSize(newSize);
+    } catch(e) {
+        try {
+            var copy = player.world.createItemFromNbt(stack.getItemNbt());
+            copy.setStackSize(newSize);
+            inv.setSlot(slotIndex, copy);
+        } catch(e2) {
+            inv.setSlot(slotIndex, null);
+        }
+    }
+}
+
 function giveCoins(player, amount) {
     var emeralds = Math.floor(amount / (STONE_TO_COAL * COAL_TO_EMERALD));
     amount -= emeralds * STONE_TO_COAL * COAL_TO_EMERALD;
@@ -834,7 +848,7 @@ function removeCoins(player, amount) {
         if (stack && !stack.isEmpty() && stack.getName() === "coins:stone_coin") {
             var stackAmount = stack.getStackSize();
             if (stackAmount <= remaining) { inv.setSlot(i, null); remaining -= stackAmount; }
-            else { stack.setStackSize(stackAmount - remaining); remaining = 0; }
+            else { safeSetStackSize(player, inv, i, stack, stackAmount - remaining); remaining = 0; }
         }
     }
  
@@ -846,7 +860,7 @@ function removeCoins(player, amount) {
             if (stoneValue <= remaining) { inv.setSlot(i, null); remaining -= stoneValue; }
             else {
                 var coalsNeeded = Math.ceil(remaining / STONE_TO_COAL);
-                stack.setStackSize(stackAmount - coalsNeeded);
+                safeSetStackSize(player, inv, i, stack, stackAmount - coalsNeeded);
                 var overpaid = (coalsNeeded * STONE_TO_COAL) - remaining;
                 remaining = 0;
                 if (overpaid > 0) player.giveItem(player.world.createItem("coins:stone_coin", overpaid));
@@ -862,7 +876,7 @@ function removeCoins(player, amount) {
             if (stoneValue <= remaining) { inv.setSlot(i, null); remaining -= stoneValue; }
             else {
                 var emeraldsNeeded = Math.ceil(remaining / (STONE_TO_COAL * COAL_TO_EMERALD));
-                stack.setStackSize(stackAmount - emeraldsNeeded);
+                safeSetStackSize(player, inv, i, stack, stackAmount - emeraldsNeeded);
                 var overpaid = (emeraldsNeeded * STONE_TO_COAL * COAL_TO_EMERALD) - remaining;
                 remaining = 0;
                 var changeCoal  = Math.floor(overpaid / STONE_TO_COAL);
