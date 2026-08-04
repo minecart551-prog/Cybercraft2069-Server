@@ -210,7 +210,7 @@ var CONFIG_SHOP_ITEMS = [
 { id: "minecraft:diamond_leggings", count: 1, price: 4000, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 25.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;358474619,-920183746,647382915,-183746590]", "AttributeName": "generic.armor", "Slot": "legs"}]}, lore: [] },
 { id: "minecraft:diamond_boots", count: 1, price: 3000, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 18.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;-847362915,244918375,-519283746,736491820]", "AttributeName": "generic.armor", "Slot": "feet"}]}, lore: [] },
 { id: "tacz:ammo", count: 10, price: 50, nbt: {"AmmoId": "cyber_armorer:bullet_pistol"}, lore: [] },
-{ id: "tacz:attachment", count: 1, price: 600, nbt: {"AttachmentId": "cyber_armorer:sight_04"}, lore: [] },
+{ id: "tacz:attachment", count: 1, price: 400, nbt: {"AttachmentId": "cyber_armorer:sight_03"}, lore: [] },
 
     null,
 ],
