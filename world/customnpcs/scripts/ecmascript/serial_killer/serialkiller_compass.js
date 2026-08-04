@@ -45,8 +45,12 @@ function interact(t) {
         }
     }
 
-    if (!nearest) return;
+    if (!nearest) {
+        player.message("No Serial Killer detected near you");
+        return;
+    }
 
+    player.message("Serial Killer detected near you, look for trail!");
     var R = GetCoordRotation(px, pz, nearest.getX(), nearest.getZ());
     var P = GetPitchRotation(px, py, pz, nearest.getX(), nearest.getY(), nearest.getZ());
     var d = FrontVectors(player, R, P, 4, 0);
