@@ -306,7 +306,7 @@ function findRandomNearbyNPC(player, world) {
     var py = pos.getY();
     var pz = pos.getZ();
     var minRange = 30;
-    var maxRange = 120;
+    var maxRange = 90;
 
     var nearby = world.getNearbyEntities(pos, maxRange, 2); // 2 = NPCs
     if (!nearby || nearby.length === 0) return null;
