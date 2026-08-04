@@ -72,7 +72,7 @@ var TIER_STATS = {
             { slot: 4, snbt: '{id:"minecraft:leather_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:5.0,Operation:0,Slot:"legs",UUID:"[I;1393173916,1759135223,-1879342790,-508144820]",AttributeName:"generic.armor",Name:"generic.armor"}]}}', chance: 90 },
             { slot: 5, snbt: '{id:"minecraft:leather_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:2.0,Operation:0,Slot:"feet",UUID:"[I;-1305545332,996295294,-1733047031,531723401]",AttributeName:"generic.armor",Name:"generic.armor"}]}}', chance: 90 },
             { slot: 6, id: "minecraft:steak", count: 10, chance: 100 },
-            { slot: 7, id: "minecraft:potion", count: 5, nbt: { Potion: "minecraft:healing" }, chance: 100 }
+            { slot: 7, id: "potion:strong_healing", count: 5, chance: 100 }
         ],
         expMin: 8,
         expMax: 8
@@ -100,7 +100,7 @@ var TIER_STATS = {
             { slot: 4, snbt: '{id:"minecraft:chainmail_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:6.0,Operation:0,Name:"generic.armor",UUID:"[I;650941737,-1901506567,-1582766196,1857334701]",AttributeName:"generic.armor",Slot:"legs"},{Amount:3.0,Operation:0,Name:"generic.armor_toughness",UUID:"[I;-865580501,1016744579,-1206154126,-1400343339]",AttributeName:"generic.armor_toughness",Slot:"legs"}]}}', chance: 90 },
             { slot: 5, snbt: '{id:"minecraft:chainmail_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:3.0,Operation:0,Name:"generic.armor",UUID:"[I;1624854239,-1370865197,-1979221776,1862783941]",AttributeName:"generic.armor",Slot:"feet"},{Amount:3.0,Operation:0,Name:"generic.armor_toughness",UUID:"[I;996174618,-1532542096,-1324170079,1457612765]",AttributeName:"generic.armor_toughness",Slot:"feet"}]}}', chance: 90 },
             { slot: 6, id: "minecraft:steak", count: 10, chance: 100 },
-            { slot: 7, id: "minecraft:potion", count: 5, nbt: { Potion: "minecraft:healing" }, chance: 100 }
+            { slot: 7, id: "potion:strong_healing", count: 5, chance: 100 }
         ],
         expMin: 20,
         expMax: 20
@@ -128,7 +128,7 @@ var TIER_STATS = {
             { slot: 4, snbt: '{id:"minecraft:iron_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:15.0,Operation:0,Name:"generic.armor",UUID:"[I;135791113,-975318642,864209753,-509182736]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 90 },
             { slot: 5, snbt: '{id:"minecraft:iron_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:11.0,Operation:0,Name:"generic.armor",UUID:"[I;-741852963,159357258,-258147963,753951456]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 90 },
             { slot: 6, id: "minecraft:steak", count: 10, chance: 100 },
-            { slot: 7, id: "minecraft:potion", count: 5, nbt: { Potion: "minecraft:healing" }, chance: 100 }
+            { slot: 7, id: "potion:strong_healing", count: 5, chance: 100 }
         ],
         expMin: 50,
         expMax: 50
@@ -156,7 +156,7 @@ var TIER_STATS = {
             { slot: 4, snbt: '{id:"minecraft:diamond_leggings",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:25.0,Operation:0,Name:"generic.armor",UUID:"[I;358474619,-920183746,647382915,-183746590]",AttributeName:"generic.armor",Slot:"legs"}]}}', chance: 90 },
             { slot: 5, snbt: '{id:"minecraft:diamond_boots",Count:1b,tag:{Damage:0,AttributeModifiers:[{Amount:18.0,Operation:0,Name:"generic.armor",UUID:"[I;-847362915,244918375,-519283746,736491820]",AttributeName:"generic.armor",Slot:"feet"}]}}', chance: 90 },
             { slot: 6, id: "minecraft:steak", count: 10, chance: 100 },
-            { slot: 7, id: "minecraft:potion", count: 5, nbt: { Potion: "minecraft:healing" }, chance: 100 }
+            { slot: 7, id: "potion:strong_healing", count: 5, chance: 100 }
         ],
         expMin: 100,
         expMax: 100
