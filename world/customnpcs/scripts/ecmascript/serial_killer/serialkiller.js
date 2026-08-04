@@ -476,7 +476,7 @@ function createItemFromConfig(npc, cfg) {
     // Handle potions: { id: "potion:strong_healing" } → minecraft:potion + Potion NBT tag
     if (cfg.id && cfg.id.indexOf("potion:") === 0) {
         var potionId = cfg.id.substring(7);
-        var item = npc.world.createItem("minecraft:potion", cfg.count || 1);
+        var item = npc.world.createItem("minecraft:splash_potion", cfg.count || 1);
         item.getNbt().putString("Potion", potionId);
         return item;
     }
