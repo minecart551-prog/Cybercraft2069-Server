@@ -83,7 +83,7 @@ var TIER_STATS = {
         healthRegen: 10,
         combatRegen: 3,
         speed: 6.0,
-        rangedStrength: 18,
+        rangedStrength: 20,
         rangedAccuracy: 80,
         rangedRange: 100,
         rangedDelay: 15,
@@ -261,10 +261,7 @@ function init(e) {
 
     // Scan for nearby players immediately
     scanForTarget(npc);
-    var nearbyPlayers = npc.getWorld().getNearbyEntities(npc.getPos(), 50, 1);
-    for (var i = 0; i < nearbyPlayers.length; i++) {
-        nearbyPlayers[i].message("§4§lI'm coming for you heehhee");
-    }
+
 }
 
 function tick(e) {
