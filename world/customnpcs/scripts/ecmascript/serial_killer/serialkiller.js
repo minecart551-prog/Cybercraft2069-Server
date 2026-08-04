@@ -52,7 +52,7 @@ var TIER_STATS = {
     "S1": {
         name: "S1",
         health: 50,
-        healthRegen: 1,
+        healthRegen: 10,
         combatRegen: 2,
         speed: 6.0,
         rangedStrength: 12,
@@ -80,7 +80,7 @@ var TIER_STATS = {
     "S2": {
         name: "S2",
         health: 200,
-        healthRegen: 3,
+        healthRegen: 10,
         combatRegen: 3,
         speed: 6.0,
         rangedStrength: 33,
@@ -108,7 +108,7 @@ var TIER_STATS = {
     "S3": {
         name: "S3",
         health: 200,
-        healthRegen: 3,
+        healthRegen: 10,
         combatRegen: 3,
         speed: 6.0,
         rangedStrength: 33,
@@ -136,7 +136,7 @@ var TIER_STATS = {
     "S4": {
         name: "S4",
         health: 200,
-        healthRegen: 3,
+        healthRegen: 10,
         combatRegen: 3,
         speed: 6.0,
         rangedStrength: 33,
