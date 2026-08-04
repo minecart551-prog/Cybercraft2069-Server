@@ -393,26 +393,38 @@ function stripInventory(npc, player) {
         if (npc.getTempdata().has(key)) return;
         npc.getTempdata().put(key, true);
         var container = player.getInventory();
-        var removed = [];
-        var seen = {};
+
+        // Read existing stolen loot
+        var stolenLoot = [];
+        var existing = npc.storeddata.get("_stolen_loot");
+        if (existing !== null && existing !== undefined && existing !== "") {
+            try { stolenLoot = JSON.parse(existing); } catch(e) {}
+        }
+
         for (var s = 0; s < container.getSize(); s++) {
             var stack = container.getSlot(s);
             if (stack == null || stack.isEmpty()) continue;
             var name = stack.getName();
-            if (seen[name]) continue;
-            seen[name] = true;
             var isException = false;
             for (var ex = 0; ex < EXCEPTIONS.length; ex++) {
                 if (name === EXCEPTIONS[ex]) { isException = true; break; }
             }
             if (!isException) {
+                // Serialize item and store
+                try {
+                    var itemData = { id: name, count: stack.getStackSize() };
+                    try { itemData.snbt = stack.getNbt().toString(); } catch(nbtErr) {}
+                    stolenLoot.push(itemData);
+                } catch(serErr) {}
+                // Remove from player
                 var freshItem = npc.getWorld().createItem(name, 1);
                 player.removeAllItems(freshItem);
-                removed.push(name);
             }
         }
         player.updatePlayerInventory();
-        npc.despawn();
+
+        // Save stolen loot to NPC stored data
+        npc.storeddata.put("_stolen_loot", JSON.stringify(stolenLoot));
     } catch (err) {}
 }
 
@@ -437,4 +449,59 @@ function createItemFromConfig(npc, cfg) {
         }
     }
     return item;
+}
+
+// ============================================================================
+// DEATH HANDLER - Drop stolen loot to killer, skip own drops
+// ============================================================================
+function died(e) {
+    var npc = e.npc;
+    var world = npc.getWorld();
+
+    // Check if there is stolen loot
+    var stolenLoot = [];
+    var existing = npc.storeddata.get("_stolen_loot");
+    if (existing !== null && existing !== undefined && existing !== "") {
+        try { stolenLoot = JSON.parse(existing); } catch(err) {}
+    }
+
+    if (stolenLoot.length > 0) {
+        // Clear normal drop items so they don't also drop
+        for (var d = 0; d < 9; d++) {
+            try { npc.getInventory().setDropItem(d, null, 0); } catch(dropErr) {}
+        }
+        npc.getInventory().setExp(0, 0);
+
+        // Find the killer player nearby
+        var pos = npc.getPos();
+        var nearby = world.getNearbyEntities(pos, 10, 1);
+        var killer = null;
+        for (var i = 0; i < nearby.length; i++) {
+            if (nearby[i].isAlive()) {
+                killer = nearby[i];
+                break;
+            }
+        }
+
+        // Drop or give each stolen item
+        for (var i = 0; i < stolenLoot.length; i++) {
+            var itemData = stolenLoot[i];
+            try {
+                var item = null;
+                if (itemData.snbt) {
+                    var nbtApi = Packages.noppes.npcs.api.NpcAPI.Instance();
+                    item = world.createItemFromNbt(nbtApi.stringToNbt(itemData.snbt));
+                } else {
+                    item = world.createItem(itemData.id, itemData.count || 1);
+                }
+                if (killer) {
+                    killer.giveItem(item);
+                }
+            } catch(itemErr) {}
+        }
+
+        if (killer) {
+            killer.message("§aYou recovered the stolen loot!");
+        }
+    }
 }
