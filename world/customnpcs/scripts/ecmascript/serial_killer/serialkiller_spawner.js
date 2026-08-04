@@ -92,11 +92,11 @@ function timer(e) {
         // Night just ended, assign tiers for tonight and broadcast
         var assignment = assignTiers();
         storeAssignment(world, assignment);
+        playersNotified = {};
         broadcastAssignment(world, assignment);
         nightAssigned = true;
         playerSpawnedTonight = {};
         playerSchedule = {};
-        playersNotified = {};
     }
 
     lastNightCheck = isNight;
