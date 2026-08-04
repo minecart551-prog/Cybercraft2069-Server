@@ -192,7 +192,8 @@ var CONFIG_SHOP_ITEMS = [
 { id: "minecraft:chainmail_leggings", count: 1, price: 90, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 6.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;650941737,-1901506567,-1582766196,1857334701]", "AttributeName": "generic.armor", "Slot": "legs"}, {"Amount": 3.0, "Operation": 0, "Name": "generic.armor_toughness", "UUID": "[I;-865580501,1016744579,-1206154126,-1400343339]", "AttributeName": "generic.armor_toughness", "Slot": "legs"}]}, lore: [] },
 { id: "minecraft:chainmail_boots", count: 1, price: 50, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 3.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;1624854239,-1370865197,-1979221776,1862783941]", "AttributeName": "generic.armor", "Slot": "feet"}, {"Amount": 3.0, "Operation": 0, "Name": "generic.armor_toughness", "UUID": "[I;996174618,-1532542096,-1324170079,1457612765]", "AttributeName": "generic.armor_toughness", "Slot": "feet"}]}, lore: [] },
 { id: "tacz:ammo", count: 10, price: 10, nbt: {"AmmoId": "tacz:308"}, lore: [] },
-    null,null,null,
+{ id: "tacz:attachment", count: 1, price: 60, nbt: {"AttachmentId": "tacz:scope_acog_ta31"}, lore: [] },
+    null,null,
     // Row 3 — M700 Set
 { id: "tacz:modern_kinetic_gun", count: 1, price: 2000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 6, "GunFireMode": "SEMI", "GunId": "tacz:m700"}, lore: [] },
 { id: "minecraft:iron_helmet", count: 1, price: 800, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 11.0, "Operation": 0, "Name": "generic.armor", "UUID": "[I;819273645,-564738291,271828182,-314159265]", "AttributeName": "generic.armor", "Slot": "head"}]}, lore: [] },
