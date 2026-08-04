@@ -2,6 +2,7 @@
 // SERIAL KILLER SPAWNER - Scripted Block
 // Spawns serial killers near online players at night
 // Each night randomly assigns tiers S1-S4 to areas A-D
+// Announcement happens at the beginning of each day
 // ===============================================================
 
 var SPAWNER_TIMER_ID = 1;
@@ -50,9 +51,9 @@ var SERIALKILLER_NPC_NAME = "SerialKiller";
 // ============================================================================
 var playerSpawnedTonight = {};   // { uuid: count }
 var playerSchedule = {};         // { uuid: [tick1, tick2, ...] }
-var playersNotifiedTonight = {}; // { uuid: true }
-var lastNightCheck = 0;
-var nightAssigned = false;
+var playersNotified = {};        // { uuid: true } - tracks who has been notified for tonight
+var lastNightCheck = false;      // was it night on last check?
+var nightAssigned = false;       // have we assigned tiers for tonight?
 
 // ============================================================================
 // INITIALIZATION
@@ -62,8 +63,8 @@ function init(e) {
     block.timers.forceStart(SPAWNER_TIMER_ID, CHECK_INTERVAL, true);
     playerSpawnedTonight = {};
     playerSchedule = {};
-    playersNotifiedTonight = {};
-    lastNightCheck = 0;
+    playersNotified = {};
+    lastNightCheck = false;
     nightAssigned = false;
 }
 
@@ -75,57 +76,53 @@ function timer(e) {
 
     var block = e.block;
     var world = block.getWorld();
+    var currentTime = world.getTime();
+    var isNight = isNightTime(currentTime);
 
-    // Check if it's night time
-    if (!isNight(world)) {
-        if (lastNightCheck !== 0) {
-            playerSpawnedTonight = {};
-            playerSchedule = {};
-            playersNotifiedTonight = {};
-            lastNightCheck = 0;
-            nightAssigned = false;
+    // Detect day -> night transition: notify players
+    if (!lastNightCheck && isNight) {
+        var players = world.getAllPlayers();
+        for (var i = 0; i < players.length; i++) {
+            players[i].message("§4§lNight started, watch out for Serial Killers on street!");
         }
-        return;
     }
 
-    var currentTime = world.getTime();
-
-    // New night cycle - reset state and assign tiers
-    if (lastNightCheck === 0 || currentTime < NIGHT_START) {
+    // Detect night -> day transition: beginning of day
+    if (lastNightCheck && !isNight) {
+        // Night just ended, assign tiers for tonight and broadcast
+        var assignment = assignTiers();
+        storeAssignment(world, assignment);
+        broadcastAssignment(world, assignment);
+        nightAssigned = true;
         playerSpawnedTonight = {};
         playerSchedule = {};
-        playersNotifiedTonight = {};
-        lastNightCheck = currentTime;
-        nightAssigned = false;
+        playersNotified = {};
     }
 
-    // Assign tiers to areas once per night
-    if (!nightAssigned) {
-        var assignment = assignTiers();
-        broadcastAssignment(world, assignment);
-        storeAssignment(world, assignment);
-        nightAssigned = true;
+    lastNightCheck = isNight;
+
+    // On every tick (day or night): notify any un-notified players
+    var onlinePlayers = world.getAllPlayers();
+    for (var i = 0; i < onlinePlayers.length; i++) {
+        var player = onlinePlayers[i];
+        var uuid = player.getUUID();
+        if (!playersNotified[uuid]) {
+            var msg = buildAssignmentMessage(world);
+            if (msg) {
+                player.message(msg);
+                playersNotified[uuid] = true;
+            }
+        }
     }
+
+    // Only spawn SKs at night
+    if (!isNight) return;
 
     // Build schedule for any player that doesn't have one yet
-    var onlinePlayers = world.getAllPlayers();
     for (var i = 0; i < onlinePlayers.length; i++) {
         var uuid = onlinePlayers[i].getUUID();
         if (!playerSchedule[uuid]) {
             playerSchedule[uuid] = generateSpawnTimes(KILLS_PER_PLAYER);
-        }
-    }
-
-    // Notify players who haven't received tonight's assignment yet
-    for (var i = 0; i < onlinePlayers.length; i++) {
-        var player = onlinePlayers[i];
-        var uuid = player.getUUID();
-        if (!playersNotifiedTonight[uuid]) {
-            var msg = buildAssignmentMessage(world);
-            if (msg) {
-                player.message(msg);
-                playersNotifiedTonight[uuid] = true;
-            }
         }
     }
 
@@ -218,29 +215,24 @@ function getTierForArea(world, area) {
     return "S1";
 }
 
-function getWorld() {
-    try {
-        var block = getSpawnerBlock();
-        if (block) return block.getWorld();
-    } catch (err) {}
-    return null;
-}
-
 // ============================================================================
 // BROADCAST - Send colored assignment to all players
 // ============================================================================
 function broadcastAssignment(world, assignment) {
-    var msg = "§4§lWatch out for Serial Killers on street at night!\n"
-        + "§4§lSerial Killer Area: "
+    var msg = buildAssignmentMessageFromObj(assignment);
+    var players = world.getAllPlayers();
+    for (var i = 0; i < players.length; i++) {
+        players[i].message(msg);
+        playersNotified[players[i].getUUID()] = true;
+    }
+}
+
+function buildAssignmentMessageFromObj(assignment) {
+    return "§bSerial Killer Area tonight: "
         + "§fA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
         + "§fB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
         + "§fC:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
         + "§fD:" + TIER_COLORS[assignment["D"]] + assignment["D"];
-    var players = world.getAllPlayers();
-    for (var i = 0; i < players.length; i++) {
-        players[i].message(msg);
-        playersNotifiedTonight[players[i].getUUID()] = true;
-    }
 }
 
 function buildAssignmentMessage(world) {
@@ -248,12 +240,7 @@ function buildAssignmentMessage(world) {
         var sd = world.getStoreddata();
         if (!sd.has("serialkiller_tiers")) return null;
         var assignment = JSON.parse(sd.get("serialkiller_tiers"));
-        return "§4§lWatch out for Serial Killers on street at night!\n"
-            + "§4§lSerial Killer Area: "
-            + "§fA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
-            + "§fB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
-            + "§fC:" + TIER_COLORS[assignment["C"]] + assignment["C"] + "  "
-            + "§fD:" + TIER_COLORS[assignment["D"]] + assignment["D"];
+        return buildAssignmentMessageFromObj(assignment);
     } catch (err) {
         return null;
     }
@@ -274,8 +261,7 @@ function storeAssignment(world, assignment) {
 // ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
-function isNight(world) {
-    var time = world.getTime();
+function isNightTime(time) {
     return time >= NIGHT_START && time <= NIGHT_END;
 }
 
