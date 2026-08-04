@@ -162,7 +162,7 @@ function timer(e) {
                 world.spawnClone(Math.floor(spawnX), Math.floor(spawnY)+2, Math.floor(spawnZ), 3, SERIALKILLER_NPC_NAME);
                 playerSpawnedTonight[uuid] = count + 1;
 
-                var tier = getTierForArea(area);
+                var tier = getTierForArea(world, area);
                 var color = TIER_COLORS[tier] || "§f";
                 player.message("§4§l[!] " + color + tier + " §4§ldetected near you");
             } catch (err) {
@@ -206,9 +206,8 @@ function generateSpawnTimes(count) {
 // ============================================================================
 // GET TIER FOR AREA - Read from stored assignment
 // ============================================================================
-function getTierForArea(area) {
+function getTierForArea(world, area) {
     try {
-        var world = getWorld();
         if (!world) return "S1";
         var sd = world.getStoreddata();
         if (sd.has("serialkiller_tiers")) {
@@ -266,6 +265,10 @@ function buildAssignmentMessage(world) {
 function storeAssignment(world, assignment) {
     var sd = world.getStoreddata();
     sd.put("serialkiller_tiers", JSON.stringify(assignment));
+    // Increment night counter so spawned SKs can check if they are from this night
+    var nightCount = 0;
+    try { nightCount = parseInt(sd.get("serialkiller_night")) || 0; } catch(e) {}
+    sd.put("serialkiller_night", "" + (nightCount + 1));
 }
 
 // ============================================================================

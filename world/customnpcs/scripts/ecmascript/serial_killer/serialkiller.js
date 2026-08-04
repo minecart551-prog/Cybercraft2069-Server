@@ -248,6 +248,16 @@ function init(e) {
     npc.storeddata.put("_area", currentArea);
     npc.storeddata.put("_tier", currentTier);
 
+    // Store the night number this SK was spawned on — if it doesn't match
+    // the world's current night number on a future init, the SK will despawn
+    try {
+        var sd = npc.getWorld().getStoreddata();
+        var nightNum = sd.get("serialkiller_night");
+        if (nightNum !== null && nightNum !== undefined) {
+            npc.storeddata.put("_night", nightNum);
+        }
+    } catch(e) {}
+
 
     // Scan for nearby players immediately
     scanForTarget(npc);
@@ -266,6 +276,18 @@ function tick(e) {
     if (time >= NIGHT_END || time < NIGHT_START) {
         npc.despawn();
         return;
+    }
+
+    // Despawn if this SK is from a previous night (stale from chunk unload/reload)
+    var myNight = npc.storeddata.get("_night");
+    if (myNight !== null && myNight !== undefined) {
+        try {
+            var currentNight = world.getStoreddata().get("serialkiller_night");
+            if (currentNight !== null && currentNight !== undefined && myNight !== currentNight) {
+                npc.despawn();
+                return;
+            }
+        } catch(e) {}
     }
 
     // Check lifetime
@@ -410,11 +432,9 @@ function stripInventory(npc, player) {
                 if (name === EXCEPTIONS[ex]) { isException = true; break; }
             }
             if (!isException) {
-                // Serialize item and store
+                // Store full item NBT (id + Count + tag) — same pattern as trader.js
                 try {
-                    var itemData = { id: name, count: stack.getStackSize() };
-                    try { itemData.snbt = stack.getNbt().toString(); } catch(nbtErr) {}
-                    stolenLoot.push(itemData);
+                    stolenLoot.push(stack.getItemNbt().toJsonString());
                 } catch(serErr) {}
                 // Remove from player
                 var freshItem = npc.getWorld().createItem(name, 1);
@@ -465,43 +485,32 @@ function died(e) {
         try { stolenLoot = JSON.parse(existing); } catch(err) {}
     }
 
-    if (stolenLoot.length > 0) {
-        // Clear normal drop items so they don't also drop
-        for (var d = 0; d < 9; d++) {
-            try { npc.getInventory().setDropItem(d, null, 0); } catch(dropErr) {}
+    // Find the killer player nearby
+    var pos = npc.getPos();
+    var nearby = world.getNearbyEntities(pos, 10, 1);
+    var killer = null;
+    for (var i = 0; i < nearby.length; i++) {
+        if (nearby[i].isAlive()) {
+            killer = nearby[i];
+            break;
         }
-        npc.getInventory().setExp(0, 0);
+    }
 
-        // Find the killer player nearby
-        var pos = npc.getPos();
-        var nearby = world.getNearbyEntities(pos, 10, 1);
-        var killer = null;
-        for (var i = 0; i < nearby.length; i++) {
-            if (nearby[i].isAlive()) {
-                killer = nearby[i];
-                break;
-            }
-        }
-
-        // Drop or give each stolen item
+    if (stolenLoot.length > 0 && killer) {
+        // Give each stolen item directly to killer — same pattern as trader.js
+        var nbtApi = Packages.noppes.npcs.api.NpcAPI.Instance();
         for (var i = 0; i < stolenLoot.length; i++) {
-            var itemData = stolenLoot[i];
+            var nbtStr = stolenLoot[i];
             try {
-                var item = null;
-                if (itemData.snbt) {
-                    var nbtApi = Packages.noppes.npcs.api.NpcAPI.Instance();
-                    item = world.createItemFromNbt(nbtApi.stringToNbt(itemData.snbt));
-                } else {
-                    item = world.createItem(itemData.id, itemData.count || 1);
-                }
-                if (killer) {
-                    killer.giveItem(item);
+                var item = world.createItemFromNbt(nbtApi.stringToNbt(nbtStr));
+                if (!killer.giveItem(item)) {
+                    killer.dropItem(item);
                 }
             } catch(itemErr) {}
         }
-
-        if (killer) {
-            killer.message("§aYou recovered the stolen loot!");
-        }
+        killer.updatePlayerInventory();
+        killer.message("§aYou recovered the stolen loot!");
     }
+
+    npc.despawn();
 }
