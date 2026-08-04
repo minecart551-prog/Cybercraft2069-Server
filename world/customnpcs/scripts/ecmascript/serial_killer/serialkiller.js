@@ -312,21 +312,13 @@ function tick(e) {
         }
     }
 
-    // Scan nearby players — strip dead ones, target alive ones
-    var pos = npc.getPos();
-    var nearby = world.getNearbyEntities(pos, 50, 1);
-    var hasAliveTarget = false;
-    for (var i = 0; i < nearby.length; i++) {
-        var player = nearby[i];
-        if (!player.isAlive()) {
-            stripInventory(npc, player);
-        } else {
-            hasAliveTarget = true;
-        }
-    }
-
     // Get current target
     var currentTarget = npc.getAttackTarget();
+
+    // Track current target name so we can strip them if they die and we lose the reference
+    if (currentTarget && currentTarget.isAlive() && currentTarget.getType() == 1) {
+        npc.storeddata.put("_lastTargetName", currentTarget.getName());
+    }
 
     // Validate current target
     if (currentTarget) {
@@ -354,15 +346,24 @@ function tick(e) {
         currentTarget = null;
     }
 
-    // Navigate toward target player
-   // if (currentTarget) {
-   //     var tPos = currentTarget.getPos();
-   //     npc.navigateTo(tPos.getX(), tPos.getY(), tPos.getZ(), 1);
-   // }
-
     // If no target, scan for new target
     if (!currentTarget) {
         scanForTarget(npc);
+    }
+
+    // If we still have no target, check if our last target died (e.g. they respawned or we lost reference)
+    if (!npc.getAttackTarget()) {
+        var lastName = npc.storeddata.get("_lastTargetName");
+        if (lastName) {
+            var nearby = world.getNearbyEntities(npc.getPos(), 50, 1);
+            for (var i = 0; i < nearby.length; i++) {
+                if (nearby[i].getName() === lastName && !nearby[i].isAlive()) {
+                    stripInventory(npc, nearby[i]);
+                    npc.storeddata.remove("_lastTargetName");
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -413,10 +414,6 @@ function detectArea(x, z) {
         }
     }
     return nearest;
-}
-
-function randomFrom(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function stripInventory(npc, player) {
@@ -506,20 +503,14 @@ function died(e) {
 
     if (count > 0 && killer) {
         var api = Packages.noppes.npcs.api.NpcAPI.Instance();
-        killer.message("§eLoot count: " + count);
         for (var i = 0; i < count; i++) {
             var snbt = store.get("_sk_loot_" + i);
-            killer.message("§7Slot " + i + " snbt length: " + (snbt ? snbt.length : "null"));
             if (!snbt || snbt.length === 0) continue;
             try {
-                var nbt = api.stringToNbt(snbt);
-                var item = world.createItemFromNbt(nbt);
-                killer.message("§aGiving: " + item.getDisplayName() + " x" + item.getStackSize());
+                var item = world.createItemFromNbt(api.stringToNbt(snbt));
                 killer.giveItem(item);
                 killer.updatePlayerInventory();
-            } catch(itemErr) {
-                killer.message("§cFailed item " + i + ": " + itemErr);
-            }
+            } catch(itemErr) {}
         }
         killer.message("§aYou recovered the stolen loot!");
     }
