@@ -27,7 +27,7 @@ var AREA_BOUNDS = {
 // SAFE ZONES - Players in these zones won't be targeted
 // ============================================================================
 var SAFE_ZONES = [
-    { x: 0, z: 1, radius: 7 }   // Lobby area
+    { minX: 1766, minZ: 552, maxX: 2767, maxZ: 1150 }   // Lobby area
 ];
 
 // ============================================================================
@@ -282,8 +282,7 @@ function isInSafeZone(player) {
     var pz = pos.getZ();
     for (var i = 0; i < SAFE_ZONES.length; i++) {
         var zone = SAFE_ZONES[i];
-        var dist = Math.sqrt(Math.pow(px - zone.x, 2) + Math.pow(pz - zone.z, 2));
-        if (dist <= zone.radius) return true;
+        if (px >= zone.minX && px <= zone.maxX && pz >= zone.minZ && pz <= zone.maxZ) return true;
     }
     return false;
 }
@@ -341,8 +340,7 @@ function findRandomNearbyNPC(player, world) {
 function isInSafeZoneNPC(x, z) {
     for (var i = 0; i < SAFE_ZONES.length; i++) {
         var zone = SAFE_ZONES[i];
-        var dist = Math.sqrt(Math.pow(x - zone.x, 2) + Math.pow(z - zone.z, 2));
-        if (dist <= zone.radius) return true;
+        if (x >= zone.minX && x <= zone.maxX && z >= zone.minZ && z <= zone.maxZ) return true;
     }
     return false;
 }
