@@ -324,6 +324,16 @@ function tick(e) {
     if (currentTarget) {
         try {
             if (!currentTarget.isAlive()) {
+                var killedName = currentTarget.getName();
+                var killKey = "_kills_" + killedName;
+                var prevKills = 0;
+                try { prevKills = parseInt(npc.storeddata.get(killKey)) || 0; } catch(e) {}
+                if (prevKills >= 1) {
+                    stripInventory(npc, currentTarget);
+                    npc.despawn();
+                    return;
+                }
+                npc.storeddata.put(killKey, "" + (prevKills + 1));
                 stripInventory(npc, currentTarget);
                 npc.setAttackTarget(null);
                 currentTarget = null;

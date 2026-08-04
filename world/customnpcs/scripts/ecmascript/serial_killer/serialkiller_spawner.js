@@ -291,12 +291,27 @@ function findRandomNearbyNPC(player, world) {
     var px = pos.getX();
     var py = pos.getY();
     var pz = pos.getZ();
-    var minRange = 30;
-    var maxRange = 90;
+    var preferredMin = 30;
+    var preferredMax = 90;
+    var fallbackMax = 30;
 
-    var nearby = world.getNearbyEntities(pos, maxRange, 2); // 2 = NPCs
-    if (!nearby || nearby.length === 0) return null;
+    // Pass 1: favor 30-90 range
+    var nearby = world.getNearbyEntities(pos, preferredMax, 2);
+    var candidates = filterNpcCandidates(nearby, px, py, pz, preferredMin, preferredMax);
 
+    // Pass 2: fallback within 30 blocks if no candidates in preferred range
+    if (candidates.length === 0) {
+        nearby = world.getNearbyEntities(pos, fallbackMax, 2);
+        candidates = filterNpcCandidates(nearby, px, py, pz, 0, fallbackMax);
+    }
+
+    if (candidates.length === 0) return null;
+
+    return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function filterNpcCandidates(nearby, px, py, pz, minRange, maxRange) {
+    if (!nearby) return [];
     var candidates = [];
     for (var i = 0; i < nearby.length; i++) {
         var npc = nearby[i];
@@ -320,10 +335,7 @@ function findRandomNearbyNPC(player, world) {
 
         candidates.push({ x: nx, y: ny, z: nz });
     }
-
-    if (candidates.length === 0) return null;
-
-    return candidates[Math.floor(Math.random() * candidates.length)];
+    return candidates;
 }
 
 function isInSafeZoneNPC(x, z) {
