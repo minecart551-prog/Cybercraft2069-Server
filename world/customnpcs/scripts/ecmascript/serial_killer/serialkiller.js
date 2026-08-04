@@ -52,11 +52,11 @@ var TIER_STATS = {
     "S1": {
         name: "S1",
         health: 50,
-        healthRegen: 10,
+        healthRegen: 2,
         combatRegen: 2,
         speed: 6.0,
         rangedStrength: 12,
-        rangedAccuracy: 90,
+        rangedAccuracy: 80,
         rangedRange: 100,
         rangedDelay: 15,
         rangedSpeed: 40,
@@ -79,12 +79,12 @@ var TIER_STATS = {
     },
     "S2": {
         name: "S2",
-        health: 200,
+        health: 70,
         healthRegen: 10,
         combatRegen: 3,
         speed: 6.0,
-        rangedStrength: 33,
-        rangedAccuracy: 90,
+        rangedStrength: 18,
+        rangedAccuracy: 80,
         rangedRange: 100,
         rangedDelay: 15,
         rangedSpeed: 40,
@@ -107,15 +107,15 @@ var TIER_STATS = {
     },
     "S3": {
         name: "S3",
-        health: 200,
+        health: 140,
         healthRegen: 10,
         combatRegen: 3,
         speed: 6.0,
-        rangedStrength: 33,
+        rangedStrength: 60,
         rangedAccuracy: 90,
         rangedRange: 100,
-        rangedDelay: 15,
-        rangedSpeed: 40,
+        rangedDelay: 30,
+        rangedSpeed: 50,
         skinTexture: "https://www.minecraftskins.com/uploads/skins/2025/02/28/corrupted-x2-1-armor-23088794.png?v971",
         displayName: "S3",
         handItem: { id: "tacz:modern_kinetic_gun", count: 1, nbt: { HasBulletInBarrel: 1, GunCurrentAmmoCount: 6, GunFireMode: "SEMI", GunId: "tacz:m700" } },
@@ -136,8 +136,8 @@ var TIER_STATS = {
     "S4": {
         name: "S4",
         health: 200,
-        healthRegen: 10,
-        combatRegen: 3,
+        healthRegen: 5,
+        combatRegen: 5,
         speed: 6.0,
         rangedStrength: 33,
         rangedAccuracy: 90,
@@ -475,6 +475,13 @@ function createItemFromConfig(npc, cfg) {
     if (cfg.snbt) {
         var nbtApi = Packages.noppes.npcs.api.NpcAPI.Instance();
         return npc.world.createItemFromNbt(nbtApi.stringToNbt(cfg.snbt));
+    }
+    // Handle potions: { id: "potion:strong_healing" } → minecraft:potion + Potion NBT tag
+    if (cfg.id && cfg.id.indexOf("potion:") === 0) {
+        var potionId = cfg.id.substring(7);
+        var item = npc.world.createItem("minecraft:potion", cfg.count || 1);
+        item.getNbt().putString("Potion", potionId);
+        return item;
     }
     var item = npc.world.createItem(cfg.id, cfg.count || 1);
     if (cfg.nbt) {
