@@ -22,41 +22,31 @@ function interact(t) {
     var py = pos.getY();
     var pz = pos.getZ();
 
-    // Find nearest SK
     var nearest = null;
     var nearestDist = SEARCH_RANGE;
-    var nearestTier = "";
-    var nearby = world.getNearbyEntities(pos, SEARCH_RANGE, 2); // 2 = NPCs
+    var nearby = world.getNearbyEntities(pos, SEARCH_RANGE, 2);
 
     for (var i = 0; i < nearby.length; i++) {
         var npc = nearby[i];
         var displayName = npc.getDisplay().getName();
-        var isSK = false;
         for (var j = 0; j < SK_NAMES.length; j++) {
-            if (displayName === SK_NAMES[j]) { isSK = true; break; }
-        }
-        if (isSK) {
-            var npcPos = npc.getPos();
-            var dx = npcPos.getX() - px;
-            var dy = npcPos.getY() - py;
-            var dz = npcPos.getZ() - pz;
-            var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (dist < nearestDist) {
-                nearestDist = dist;
-                nearest = npcPos;
-                nearestTier = displayName;
+            if (displayName === SK_NAMES[j]) {
+                var npcPos = npc.getPos();
+                var dx = npcPos.getX() - px;
+                var dy = npcPos.getY() - py;
+                var dz = npcPos.getZ() - pz;
+                var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                if (dist < nearestDist) {
+                    nearestDist = dist;
+                    nearest = npcPos;
+                }
+                break;
             }
         }
     }
 
-    if (!nearest) {
-        player.message("§cNo Serial Killers found in " + SEARCH_RANGE + " blocks");
-        return;
-    }
+    if (!nearest) return;
 
-    player.message("§eNearest: §4" + nearestTier + " §7(" + Math.round(nearestDist) + "m)");
-
-    // Draw particle line toward nearest SK
     var R = GetCoordRotation(px, pz, nearest.getX(), nearest.getZ());
     var P = GetPitchRotation(px, py, pz, nearest.getX(), nearest.getY(), nearest.getZ());
     var d = FrontVectors(player, R, P, 4, 0);
