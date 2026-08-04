@@ -301,6 +301,17 @@ function tick(e) {
         }
     }
 
+    // If stolen loot exists, continuously clear drops so nothing falls on death
+    var hasStolenLoot = false;
+    var lootCount = npc.storeddata.get("_sk_loot_count");
+    if (lootCount && parseInt(lootCount) > 0) { hasStolenLoot = true; }
+    if (hasStolenLoot) {
+        var airItem = world.createItem("minecraft:air", 1);
+        for (var d = 0; d < 9; d++) {
+            try { npc.getInventory().setDropItem(d, airItem, 0); } catch(dropErr) {}
+        }
+    }
+
     // Scan nearby players — strip dead ones, target alive ones
     var pos = npc.getPos();
     var nearby = world.getNearbyEntities(pos, 50, 1);
@@ -415,13 +426,12 @@ function stripInventory(npc, player) {
         if (npc.getTempdata().has(key)) return;
         npc.getTempdata().put(key, true);
         var container = player.getInventory();
+        var store = npc.storeddata;
 
-        // Read existing stolen loot
-        var stolenLoot = [];
-        var existing = npc.storeddata.get("_stolen_loot");
-        if (existing !== null && existing !== undefined && existing !== "") {
-            try { stolenLoot = JSON.parse(existing); } catch(e) {}
-        }
+        // Count existing loot
+        var count = 0;
+        var raw = store.get("_sk_loot_count");
+        if (raw && raw.length > 0) { try { count = parseInt(raw); } catch(e) {} }
 
         for (var s = 0; s < container.getSize(); s++) {
             var stack = container.getSlot(s);
@@ -432,19 +442,18 @@ function stripInventory(npc, player) {
                 if (name === EXCEPTIONS[ex]) { isException = true; break; }
             }
             if (!isException) {
-                // Store full item NBT (id + Count + tag) — same pattern as trader.js
+                // Store each item in its own key — no JSON array wrapping
                 try {
-                    stolenLoot.push(stack.getItemNbt().toJsonString());
+                    var snbt = stack.getItemNbt().toJsonString();
+                    store.put("_sk_loot_" + count, snbt);
+                    count++;
                 } catch(serErr) {}
-                // Remove from player
-                var freshItem = npc.getWorld().createItem(name, 1);
-                player.removeAllItems(freshItem);
+                // Remove only this specific stack, not all items with same ID
+                container.setSlot(s, npc.getWorld().createItem("minecraft:air", 1));
             }
         }
+        store.put("_sk_loot_count", "" + count);
         player.updatePlayerInventory();
-
-        // Save stolen loot to NPC stored data
-        npc.storeddata.put("_stolen_loot", JSON.stringify(stolenLoot));
     } catch (err) {}
 }
 
@@ -477,13 +486,12 @@ function createItemFromConfig(npc, cfg) {
 function died(e) {
     var npc = e.npc;
     var world = npc.getWorld();
+    var store = npc.storeddata;
 
-    // Check if there is stolen loot
-    var stolenLoot = [];
-    var existing = npc.storeddata.get("_stolen_loot");
-    if (existing !== null && existing !== undefined && existing !== "") {
-        try { stolenLoot = JSON.parse(existing); } catch(err) {}
-    }
+    // Read loot count
+    var count = 0;
+    var raw = store.get("_sk_loot_count");
+    if (raw && raw.length > 0) { try { count = parseInt(raw); } catch(err) {} }
 
     // Find the killer player nearby
     var pos = npc.getPos();
@@ -496,19 +504,23 @@ function died(e) {
         }
     }
 
-    if (stolenLoot.length > 0 && killer) {
-        // Give each stolen item directly to killer — same pattern as trader.js
-        var nbtApi = Packages.noppes.npcs.api.NpcAPI.Instance();
-        for (var i = 0; i < stolenLoot.length; i++) {
-            var nbtStr = stolenLoot[i];
+    if (count > 0 && killer) {
+        var api = Packages.noppes.npcs.api.NpcAPI.Instance();
+        killer.message("§eLoot count: " + count);
+        for (var i = 0; i < count; i++) {
+            var snbt = store.get("_sk_loot_" + i);
+            killer.message("§7Slot " + i + " snbt length: " + (snbt ? snbt.length : "null"));
+            if (!snbt || snbt.length === 0) continue;
             try {
-                var item = world.createItemFromNbt(nbtApi.stringToNbt(nbtStr));
-                if (!killer.giveItem(item)) {
-                    killer.dropItem(item);
-                }
-            } catch(itemErr) {}
+                var nbt = api.stringToNbt(snbt);
+                var item = world.createItemFromNbt(nbt);
+                killer.message("§aGiving: " + item.getDisplayName() + " x" + item.getStackSize());
+                killer.giveItem(item);
+                killer.updatePlayerInventory();
+            } catch(itemErr) {
+                killer.message("§cFailed item " + i + ": " + itemErr);
+            }
         }
-        killer.updatePlayerInventory();
         killer.message("§aYou recovered the stolen loot!");
     }
 
