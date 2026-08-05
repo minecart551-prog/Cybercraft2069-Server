@@ -5,7 +5,6 @@
 // ===============================================================
 
 var targetPlayer = null;
-var DESPAWN_DISTANCE = 100;
 var LIFETIME_SECONDS = 300; // 5 minutes
 var EXCEPTIONS = [      "minecraft:fishing_rod",
                         "lockandblock:key",
@@ -334,12 +333,6 @@ function tick(e) {
                 stripInventory(npc, currentTarget);
                 npc.setAttackTarget(null);
                 currentTarget = null;
-            } else {
-                var dist = npc.getPos().distanceTo(currentTarget.getPos());
-                if (dist > DESPAWN_DISTANCE) {
-                    npc.despawn();
-                    return;
-                }
             }
         } catch (err) {
             npc.setAttackTarget(null);
