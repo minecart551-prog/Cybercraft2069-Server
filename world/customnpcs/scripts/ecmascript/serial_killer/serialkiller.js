@@ -5,7 +5,6 @@
 // ===============================================================
 
 var targetPlayer = null;
-var LIFETIME_SECONDS = 300; // 5 minutes
 var EXCEPTIONS = [      "minecraft:fishing_rod",
                         "lockandblock:key",
                         "cyberwarecore:cyberware_scanner",
@@ -242,8 +241,7 @@ function init(e) {
     npc.getStats().getRanged().setSound(2, "tacz:target_block_hit");
     npc.getStats().getRanged().setMeleeRange(4);
     npc.getAi().setWalkingSpeed(currentStats.speed);
-    // Store birth timestamp and area for lifetime/despawn checks
-    npc.storeddata.put("_birth", "" + Math.floor(Date.now() / 1000));
+    // Store area and tier for reference
     npc.storeddata.put("_area", currentArea);
     npc.storeddata.put("_tier", currentTier);
 
@@ -284,17 +282,6 @@ function tick(e) {
                 return;
             }
         } catch(e) {}
-    }
-
-    // Check lifetime
-    var birthStr = npc.storeddata.get("_birth");
-    if (birthStr) {
-        var birthTime = parseInt(birthStr);
-        var now = Math.floor(Date.now() / 1000);
-        if (now - birthTime >= LIFETIME_SECONDS) {
-            npc.despawn();
-            return;
-        }
     }
 
     // If stolen loot exists, continuously clear drops so nothing falls on death
