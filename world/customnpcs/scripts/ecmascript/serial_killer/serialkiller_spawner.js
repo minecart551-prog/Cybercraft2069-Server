@@ -45,6 +45,7 @@ var KILLS_PER_PLAYER = 5;  // Number of serial killers per player per night
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
 var SERIALKILLER_NPC_NAME = "SerialKiller";
+var NO_SK_CHANCE = 20;  // 20% chance no SKs spawn tonight
 
 // ============================================================================
 // STATE TRACKING
@@ -89,11 +90,13 @@ function timer(e) {
 
     // Detect night -> day transition: beginning of day
     if (lastNightCheck && !isNight) {
-        // Night just ended, assign tiers for tonight and broadcast
+        // Night just ended, roll for SK activity tonight and assign tiers
+        var noSkRoll = Math.random() * 100;
+        var skActive = noSkRoll >= NO_SK_CHANCE;
         var assignment = assignTiers();
-        storeAssignment(world, assignment);
+        storeAssignment(world, assignment, skActive);
         playersNotified = {};
-        broadcastAssignment(world, assignment);
+        broadcastAssignment(world, assignment, skActive);
         nightAssigned = true;
         playerSpawnedTonight = {};
         playerSchedule = {};
@@ -117,6 +120,9 @@ function timer(e) {
 
     // Only spawn SKs at night
     if (!isNight) return;
+
+    // Check if SKs are active tonight
+    if (!isSkActiveTonight(world)) return;
 
     // Build schedule for any player that doesn't have one yet
     for (var i = 0; i < onlinePlayers.length; i++) {
@@ -218,8 +224,8 @@ function getTierForArea(world, area) {
 // ============================================================================
 // BROADCAST - Send colored assignment to all players
 // ============================================================================
-function broadcastAssignment(world, assignment) {
-    var msg = buildAssignmentMessageFromObj(assignment);
+function broadcastAssignment(world, assignment, skActive) {
+    var msg = buildAssignmentMessageFromObj(assignment, skActive);
     var players = world.getAllPlayers();
     for (var i = 0; i < players.length; i++) {
         players[i].message(msg);
@@ -227,7 +233,8 @@ function broadcastAssignment(world, assignment) {
     }
 }
 
-function buildAssignmentMessageFromObj(assignment) {
+function buildAssignmentMessageFromObj(assignment, skActive) {
+    if (!skActive) return "§aNo serial killers tonight!";
     return "§bSerial Killer Area tonight: "
         + "§fA:" + TIER_COLORS[assignment["A"]] + assignment["A"] + "  "
         + "§fB:" + TIER_COLORS[assignment["B"]] + assignment["B"] + "  "
@@ -240,7 +247,8 @@ function buildAssignmentMessage(world) {
         var sd = world.getStoreddata();
         if (!sd.has("serialkiller_tiers")) return null;
         var assignment = JSON.parse(sd.get("serialkiller_tiers"));
-        return buildAssignmentMessageFromObj(assignment);
+        var skActive = sd.get("serialkiller_active") !== "false";
+        return buildAssignmentMessageFromObj(assignment, skActive);
     } catch (err) {
         return null;
     }
@@ -249,9 +257,10 @@ function buildAssignmentMessage(world) {
 // ============================================================================
 // STORE ASSIGNMENT - Save to world stored data for serialkiller.js to read
 // ============================================================================
-function storeAssignment(world, assignment) {
+function storeAssignment(world, assignment, skActive) {
     var sd = world.getStoreddata();
     sd.put("serialkiller_tiers", JSON.stringify(assignment));
+    sd.put("serialkiller_active", skActive ? "true" : "false");
     // Increment night counter so spawned SKs can check if they are from this night
     var nightCount = 0;
     try { nightCount = parseInt(sd.get("serialkiller_night")) || 0; } catch(e) {}
@@ -263,6 +272,14 @@ function storeAssignment(world, assignment) {
 // ============================================================================
 function isNightTime(time) {
     return time >= NIGHT_START && time <= NIGHT_END;
+}
+
+function isSkActiveTonight(world) {
+    try {
+        var sd = world.getStoreddata();
+        return sd.get("serialkiller_active") !== "false";
+    } catch(e) {}
+    return true;
 }
 
 function isInSafeZone(player) {
