@@ -7,6 +7,7 @@
 var targetPlayer = null;
 var EXCEPTIONS = [      "minecraft:fishing_rod",
                         "lockandblock:key",
+						"customnpcs:scripted_item",
                         "cyberwarecore:cyberware_scanner",
                         "cyberwarecore:basic_os",
                         "cyberwarecore:titanium_bones",
@@ -164,9 +165,11 @@ var TIER_STATS = {
 var currentArea = null;
 var currentTier = null;
 var currentStats = null;
+var crawlTickCount = 0;
 
 function init(e) {
     var npc = e.npc;
+    crawlTickCount = 0;
     var pos = npc.getPos();
     var spawnX = pos.getX();
     var spawnZ = pos.getZ();
@@ -270,6 +273,20 @@ function tick(e) {
     if (time >= NIGHT_END || time < NIGHT_START) {
         npc.despawn();
         return;
+    }
+
+    // Crawl check — every 1 second (20 ticks)
+    crawlTickCount++;
+    if (crawlTickCount % 2 === 0) {
+        var blocked = isHeadBlocked(npc);
+        var animType = npc.getAi().getAnimation();
+        if (blocked && animType !== 7) {
+            npc.getAi().setMovingType(0);
+            npc.getAi().setAnimation(7);
+        } else if (!blocked && animType === 7) {
+            npc.getAi().setMovingType(1);
+            npc.getAi().setAnimation(0);
+        }
     }
 
     // Despawn if this SK is from a previous night (stale from chunk unload/reload)
@@ -401,6 +418,27 @@ function detectArea(x, z) {
         }
     }
     return nearest;
+}
+
+function isHeadBlocked(npc) {
+    var pos = npc.getPos();
+    var world = npc.getWorld();
+    var ix = Math.floor(pos.getX());
+    var iy = Math.floor(pos.getY());
+    var iz = Math.floor(pos.getZ());
+
+    return isSolid(world.getBlock(ix, iy + 1, iz))
+        || isSolid(world.getBlock(ix + 1, iy + 1, iz))
+        || isSolid(world.getBlock(ix - 1, iy + 1, iz))
+        || isSolid(world.getBlock(ix, iy + 1, iz + 1))
+        || isSolid(world.getBlock(ix, iy + 1, iz - 1));
+}
+
+function isSolid(block) {
+    if (!block) return false;
+    var name = block.getName();
+    return name !== "minecraft:air" && name !== "minecraft:cave_air" && name !== "minecraft:void_air"
+        && name.indexOf("water") === -1 && name.indexOf("lava") === -1;
 }
 
 function stripInventory(npc, player) {

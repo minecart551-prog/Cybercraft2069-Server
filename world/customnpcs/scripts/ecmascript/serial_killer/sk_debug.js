@@ -1,6 +1,3 @@
-// Edit these values, save, then kill + respawn the NPC to test
-// ===============================================================
-
 var HEALTH = 200;
 var HEALTH_REGEN = 3;
 var COMBAT_REGEN = 3;
@@ -36,12 +33,11 @@ function init(e) {
 
     npc.getInventory().setExp(EXP_MIN, EXP_MAX);
     npc.getAi().setWalkingSpeed(SPEED);
+    npc.getAi().setMovingType(1);
     npc.setName(DISPLAY_NAME);
 
-    // Skin
     try { npc.setSkinUrl(SKIN_URL); } catch (err) {}
 
-    // Main hand with NBT
     try {
         var hand = npc.getWorld().createItem(HAND_ITEM_ID, 1);
         if (HAND_ITEM_NBT) {
@@ -50,4 +46,61 @@ function init(e) {
         }
         npc.setMainhandItem(hand);
     } catch (err) {}
+}
+
+var tickCount = 0;
+
+function tick(e) {
+    var npc = e.npc;
+    tickCount++;
+
+    try {
+        var blocked = isBlocked(npc);
+        var animType = npc.getAi().getAnimation();
+        var needCrawl = blocked;
+        var haveCrawl = (animType === 7);
+
+        if (needCrawl !== haveCrawl) {
+            if (needCrawl) {
+                npc.getAi().setMovingType(0);
+                npc.getAi().setAnimation(7);
+            } else {
+                npc.getAi().setMovingType(1);
+                npc.getAi().setAnimation(0);
+            }
+            npc.getWorld().broadcast("[SK-DBG] FIX blocked=" + blocked
+                + " wasAnim=" + animType + " => nowAnim=" + npc.getAi().getAnimation());
+        }
+
+        if (tickCount % 10 === 0) {
+            var curAnim = npc.getAi().getCurrentAnimation();
+            npc.getWorld().broadcast("[SK-DBG] t=" + tickCount
+                + " blk=" + blocked + " anim=" + npc.getAi().getAnimation()
+                + " cur=" + curAnim + " atk=" + npc.isAttacking()
+                + " mov=" + npc.getAi().getMovingType());
+        }
+    } catch (err) {
+        npc.getWorld().broadcast("[SK-DBG] ERROR: " + err);
+    }
+}
+
+function isBlocked(npc) {
+    var pos = npc.getPos();
+    var world = npc.getWorld();
+    var ix = Math.floor(pos.getX());
+    var iy = Math.floor(pos.getY());
+    var iz = Math.floor(pos.getZ());
+
+    return isSolid(world.getBlock(ix, iy + 1, iz))
+        || isSolid(world.getBlock(ix + 1, iy + 1, iz))
+        || isSolid(world.getBlock(ix - 1, iy + 1, iz))
+        || isSolid(world.getBlock(ix, iy + 1, iz + 1))
+        || isSolid(world.getBlock(ix, iy + 1, iz - 1));
+}
+
+function isSolid(block) {
+    if (!block) return false;
+    var name = block.getName();
+    return name !== "minecraft:air" && name !== "minecraft:cave_air" && name !== "minecraft:void_air"
+        && name.indexOf("water") === -1 && name.indexOf("lava") === -1;
 }
