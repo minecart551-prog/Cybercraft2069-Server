@@ -138,7 +138,7 @@ var TIER_STATS = {
         healthRegen: 5,
         combatRegen: 5,
         speed: 6.0,
-        rangedStrength: 33,
+        rangedStrength: 37,
         rangedAccuracy: 90,
         rangedRange: 100,
         rangedDelay: 15,
