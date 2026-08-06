@@ -44,6 +44,11 @@ function init(e) {
         npc.getStats().getRanged().setSound(2, "tacz:target_block_hit");
         npc.getStats().getRanged().setMeleeRange(4);
         isPolice = 1;
+
+        // Drops
+        npc.getInventory().setDropItem(0, npc.world.createItem("minecraft:stone_coin", 3), 50);
+        npc.getInventory().setDropItem(0, npc.world.createItem("minecraft:stone_coin", 5), 50);
+        npc.getInventory().setDropItem(0, npc.world.createItem("minecraft:apple", 1), 30);
         return;
     }
 
