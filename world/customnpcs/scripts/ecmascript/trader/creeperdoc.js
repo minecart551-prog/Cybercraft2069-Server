@@ -424,6 +424,7 @@ function customGuiButton(event) {
     }
  
     if (event.buttonId === ID_MODE_TOGGLE) {
+        if (!guiRef) return;
         isSellMode = !isSellMode;
         try {
             guiRef.removeComponent(ID_MODE_TOGGLE);
