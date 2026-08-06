@@ -24,7 +24,8 @@ var TU_TOPICS = {
     SMUGGLING:  26,
     BOUNTY:     27,
     FACTIONS:   28,
-    COSMETIC:   29
+    COSMETIC:   29,
+    SK:         30
 }
 
 // Per-player last-selected topic (defaults to BASIC on first open)
@@ -160,6 +161,28 @@ TUTORIAL_TOPICS[TU_TOPICS.COSMETIC] = {
         "\u00a7d\ud83c\udfa8 \u00a7fCosmetic artists earn \u00a7d25%\u00a7f per purchase"
     ]
 }
+TUTORIAL_TOPICS[TU_TOPICS.SK] = {
+    label: "\u00a7c\u2620 Serial Killers",
+    title: "\u00a7c\u00a7l\u2620 Serial Killers",
+    lines: [
+        "\u00a7c\u26a0 \u00a7fDangerous NPCs that hunt players \u00a7c at night",
+        "\u00a7a\ud83c\udf04 \u00a7fStay in safe zone (second level market area",
+        "\u00a7f  and near spawn) to avoid them",
+        "",
+        "\u00a7e\ud83d\udccd \u00a7f4 tiers of danger: \u00a7aS1\u00a7f (easy) \u00a7e-> \u00a7cS4\u00a7f (pro)",
+        "\u00a7f  Each area has a different tier assigned per night",
+        "\u00a7f  You'll at least need \u00a7eCZ75\u00a7f and some \u00a7eleather armor",
+        "\u00a7f  to fight the \u00a7aS1",
+        "",
+        "\u00a7e\ud83d\udce6 \u00a7fLoot they drop:",
+        "\u00a7f  Guns, armor, potions, food, ...",
+        "",
+        "\u00a7c\u2694 \u00a7fKill the same player \u00a7ctwice\u00a7f = despawn",
+        "\u00a7f  Player has until morning to kill it to get their item back",
+        "",
+        "\u00a7a\ud83d\udca1 \u00a7fUse the \u00a7eSK Compass\u00a7f to track nearest SK"
+    ]
+}
 
 // Ordered list of topic IDs (top to bottom in nav)
 var TU_TOPIC_ORDER = [
@@ -172,7 +195,8 @@ var TU_TOPIC_ORDER = [
     TU_TOPICS.SMUGGLING,
     TU_TOPICS.BOUNTY,
     TU_TOPICS.FACTIONS,
-    TU_TOPICS.COSMETIC
+    TU_TOPICS.COSMETIC,
+    TU_TOPICS.SK
 ]
 
 // ── Layout constants ──────────────────────────────────────────────────────────
@@ -356,7 +380,7 @@ function customGuiButton(event) {
     // ── Tutorial GUI ──────────────────────────────────────────────────────────
     if (guiId === GUI_TUTORIAL) {
         // Topic nav buttons (IDs 20-29) — save state and re-render
-        if (bid >= 20 && bid <= 29) {
+        if (bid >= 20 && bid <= 30) {
             tuTopicState[uuid] = bid
             openTutorialGui(event)
             return
