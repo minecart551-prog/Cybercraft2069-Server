@@ -18,7 +18,10 @@ function init(e) {
     // --- Citizen faction ---
     npc.setFaction(17);
     npc.getAi().setAvoidsWater(true);
-
+        // Drops
+        npc.getInventory().setDropItem(0, npc.world.createItem("minecraft:stone_coin", 3), 50);
+        npc.getInventory().setDropItem(1, npc.world.createItem("minecraft:stone_coin", 5), 50);
+        npc.getInventory().setDropItem(2, npc.world.createItem("minecraft:apple", 1), 50);
     if (Math.random() < 0.09) {
         display.setSkinTexture("cyberpunkskins:textures/lcpd.png");
         display.setName("LCPD");
@@ -45,10 +48,7 @@ function init(e) {
         npc.getStats().getRanged().setMeleeRange(4);
         isPolice = 1;
 
-        // Drops
-        npc.getInventory().setDropItem(0, npc.world.createItem("minecraft:stone_coin", 3), 50);
-        npc.getInventory().setDropItem(0, npc.world.createItem("minecraft:stone_coin", 5), 50);
-        npc.getInventory().setDropItem(0, npc.world.createItem("minecraft:apple", 1), 30);
+
         return;
     }
 
