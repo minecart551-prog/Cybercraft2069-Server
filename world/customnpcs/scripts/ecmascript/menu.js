@@ -162,7 +162,7 @@ TUTORIAL_TOPICS[TU_TOPICS.COSMETIC] = {
     ]
 }
 TUTORIAL_TOPICS[TU_TOPICS.SK] = {
-    label: "\u00a7c\u2620 Serial Killers",
+    label: "\u00a70\ud83e\udd77 \u00a7fSerial Killers",
     title: "\u00a7c\u00a7l\u2620 Serial Killers",
     lines: [
         "\u00a7c\u26a0 \u00a7fDangerous NPCs that hunt players \u00a7c at night",
