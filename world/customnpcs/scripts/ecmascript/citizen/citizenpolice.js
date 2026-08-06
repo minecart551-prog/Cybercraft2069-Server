@@ -19,8 +19,8 @@ function init(e) {
     npc.setFaction(17);
     npc.getAi().setAvoidsWater(true);
         // Drops
-        npc.getInventory().setDropItem(0, npc.world.createItem("minecraft:stone_coin", 3), 50);
-        npc.getInventory().setDropItem(1, npc.world.createItem("minecraft:stone_coin", 5), 50);
+        npc.getInventory().setDropItem(0, npc.world.createItem("coins:stone_coin", 3), 50);
+        npc.getInventory().setDropItem(1, npc.world.createItem("coins:stone_coin", 5), 50);
         npc.getInventory().setDropItem(2, npc.world.createItem("minecraft:apple", 1), 50);
     if (Math.random() < 0.09) {
         display.setSkinTexture("cyberpunkskins:textures/lcpd.png");
