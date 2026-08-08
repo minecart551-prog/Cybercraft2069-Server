@@ -163,16 +163,16 @@ TUTORIAL_TOPICS[TU_TOPICS.COSMETIC] = {
     ]
 }
 TUTORIAL_TOPICS[TU_TOPICS.BUILD] = {
-    label: "\u00a7e\ud83d\udd28 \u00a7fBuild Mode",
+    label: "\u00a7e\ud83d\udd28 \u00a7eBuild Mode",
     title: "\u00a7e\ud83d\udd28 Build Mode",
     lines: [
-        "Type \u00a7e/build <area_name>\u00a7f to go in creative mode",
-        "  and build with us, decorating the main city",
-        "  area or expanding it!",
+        "\u00a7fType \u00a7e/build <area_name>\u00a7f to go in creative mode",
+        "\u00a7f  and build with us, decorating the main city",
+        "\u00a7f  area or expanding it!",
         "",
         "\u00a7e\ud83c\udfa8 \u00a7fWe have \u00a7eYuushya modelling mod\u00a7f that allows",
-        "  you to create beautiful small details with",
-        "  blocks scaling, rotating, combining, etc..!"
+        "\u00a7f  you to create beautiful small details with",
+        "\u00a7f  blocks scaling, rotating, combining, etc..!"
     ]
 }
 
