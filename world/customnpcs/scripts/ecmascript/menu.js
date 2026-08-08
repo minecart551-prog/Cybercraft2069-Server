@@ -25,7 +25,8 @@ var TU_TOPICS = {
     BOUNTY:     27,
     FACTIONS:   28,
     COSMETIC:   29,
-    SK:         30
+    SK:         30,
+    BUILD:      31
 }
 
 // Per-player last-selected topic (defaults to BASIC on first open)
@@ -161,6 +162,20 @@ TUTORIAL_TOPICS[TU_TOPICS.COSMETIC] = {
         "\u00a7d\ud83c\udfa8 \u00a7fCosmetic artists earn \u00a7d25%\u00a7f per purchase"
     ]
 }
+TUTORIAL_TOPICS[TU_TOPICS.BUILD] = {
+    label: "\u00a7e\ud83d\udd28 \u00a7fBuild Mode",
+    title: "\u00a7e\ud83d\udd28 Build Mode",
+    lines: [
+        "Type \u00a7e/build <area_name>\u00a7f to go in creative mode",
+        "  and build with us, decorating the main city",
+        "  area or expanding it!",
+        "",
+        "\u00a7e\ud83c\udfa8 \u00a7fWe have \u00a7eYuushya modelling mod\u00a7f that allows",
+        "  you to create beautiful small details with",
+        "  blocks scaling, rotating, combining, etc..!"
+    ]
+}
+
 TUTORIAL_TOPICS[TU_TOPICS.SK] = {
     label: "\u00a70\ud83e\udd77 \u00a7fSerial Killers",
     title: "\u00a7c\u00a7l\u2620 Serial Killers",
@@ -196,6 +211,7 @@ var TU_TOPIC_ORDER = [
     TU_TOPICS.BOUNTY,
     TU_TOPICS.FACTIONS,
     TU_TOPICS.COSMETIC,
+    TU_TOPICS.BUILD,
     TU_TOPICS.SK
 ]
 
@@ -380,7 +396,7 @@ function customGuiButton(event) {
     // ── Tutorial GUI ──────────────────────────────────────────────────────────
     if (guiId === GUI_TUTORIAL) {
         // Topic nav buttons (IDs 20-29) — save state and re-render
-        if (bid >= 20 && bid <= 30) {
+        if (bid >= 20 && bid <= 31) {
             tuTopicState[uuid] = bid
             openTutorialGui(event)
             return
