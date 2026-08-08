@@ -42,6 +42,8 @@ var TIER_COLORS = {
     "S4": "§5"   // Purple
 };
 var KILLS_PER_PLAYER = 5;  // Number of serial killers per player per night
+var MIN_SK_PER_PLAYER = 2; // Minimum SKs per player per night
+var MAX_SK_PER_PLAYER = 5; // Maximum SKs per player per night
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
 var SERIALKILLER_NPC_NAME = "SerialKiller";
@@ -128,7 +130,8 @@ function timer(e) {
     for (var i = 0; i < onlinePlayers.length; i++) {
         var uuid = onlinePlayers[i].getUUID();
         if (!playerSchedule[uuid]) {
-            playerSchedule[uuid] = generateSpawnTimes(KILLS_PER_PLAYER);
+            var count = MIN_SK_PER_PLAYER + Math.floor(Math.random() * (MAX_SK_PER_PLAYER - MIN_SK_PER_PLAYER + 1));
+            playerSchedule[uuid] = generateSpawnTimes(count);
         }
     }
 
@@ -137,14 +140,14 @@ function timer(e) {
         var player = onlinePlayers[i];
         var uuid = player.getUUID();
         var count = playerSpawnedTonight[uuid] || 0;
+        var schedule = playerSchedule[uuid];
 
         // Already hit limit for this night
-        if (count >= KILLS_PER_PLAYER) continue;
+        if (schedule && count >= schedule.length) continue;
         if (isInSafeZone(player)) continue;
 
-        var schedule = playerSchedule[uuid];
-        // No schedule or all slots consumed
-        if (!schedule || count >= schedule.length) continue;
+        // No schedule
+        if (!schedule) continue;
 
         // Check if current time is within window of the next scheduled slot
         var nextSlot = schedule[count];
@@ -198,11 +201,16 @@ function assignTiers() {
 // ============================================================================
 function generateSpawnTimes(count) {
     var nightLength = NIGHT_END - NIGHT_START;
+    var MIN_GAP = 1800;  // 90 seconds minimum between spawns (1.5 min)
     var times = [];
+    var cursor = NIGHT_START;
     for (var i = 0; i < count; i++) {
-        times.push(NIGHT_START + Math.floor(Math.random() * nightLength));
+        var windowEnd = NIGHT_END - (count - i - 1) * MIN_GAP;
+        if (cursor >= windowEnd) break;
+        var pick = cursor + Math.floor(Math.random() * (windowEnd - cursor));
+        times.push(pick);
+        cursor = pick + MIN_GAP;
     }
-    times.sort(function(a, b) { return a - b; });
     return times;
 }
 
