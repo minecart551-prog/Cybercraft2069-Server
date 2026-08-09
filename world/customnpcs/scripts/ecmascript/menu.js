@@ -172,7 +172,9 @@ TUTORIAL_TOPICS[TU_TOPICS.BUILD] = {
         "",
         "\u00a7e\ud83c\udfa8 \u00a7fWe have \u00a7eYuushya modelling mod\u00a7f that allows",
         "\u00a7f  you to create beautiful small details with",
-        "\u00a7f  blocks scaling, rotating, combining, etc..!"
+        "\u00a7f  blocks scaling, rotating, combining, etc..",
+        "",
+        "\u00a7f  Ask moderator if you'd like to decorate more areas that arent in the list yet!"
     ]
 }
 
