@@ -42,8 +42,8 @@ var TIER_COLORS = {
     "S4": "§5"   // Purple
 };
 var KILLS_PER_PLAYER = 5;  // Number of serial killers per player per night
-var MIN_SK_PER_PLAYER = 2; // Minimum SKs per player per night
-var MAX_SK_PER_PLAYER = 5; // Maximum SKs per player per night
+var MIN_SK_PER_PLAYER = 1; // Minimum SKs per player per night
+var MAX_SK_PER_PLAYER = 3; // Maximum SKs per player per night
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
 var SERIALKILLER_NPC_NAME = "SerialKiller";
