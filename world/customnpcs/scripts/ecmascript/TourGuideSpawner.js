@@ -92,19 +92,30 @@ function tick(event) {
 
         // Grace period: don't teleport immediately on leaving range
         if (leaveGrace[leftUuid] === undefined) {
-            leaveGrace[leftUuid] = 20;
+            leaveGrace[leftUuid] = 2;
             continue;
         }
         if (leaveGrace[leftUuid] > 0) {
             leaveGrace[leftUuid]--;
-            continue;
+            if (leaveGrace[leftUuid] > 0) continue;
+            // grace just expired, fall through to teleport
         }
 
         if (qualifiedValue !== null && qualifiedValue !== undefined && qualifiedValue != 1) {
             leftPlayer.setPosition(SPAWN_X, SPAWN_Y, SPAWN_Z);
             leftPlayer.message("§e[Tour Guide] Please use the Tour Guide and finish the tour first!");
+            delete leaveGrace[leftUuid];
+            delete playersInRange[leftUuid];
         }
     }
 
-    playersInRange = currentlyHere;
+    // Keep players in range + any still in grace period
+    for (var uuid in currentlyHere) {
+        playersInRange[uuid] = currentlyHere[uuid];
+    }
+    for (var uuid in playersInRange) {
+        if (!currentlyHere[uuid] && (leaveGrace[uuid] === undefined || leaveGrace[uuid] <= 0)) {
+            delete playersInRange[uuid];
+        }
+    }
 }
