@@ -270,6 +270,11 @@ function interact(e) {
             lockToPlayer(npc, player);
         }
 
+        // Persist BEFORE movement so spawner always sees current step
+        var thisStep = currentTourStep;
+        currentTourStep++;
+        persistProgress(npc, player);
+
         if (stop.coords || stop.path) {
             if (stop.teleport) {
                 var target = stop.coords ? stop.coords : stop.path[stop.path.length - 1];
@@ -277,7 +282,7 @@ function interact(e) {
                 player.setPosition(target[0], target[1], target[2]);
                 isMoving = false;
 
-                if (currentTourStep === tourStops.length - 1) {
+                if (thisStep === tourStops.length - 1) {
                     npc.despawn();
                     currentTourStep = 0;
                     currentLeaderName = null;
@@ -295,9 +300,6 @@ function interact(e) {
                 isMoving = true;
             }
         }
-
-        currentTourStep++;
-        persistProgress(npc, player);
     }
 }
 
