@@ -318,17 +318,9 @@ function findRandomNearbyNPC(player, world) {
     var pz = pos.getZ();
     var preferredMin = 30;
     var preferredMax = 90;
-    var fallbackMax = 30;
 
-    // Pass 1: favor 30-90 range
     var nearby = world.getNearbyEntities(pos, preferredMax, 2);
     var candidates = filterNpcCandidates(nearby, px, py, pz, preferredMin, preferredMax);
-
-    // Pass 2: fallback within 30 blocks if no candidates in preferred range
-    if (candidates.length === 0) {
-        nearby = world.getNearbyEntities(pos, fallbackMax, 2);
-        candidates = filterNpcCandidates(nearby, px, py, pz, 0, fallbackMax);
-    }
 
     if (candidates.length === 0) return null;
 
