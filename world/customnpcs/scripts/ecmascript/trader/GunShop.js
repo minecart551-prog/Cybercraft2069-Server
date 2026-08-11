@@ -53,8 +53,8 @@ var CONFIG_SHOP_ITEMS = [
     // Tab 0 — Guns
 [
 
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 15, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 17, "GunFireMode": "SEMI", "GunId": "tacz:glock_17"}, lore: [] },
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 100, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 16, "GunFireMode": "AUTO", "GunId": "tacz:cz75"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 10, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 17, "GunFireMode": "SEMI", "GunId": "tacz:glock_17"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 50, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 16, "GunFireMode": "AUTO", "GunId": "tacz:cz75"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 4500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_archangel"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 5000, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture_crash"}, lore: [] },
 { id: "tacz:modern_kinetic_gun", count: 1, price: 5500, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 11, "GunFireMode": "SEMI", "GunId": "cyber_armorer:overture"}, lore: [] },
@@ -176,7 +176,7 @@ var CONFIG_SHOP_ITEMS = [
     // Tab 11 — Sets
 [
     // Row 1 — CZ75 Set
-{ id: "tacz:modern_kinetic_gun", count: 1, price: 100, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 16, "GunFireMode": "AUTO", "GunId": "tacz:cz75"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 50, nbt: {"HasBulletInBarrel": 1, "GunCurrentAmmoCount": 16, "GunFireMode": "AUTO", "GunId": "tacz:cz75"}, lore: [] },
 { id: "minecraft:leather_helmet", count: 1, price: 15, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 2.0, "Operation": 0, "Slot": "head", "UUID": "[I;1276935719,2101628065,-2062805011,-1388635]", "AttributeName": "generic.armor", "Name": "generic.armor"}]}, lore: [] },
 { id: "minecraft:leather_chestplate", count: 1, price: 50, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 6.0, "Operation": 0, "Slot": "chest", "UUID": "[I;66453,79497593,-201178,-16957605]", "AttributeName": "generic.armor", "Name": "generic.armor"}]}, lore: [] },
 { id: "minecraft:leather_leggings", count: 1, price: 40, nbt: {"Damage": 0, "AttributeModifiers": [{"Amount": 5.0, "Operation": 0, "Slot": "legs", "UUID": "[I;1393173916,1759135223,-1879342790,-508144820]", "AttributeName": "generic.armor", "Name": "generic.armor"}]}, lore: [] },
