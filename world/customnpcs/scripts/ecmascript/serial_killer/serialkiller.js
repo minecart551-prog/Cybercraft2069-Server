@@ -138,7 +138,7 @@ var TIER_STATS = {
         healthRegen: 5,
         combatRegen: 5,
         speed: 6.0,
-        rangedStrength: 37,
+        rangedStrength: 32,
         rangedAccuracy: 90,
         rangedRange: 100,
         rangedDelay: 15,
@@ -166,11 +166,26 @@ var currentArea = null;
 var currentTier = null;
 var currentStats = null;
 var crawlTickCount = 0;
+var lastX = null;
+var lastY = null;
+var lastZ = null;
+var stuckTicks = 0;
+var STUCK_THRESHOLD = 4;  // ticks before considered stuck
+var FLY_DURATION = 6;     // 10 CNPC ticks = 100 MC ticks = 5 seconds
+var flyTimer = 0;
+var isFlying = false;
+var flyDirIndex = 0;
 
 function init(e) {
     var npc = e.npc;
     crawlTickCount = 0;
     var pos = npc.getPos();
+    lastX = pos.getX();
+    lastY = pos.getY();
+    lastZ = pos.getZ();
+    stuckTicks = 0;
+    flyTimer = 0;
+    isFlying = false;
     var spawnX = pos.getX();
     var spawnZ = pos.getZ();
     npc.getAi().setReturnsHome(false);
@@ -281,11 +296,52 @@ function tick(e) {
         var blocked = isHeadBlocked(npc);
         var animType = npc.getAi().getAnimation();
         if (blocked && animType !== 7) {
-            npc.getAi().setMovingType(0);
             npc.getAi().setAnimation(7);
         } else if (!blocked && animType === 7) {
-            npc.getAi().setMovingType(1);
             npc.getAi().setAnimation(0);
+        }
+    }
+
+    // Stuck detection — track position and fly over obstacles
+    var pos = npc.getPos();
+    var x = pos.getX();
+    var y = pos.getY();
+    var z = pos.getZ();
+
+    if (isFlying) {
+        flyTimer--;
+        if (flyTimer <= 0) {
+            npc.getAi().setNavigationType(0);
+            isFlying = false;
+        } else if (flyTimer % 2 === 0) {
+            npc.setMotionY(0.2);
+            var dir = flyDirIndex % 4;
+            if (dir === 0) { npc.setMotionX(0.2); npc.setMotionZ(0); }
+            else if (dir === 1) { npc.setMotionX(0); npc.setMotionZ(0.2); }
+            else if (dir === 2) { npc.setMotionX(-0.2); npc.setMotionZ(0); }
+            else { npc.setMotionX(0); npc.setMotionZ(-0.2); }
+            flyDirIndex++;
+        }
+        lastX = x;
+        lastY = y;
+        lastZ = z;
+    } else {
+        if (lastX !== null && x === lastX && y === lastY && z === lastZ) {
+            stuckTicks++;
+        } else {
+            stuckTicks = 0;
+        }
+
+        lastX = x;
+        lastY = y;
+        lastZ = z;
+
+        if (stuckTicks >= STUCK_THRESHOLD) {
+            npc.getAi().setNavigationType(1);
+            flyTimer = FLY_DURATION;
+            isFlying = true;
+            flyDirIndex = Math.floor(Math.random() * 4);
+            stuckTicks = 0;
         }
     }
 
