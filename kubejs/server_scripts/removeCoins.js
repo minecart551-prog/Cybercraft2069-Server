@@ -2,7 +2,6 @@
 event.remove({ mod: 'coins' }),
 event.remove({ mod: 'waterframes' }),
 event.remove({ mod: 'tacz' }),
-event.remove({ mod: 'automobility' }),
 event.remove({ mod: 'decocraft' }),
 event.remove({ mod: 'cyber_armorer' }),
 event.remove({ mod: 'armourers_workshop' }),
