@@ -13,16 +13,12 @@ var CARS = [
 
 // ========== Layout Constants ==========
 var GUI_WIDTH        = 230;
-var TELEPORT_BTN_X   = 100;
-var TELEPORT_BTN_W   = 48;
-var TELEPORT_BTN_H   = 16;
 
 // ========== GUI State ==========
 var guiRef       = null;
 var lastBlock    = null;
 var lastPlayer   = null;
 var lastAPI      = null;
-var teleportBtnY = 0;
 
 // ========== Safe Update ==========
 function safeUpdate(gui) {
@@ -36,47 +32,6 @@ function interact(event) {
     lastPlayer = event.player;
     lastAPI    = event.API;
     showCarPurchaseGUI(lastPlayer, lastAPI);
-}
-
-// ========== World StoredData: Lost Car List Helpers ==========
-function getLostCarList(world) {
-    var wdata = world.getStoreddata();
-    if (!wdata.has("lostCarPlayers")) return [];
-    try {
-        return JSON.parse(wdata.get("lostCarPlayers"));
-    } catch(e) {
-        return [];
-    }
-}
-
-function saveLostCarList(world, list) {
-    world.getStoreddata().put("lostCarPlayers", JSON.stringify(list));
-}
-
-function isPlayerLostCar(world, playerName) {
-    var list = getLostCarList(world);
-    for (var i = 0; i < list.length; i++) {
-        if (list[i] === playerName) return true;
-    }
-    return false;
-}
-
-function addPlayerToLostCar(world, playerName) {
-    var list = getLostCarList(world);
-    for (var i = 0; i < list.length; i++) {
-        if (list[i] === playerName) return; // already in list
-    }
-    list.push(playerName);
-    saveLostCarList(world, list);
-}
-
-function removePlayerFromLostCar(world, playerName) {
-    var list = getLostCarList(world);
-    var newList = [];
-    for (var i = 0; i < list.length; i++) {
-        if (list[i] !== playerName) newList.push(list[i]);
-    }
-    saveLostCarList(world, newList);
 }
 
 // ========== Car Purchase GUI ==========
@@ -95,14 +50,7 @@ function showCarPurchaseGUI(player, api) {
         yPos -= 30;
     }
 
-    // ===== Teleport Car Mode Toggle =====
-    var lostCar = isPlayerLostCar(world, player.getName());
-    teleportBtnY = yPos - 9;
-    guiRef.addLabel(300, "§fLost Car Mode:", 20, yPos - 5, 0.9, 0.9);
-    guiRef.addButton(301, lostCar ? "§aEnabled" : "§cDisabled", TELEPORT_BTN_X, teleportBtnY, TELEPORT_BTN_W, TELEPORT_BTN_H);
-
-    yPos -= 30;
-
+    // ===== Close Button =====
     guiRef.addButton(999, "§cClose", GUI_WIDTH / 2 - 25, yPos - 20, 50, 16);
 
     player.showCustomGui(guiRef);
@@ -118,29 +66,6 @@ function customGuiButton(event) {
 
     if (buttonId === 999) {
         player.closeGui();
-        return;
-    }
-
-    if (buttonId === 301) {
-        var world      = lastBlock.getWorld();
-        var playerName = player.getName();
-        var current    = isPlayerLostCar(world, playerName);
-        var newVal     = !current;
-
-        if (newVal) {
-            addPlayerToLostCar(world, playerName);
-        } else {
-            removePlayerFromLostCar(world, playerName);
-        }
-
-        var statusMsg = newVal
-            ? "§aLost Car Mode §lENABLED§r§a. Your car will teleport back to shop!"
-            : "§cLost Car Mode §lDISABLED§r§c.";
-        player.message(statusMsg);
-
-        try { guiRef.removeComponent(301); } catch(e) {}
-        guiRef.addButton(301, newVal ? "§aEnabled" : "§cDisabled", TELEPORT_BTN_X, teleportBtnY, TELEPORT_BTN_W, TELEPORT_BTN_H);
-        safeUpdate(guiRef);
         return;
     }
 

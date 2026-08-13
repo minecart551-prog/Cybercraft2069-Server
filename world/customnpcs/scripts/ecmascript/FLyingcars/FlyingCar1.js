@@ -19,17 +19,6 @@ var CAR_PRICE_AMOUNT = 6;
 var CAR_HOME_X = 2432;
 var CAR_HOME_Y = 162;
 var CAR_HOME_Z = 874;
-
-// Allowed teleport boundary (XZ box)
-var CORNER1_X = 635;
-var CORNER1_Z = 2262;
-var CORNER2_X = 3197;
-var CORNER2_Z = -1314;
-
-var MIN_X = Math.min(CORNER1_X, CORNER2_X);
-var MAX_X = Math.max(CORNER1_X, CORNER2_X);
-var MIN_Z = Math.min(CORNER1_Z, CORNER2_Z);
-var MAX_Z = Math.max(CORNER1_Z, CORNER2_Z);
 var CAR_BASE_NAME = "FC1";
 
 // Fuel Settings
@@ -69,12 +58,6 @@ function init(event) {
 
     if (carData.owner) {
         npc.getDisplay().setName(CAR_BASE_NAME + " (" + carData.owner + ")");
-
-        // Check if owner is in the lost car list
-        var world = npc.getWorld();
-        if (isPlayerInLostCarList(world, carData.owner)) {
-            npc.setPosition(2436, 159, 828);
-        }
     }
 }
 
@@ -218,14 +201,9 @@ function showOwnerGUI(player, npc, api, carData) {
     }
 
     // Add member input
-    localGui.addLabel(110, "§7Add member:", 20, -70, 0.8, 0.8);
-    localGui.addTextField(50, 105, -70, 90, 14).setText("");
-    localGui.addButton(20, "§aAdd", 202, -71, 30, 16);
-
-    // Teleport fields
-    localGui.addLabel(115, "§7Teleport (x,y,z):", 20, -45, 0.8, 0.8);
-    localGui.addTextField(60, 105, -47, 90, 14);
-    localGui.addButton(22, "§bGo", 202, -48, 30, 16);
+    localGui.addLabel(110, "§7Add member:", 20, -45, 0.8, 0.8);
+    localGui.addTextField(50, 105, -45, 90, 14).setText("");
+    localGui.addButton(20, "§aAdd", 202, -46, 30, 16);
 
     // Player inventory
     localGui.showPlayerInventory(49, 90, false);
@@ -472,25 +450,6 @@ function customGuiButton(event) {
         return;
     }
 
-    // Teleport
-    if (event.buttonId === 22) {
-        if (!isOwner(npc, playerName)) return;
-        var gui = event.gui;
-        var field = gui ? gui.getComponent(60) : null;
-        var raw = field ? field.getText().trim() : "";
-        var parts = raw.split(",");
-        if (parts.length !== 3) { player.message("§cFormat must be: x,y,z"); return; }
-        var tx = parseFloat(parts[0].trim());
-        var ty = parseFloat(parts[1].trim()) + 3;
-        var tz = parseFloat(parts[2].trim());
-        if (isNaN(tx) || isNaN(ty) || isNaN(tz)) { player.message("§cInvalid coordinates!"); return; }
-        if (tx < MIN_X || tx > MAX_X || tz < MIN_Z || tz > MAX_Z) { player.message("§cCoordinates are outside the allowed area!"); return; }
-        npc.setPosition(tx, ty, tz);
-        player.message("§bCar teleported to §f" + tx + ", " + ty + ", " + tz);
-        player.closeGui();
-        return;
-    }
-
     // Remove member buttons (200–204) — NO close/reopen, just update member list in-place
     if (event.buttonId >= 200 && event.buttonId <= 204) {
         if (!isOwner(npc, playerName)) return;
@@ -686,18 +645,4 @@ function removeRestrictedItems(player) {
             }
         }
     }
-}
-
-// ========== World StoredData: Lost Car List Helper ==========
-
-function isPlayerInLostCarList(world, playerName) {
-    var wdata = world.getStoreddata();
-    if (!wdata.has("lostCarPlayers")) return false;
-    try {
-        var list = JSON.parse(wdata.get("lostCarPlayers"));
-        for (var i = 0; i < list.length; i++) {
-            if (list[i] === playerName) return true;
-        }
-    } catch(e) {}
-    return false;
 }
