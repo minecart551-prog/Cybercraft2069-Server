@@ -79,8 +79,8 @@ function scanForFlyingCars(player) {
 
                     var hasRider = false;
                     try {
-                        var passengers = ent.getPassengers();
-                        if (passengers && passengers.length > 0) {
+                        var riders = ent.getRiders();
+                        if (riders && riders.length > 0) {
                             hasRider = true;
                         }
                     } catch(e) {}
