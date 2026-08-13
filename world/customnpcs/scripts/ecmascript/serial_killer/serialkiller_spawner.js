@@ -28,7 +28,8 @@ var AREA_BOUNDS = {
 // SAFE ZONES - Players in these zones won't be targeted
 // ============================================================================
 var SAFE_ZONES = [
-    { minX: 1766, minZ: 552, maxX: 2767, maxZ: 1150 }   // Lobby area
+    { minX: 1766, minZ: 552, maxX: 2767, maxZ: 1150 },   // Lobby area
+    { minX: 2120, minZ: -475, maxX:  2206, maxZ: -435 } 
 ];
 
 // ============================================================================
