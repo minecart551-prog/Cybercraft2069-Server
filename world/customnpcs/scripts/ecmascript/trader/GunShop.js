@@ -103,7 +103,13 @@ var CONFIG_SHOP_ITEMS = [
 ],
 
 //Something
-[],
+[
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 8000, nbt: {"HasBulletInBarrel": 1, "GunFireMode": "SEMI", "GunId": "cyber_armorer:mantis_blade"}, lore: [] },
+{ id: "tacz:modern_kinetic_gun", count: 1, price: 10000, nbt: {"HasBulletInBarrel": 1, "GunFireMode": "SEMI", "GunId": "cyber_armorer:mantis_blade_maxtac"}, lore: [] }
+],
+
+
+
     // Tab 6 — Ammo
 [
  
