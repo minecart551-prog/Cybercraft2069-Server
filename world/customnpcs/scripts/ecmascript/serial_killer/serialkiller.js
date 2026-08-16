@@ -418,6 +418,15 @@ function tick(e) {
             var nearby = world.getNearbyEntities(npc.getPos(), 50, 1);
             for (var i = 0; i < nearby.length; i++) {
                 if (nearby[i].getName() === lastName && !nearby[i].isAlive()) {
+                    var killKey = "_kills_" + lastName;
+                    var prevKills = 0;
+                    try { prevKills = parseInt(npc.storeddata.get(killKey)) || 0; } catch(e) {}
+                    if (prevKills >= 1) {
+                        stripInventory(npc, nearby[i]);
+                        npc.despawn();
+                        return;
+                    }
+                    npc.storeddata.put(killKey, "" + (prevKills + 1));
                     stripInventory(npc, nearby[i]);
                     npc.storeddata.remove("_lastTargetName");
                     break;
@@ -578,14 +587,20 @@ function died(e) {
     var raw = store.get("_sk_loot_count");
     if (raw && raw.length > 0) { try { count = parseInt(raw); } catch(err) {} }
 
-    // Find the killer player nearby
-    var pos = npc.getPos();
-    var nearby = world.getNearbyEntities(pos, 10, 1);
+    // Use e.source to get the actual killer
     var killer = null;
-    for (var i = 0; i < nearby.length; i++) {
-        if (nearby[i].isAlive()) {
-            killer = nearby[i];
-            break;
+    if (e.source && e.source.getType && e.source.getType() == 1) {
+        killer = e.source;
+    }
+    // Fallback: scan nearby players if e.source isn't a player
+    if (!killer) {
+        var pos = npc.getPos();
+        var nearby = world.getNearbyEntities(pos, 10, 1);
+        for (var i = 0; i < nearby.length; i++) {
+            if (nearby[i].isAlive()) {
+                killer = nearby[i];
+                break;
+            }
         }
     }
 
