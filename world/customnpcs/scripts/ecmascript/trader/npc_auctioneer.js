@@ -899,15 +899,19 @@ function openSellerGui(event) {
     gui.addLabel(C.LBL_SEC_TITLE2, "§e§lSeller Desk", 158, 50, 170, 10)
     buildDivider(gui, C.BG_STRIPE2, 158, 62, w - 178, SKIN.SELLER.trim)
 
-    gui.addLabel(C.LBL_PRICE, "§fAsking Price §7(" + CUR_SYMBOL + ")", 158, 74, 132, 10)
+    gui.addLabel(C.LBL_PRICE, "§fPrice Per Unit §7(" + CUR_SYMBOL + ")", 158, 74, 132, 10)
     gui.addTextField(C.TF_PRICE, 158, 86, 168, 16).setText("1.00")
 
-    gui.addLabel(C.LBL_DAYS, "§fStall Duration §7(1-" + MAX_DAYS + " days)", 158, 108, 150, 10)
-    gui.addTextField(C.TF_DAYS, 158, 120, 62, 16).setText("3")
+    if (hasItem && held.getStackSize() > 1) {
+        gui.addLabel(C.LBL_ICON4, "§7Stack: §f" + held.getStackSize() + " §7units", 158, 104, 170, 10)
+    }
+
+    gui.addLabel(C.LBL_DAYS, "§fStall Duration §7(1-" + MAX_DAYS + " days)", 158, 116, 150, 10)
+    gui.addTextField(C.TF_DAYS, 158, 128, 62, 16).setText("3")
 
     var defFee = calcFee(100, 3)
-    gui.addLabel(C.LBL_FEE, "§7Desk fee: " + formatPrice(defFee), 158, 144, 170, 10)
-    gui.addLabel(C.LBL_ICON3, "§8Fee = 0% × price × days (min 1)", 158, 156, 170, 10)
+    gui.addLabel(C.LBL_FEE, "§7Desk fee: " + formatPrice(defFee), 158, 148, 170, 10)
+    gui.addLabel(C.LBL_ICON3, "§8Fee = 0% × total × days (min 1)", 158, 160, 170, 10)
 
     var bal = countPlayerCoins(player)
     gui.addLabel(C.LBL_BALANCE, "§7Wallet: §a" + formatPrice(bal), 12, 200, 200, 10)
@@ -929,8 +933,18 @@ function addPreviewToGui(gui, pvX, pvW, listing, world, showSeller) {
         addItemDisplay(gui, C.ITEM_PREVIEW, frameX + 5, 63, item)
     }
 
+    var unitP = listing.unitPrice || listing.price
+    var qty = listing.originalQty || listing.remainingQty || 1
+    if (qty > 1) {
+        unitP = listing.unitPrice || Math.round(listing.price / qty)
+    }
+
     gui.addLabel(C.LBL_PV_NAME, "§f§l" + getItemLabel(listing.itemNbt, world), pvX + 4, 92, pvW - 8, 10)
-    gui.addLabel(C.LBL_PV_PRICE, "§7Price: " + formatPrice(listing.price), pvX + 4, 106, pvW - 8, 10)
+    if (qty > 1) {
+        gui.addLabel(C.LBL_PV_PRICE, "§7Price: " + formatPrice(unitP) + "/u §7(§e" + formatPrice(listing.price) + "§7 total)", pvX + 4, 106, pvW - 8, 10)
+    } else {
+        gui.addLabel(C.LBL_PV_PRICE, "§7Price: " + formatPrice(unitP), pvX + 4, 106, pvW - 8, 10)
+    }
 
     if (showSeller) {
         gui.addLabel(C.LBL_PV_SELLER, "§7Seller: §f" + listing.sellerName, pvX + 4, 118, pvW - 8, 10)
@@ -973,11 +987,14 @@ function openBrowserGui(event, selectedIdx) {
         var L = active[i]
         var itemName = getItemLabel(L.itemNbt, world)
         var qtyInfo = ""
-        if (L.originalQty && L.originalQty > 1) {
-            var rem = L.remainingQty || L.originalQty
-            qtyInfo = " §8(§f" + rem + "§8/§f" + L.originalQty + "§8)"
+        var unitP = L.unitPrice || L.price
+        var qty = L.originalQty || L.remainingQty || 1
+        if (qty > 1) {
+            unitP = L.unitPrice || Math.round(L.price / qty)
+            var rem = L.remainingQty || qty
+            qtyInfo = " §8(§f" + rem + "§8/§f" + qty + "§8)"
         }
-        lines.push(formatPrice(L.price) + " §r§8|§r " + itemName + qtyInfo + " §r§8|§r §b" + timeLeftStr(L))
+        lines.push(formatPrice(unitP) + "/u §r§8|§r " + itemName + qtyInfo + " §r§8|§r §b" + timeLeftStr(L))
         ids.push(L.id)
     }
     if (lines.length === 0) {
@@ -1055,10 +1072,15 @@ function openDetailGui(event, listingId) {
         addItemDisplay(gui, C.ITEM_PREVIEW, 28, 66, item)
     }
     var iName = getItemLabel(L.itemNbt, world)
+    var unitP = L.unitPrice || L.price
+    var qty = L.originalQty || L.remainingQty || 1
+    if (qty > 1) {
+        unitP = L.unitPrice || Math.round(L.price / qty)
+    }
     var qtyLabel = ""
-    if (L.originalQty && L.originalQty > 1) {
-        var rem = L.remainingQty || L.originalQty
-        qtyLabel = " §8(§f" + rem + "§8/§f" + L.originalQty + "§8)"
+    if (qty > 1) {
+        var rem = L.remainingQty || qty
+        qtyLabel = " §8(§f" + rem + "§8/§f" + qty + "§8)"
     }
     gui.addLabel(C.LBL_D1, "§f§l" + iName + qtyLabel, 62, 58, 250, 12)
     gui.addLabel(C.LBL_D5, "§7Seller: §f" + L.sellerName, 62, 74, 250, 10)
@@ -1069,8 +1091,13 @@ function openDetailGui(event, listingId) {
     buildSection(gui, C.BG_SECTION2, 12, 132, w - 24, 80, SKIN.DETAIL.sectionB || TEX.SECTION)
     buildDivider(gui, C.BG_DIVIDER, 18, 146, w - 36, SKIN.DETAIL.trim)
 
-    gui.addLabel(C.LBL_D2, "§7Total Price", 20, 152, 80, 12)
-    gui.addLabel(C.LBL_ICON1, "§e§l" + formatPrice(L.price), 100, 152, 210, 12)
+    if (qty > 1) {
+        gui.addLabel(C.LBL_D2, "§7Price Per Unit", 20, 152, 80, 12)
+        gui.addLabel(C.LBL_ICON1, "§e§l" + formatPrice(unitP) + "/u §7(§f" + formatPrice(L.price) + "§7 total)", 100, 152, 210, 12)
+    } else {
+        gui.addLabel(C.LBL_D2, "§7Price", 20, 152, 80, 12)
+        gui.addLabel(C.LBL_ICON1, "§e§l" + formatPrice(unitP), 100, 152, 210, 12)
+    }
 
     gui.addLabel(C.LBL_D3, "§7Time left", 20, 166, 80, 12)
     var tl = timeLeftStr(L)
@@ -1126,7 +1153,12 @@ function openMyListingsGui(event, selectedIdx) {
     for (var i = 0; i < mine.length; i++) {
         var L = mine[i]
         var iName = getItemLabel(L.itemNbt, world)
-        lines.push(formatPrice(L.price) + " §r§8|§r " + iName + " §r§8|§r §b" + timeLeftStr(L))
+        var unitP = L.unitPrice || L.price
+        var qty = L.originalQty || L.remainingQty || 1
+        if (qty > 1) {
+            unitP = L.unitPrice || Math.round(L.price / qty)
+        }
+        lines.push(formatPrice(unitP) + "/u §r§8|§r " + iName + " §r§8|§r §b" + timeLeftStr(L))
         ids.push(L.id)
     }
     if (lines.length === 0) lines.push("§7\u2014 You have no active listings \u2014")
@@ -1268,9 +1300,14 @@ function openAdminGui(event, selectedIdx) {
         var status = L.status
         if (L.status === "active" && isExpired(L)) status = "expired"
         var statusTag = status === "active" ? "§a\u25CF" : status === "expired" ? "§c\u25CF" : "§7\u25CF"
+        var unitP = L.unitPrice || L.price
+        var qty = L.originalQty || L.remainingQty || 1
+        if (qty > 1) {
+            unitP = L.unitPrice || Math.round(L.price / qty)
+        }
         lines.push(
             statusTag + " " + iName +
-            " §r§8|§r " + formatPrice(L.price) +
+            " §r§8|§r " + formatPrice(unitP) + "/u" +
             " §r§8|§r §7" + L.sellerName
         )
         ids.push(L.id)
@@ -1336,7 +1373,7 @@ function openPurchaseGui(event, listingId) {
 
     var originalQty = L.originalQty || L.remainingQty
     var remainingQty = L.remainingQty || originalQty
-    var unitPriceCents = Math.round(L.price / originalQty)
+    var unitPriceCents = L.unitPrice || Math.round(L.price / originalQty)
     var iName = getItemLabel(L.itemNbt, world)
 
     var w = 330
@@ -1404,7 +1441,7 @@ function openConfirmGui(event, title, message, action, actionData) {
 // ============================================================================
 // CORE LOGIC — Create Listing
 // ============================================================================
-function doCreateListing(event, price, days) {
+function doCreateListing(event, unitPrice, days) {
     var player = event.player
     var world = player.getWorld()
     var npc = getNpc(world)
@@ -1422,10 +1459,10 @@ for (var bi = 0; bi < BLOCKED_ITEMS.length; bi++) {
         return
     }
 }    
-    // Price is already in cents (parsed by parsePriceInput in the button handler)
-    price = parseInt(price)
+    // unitPrice is in cents (parsed by parsePriceInput in the button handler)
+    unitPrice = parseInt(unitPrice)
     days = parseInt(days)
-    if (isNaN(price) || price < MIN_PRICE || price > MAX_PRICE) {
+    if (isNaN(unitPrice) || unitPrice < MIN_PRICE || unitPrice > MAX_PRICE) {
         player.message("§c[Auction] Price must be 0.01-" + (MAX_PRICE / 100) + CUR_SYMBOL)
         return
     }
@@ -1440,7 +1477,10 @@ for (var bi = 0; bi < BLOCKED_ITEMS.length; bi++) {
         return
     }
 
-    var fee = calcFee(price, days)
+    // Calculate total price and fee
+    var originalQty = held.getStackSize()
+    var totalPrice = unitPrice * originalQty
+    var fee = calcFee(totalPrice, days)
     if (countPlayerCoins(player) < fee) {
         player.message("§c[Auction] You need " + formatPrice(fee) + " for the listing fee!")
         return
@@ -1462,14 +1502,14 @@ for (var bi = 0; bi < BLOCKED_ITEMS.length; bi++) {
     player.setMainhandItem(world.createItem("minecraft:air", 1))
     player.updatePlayerInventory()
 
-    // Create listing entry
-    var originalQty = held.getStackSize()
+    // Create listing entry — store total price (unitPrice * qty)
     var listing = {
         id: generateId(),
         sellerUuid: player.getUUID(),
         sellerName: player.getName(),
         itemNbt: itemNbt,
-        price: price,
+        price: totalPrice,
+        unitPrice: unitPrice,
         days: days,
         feePaid: fee,
         createdAt: now(),
@@ -1480,7 +1520,7 @@ for (var bi = 0; bi < BLOCKED_ITEMS.length; bi++) {
     data.listings.push(listing)
     saveData(npc, data)
 
-    player.message("§a[Auction] Listed for " + formatPrice(price) + " §a(" + days + " days). Fee charged: " + formatPrice(fee))
+    player.message("§a[Auction] Listed " + originalQty + "x at " + formatPrice(unitPrice) + "/unit (§e" + formatPrice(totalPrice) + "§a total, " + days + "d). Fee: " + formatPrice(fee))
     openMainMenu(event)
 }
 
@@ -1807,16 +1847,17 @@ function customGuiButton(e) {
                 return
             }
 
-            var fee = calcFee(price, days)
+            var heldCount = held.getStackSize()
+            var totalPrice = price * heldCount
+            var fee = calcFee(totalPrice, days)
             var itemName = held.getDisplayName()
-            var count = held.getStackSize()
-            var label = itemName + (count > 1 ? " x" + count : "")
+            var label = itemName + (heldCount > 1 ? " x" + heldCount : "")
 
             openConfirmGui(e,
                 "§eConfirm Listing",
-                "§fList §b" + label + "§f for " + formatPrice(price) + "§f? Duration: " + days + "d, Fee: " + formatPrice(fee),
+                "§fList §b" + label + "§f at " + formatPrice(price) + "§f/unit? §7(" + heldCount + " units = §e" + formatPrice(totalPrice) + "§7) Duration: " + days + "d, Fee: " + formatPrice(fee),
                 "create_listing",
-                { price: price, days: days }
+                { unitPrice: price, days: days }
             )
         }
         return
@@ -1996,7 +2037,7 @@ function customGuiButton(e) {
         if (bid === C.BTN_YES && conf) {
             delete playerConfirmAction[pn]
             if (conf.action === "create_listing") {
-                doCreateListing(e, conf.data.price, conf.data.days)
+                doCreateListing(e, conf.data.unitPrice, conf.data.days)
             } else if (conf.action === "purchase") {
                 doPurchase(e, conf.data.listingId, conf.data.quantity)
             } else if (conf.action === "cancel_listing") {

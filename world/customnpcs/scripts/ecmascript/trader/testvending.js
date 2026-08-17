@@ -311,7 +311,13 @@ function doMarketPurchase(player, listing) {
         return { success: false, error: "No items remaining" };
     }
 
-    var priceToPay = freshListing.price;
+    // Use per-unit price for qty=1 purchase
+    var unitP = freshListing.unitPrice;
+    if (!unitP) {
+        var origQty = freshListing.originalQty || freshListing.remainingQty || 1;
+        unitP = (origQty > 1) ? Math.round(freshListing.price / origQty) : freshListing.price;
+    }
+    var priceToPay = unitP;
 
     if (countPlayerCoins(player) < priceToPay) {
         return { success: false, error: "Not enough coins. Need: " + formatPrice(priceToPay) };
@@ -370,7 +376,12 @@ function getMarketFoodIds(world) {
 function getMarketBestPrice(marketData, itemId, world) {
     var listings = getListingsForItem(marketData, itemId, world);
     if (listings.length === 0) return null;
-    return listings[0].price;
+    // Return per-unit price
+    var L = listings[0];
+    if (L.unitPrice) return L.unitPrice;
+    var qty = L.originalQty || L.remainingQty || 1;
+    if (qty > 1) return Math.round(L.price / qty);
+    return L.price;
 }
 
 // ============================================================
