@@ -1509,11 +1509,6 @@ function doPurchase(event, listingId, quantity) {
         return
     }
 
-    // Can't buy own listing
-    if (L.sellerUuid === player.getUUID()) {
-        player.message("§c[Auction] You cannot buy your own listing!")
-        return
-    }
 
     // Handle legacy listings without originalQty (full stack only)
     var originalQty = L.originalQty || L.remainingQty
