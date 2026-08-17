@@ -151,8 +151,16 @@ function getItemIdFromListing(listing, world) {
     return item.getName();
 }
 
+// Get per-unit price from a listing (handles both old and new formats)
+function getUnitPrice(listing) {
+    if (listing.unitPrice) return listing.unitPrice;
+    var qty = listing.originalQty || listing.remainingQty || 1;
+    if (qty > 1) return Math.round(listing.price / qty);
+    return listing.price;
+}
+
 // Find market listings for a specific item ID, buy qty=1 each click
-// Returns array of matching listings sorted by price ascending
+// Returns array of matching listings sorted by per-unit price ascending
 function getListingsForItem(marketData, itemId, world) {
     var active = getActiveListings(marketData);
     var matches = [];
@@ -166,7 +174,7 @@ function getListingsForItem(marketData, itemId, world) {
             }
         }
     }
-    matches.sort(function(a, b) { return a.price - b.price; });
+    matches.sort(function(a, b) { return getUnitPrice(a) - getUnitPrice(b); });
     return matches;
 }
 
@@ -312,12 +320,7 @@ function doMarketPurchase(player, listing) {
     }
 
     // Use per-unit price for qty=1 purchase
-    var unitP = freshListing.unitPrice;
-    if (!unitP) {
-        var origQty = freshListing.originalQty || freshListing.remainingQty || 1;
-        unitP = (origQty > 1) ? Math.round(freshListing.price / origQty) : freshListing.price;
-    }
-    var priceToPay = unitP;
+    var priceToPay = getUnitPrice(freshListing);
 
     if (countPlayerCoins(player) < priceToPay) {
         return { success: false, error: "Not enough coins. Need: " + formatPrice(priceToPay) };
@@ -376,12 +379,7 @@ function getMarketFoodIds(world) {
 function getMarketBestPrice(marketData, itemId, world) {
     var listings = getListingsForItem(marketData, itemId, world);
     if (listings.length === 0) return null;
-    // Return per-unit price
-    var L = listings[0];
-    if (L.unitPrice) return L.unitPrice;
-    var qty = L.originalQty || L.remainingQty || 1;
-    if (qty > 1) return Math.round(L.price / qty);
-    return L.price;
+    return getUnitPrice(listings[0]);
 }
 
 // ============================================================
