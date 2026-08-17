@@ -605,6 +605,75 @@ function updateVisibleSlots(player, api) {
     }
 }
 
+function refreshSlot(player, api, slotIndex) {
+    if (!api) {
+        try { api = Packages.noppes.npcs.api.NpcAPI.Instance(); } catch(e) {}
+    }
+    var world = player.getWorld();
+    var globalIndex = viewportToGlobal(slotIndex);
+    var marketData = loadMarketData(world);
+
+    var currentNbt = storedSlotItems[currentPage][globalIndex];
+    if (!currentNbt) return;
+
+    var currentItem = player.world.createItemFromNbt(api.stringToNbt(currentNbt));
+    var itemId = currentItem.getName();
+    var oldLore = currentItem.getLore();
+
+    var sourceLine = "";
+    for (var i = 0; i < oldLore.length; i++) {
+        if (oldLore[i].indexOf("Source:") !== -1) sourceLine = oldLore[i];
+    }
+
+    if (sourceLine.indexOf("Vending") !== -1) return;
+
+    var listings = getListingsForItem(marketData, itemId, world);
+    if (listings.length === 0) {
+        delete selectedMarketListings[globalIndex];
+        var fallbackPrice = cfg_price_for_id(itemId);
+        var cleanLore = [];
+        for (var i = 0; i < oldLore.length; i++) {
+            if (oldLore[i].indexOf("Price:") === -1 && oldLore[i].indexOf("Source:") === -1) {
+                cleanLore.push(oldLore[i]);
+            }
+        }
+        while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") cleanLore.pop();
+        cleanLore.push("");
+        cleanLore.push("§aPrice: §e" + fallbackPrice + "¢");
+        cleanLore.push("§7Source: Vending");
+        currentItem.setLore(cleanLore);
+        storedSlotItems[currentPage][globalIndex] = currentItem.getItemNbt().toJsonString();
+        mySlots[slotIndex].setStack(currentItem);
+        return;
+    }
+
+    var selected = pickRandomFromCheapest(listings);
+    selectedMarketListings[globalIndex] = selected.id;
+    var newPrice = getUnitPrice(selected);
+
+    var cleanLore = [];
+    for (var i = 0; i < oldLore.length; i++) {
+        if (oldLore[i].indexOf("Price:") === -1 && oldLore[i].indexOf("Source:") === -1) {
+            cleanLore.push(oldLore[i]);
+        }
+    }
+    while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") cleanLore.pop();
+    cleanLore.push("");
+    cleanLore.push("§aPrice: §e" + newPrice + "¢");
+    cleanLore.push("§7Source: Market");
+    currentItem.setLore(cleanLore);
+    storedSlotItems[currentPage][globalIndex] = currentItem.getItemNbt().toJsonString();
+    mySlots[slotIndex].setStack(currentItem);
+}
+
+function cfg_price_for_id(itemId) {
+    var foods = CONFIG_SHOP_ITEMS[0] || [];
+    for (var i = 0; i < foods.length; i++) {
+        if (foods[i].id === itemId) return foods[i].price;
+    }
+    return 0;
+}
+
 function refreshGui(player, api) {
     if (!api) {
         try { api = Packages.noppes.npcs.api.NpcAPI.Instance(); } catch(e) {}
@@ -733,11 +802,11 @@ function customGuiSlotClicked(event) {
     var globalIndex = viewportToGlobal(slotIndex);
     if (globalIndex >= storedSlotItems[currentPage].length) return;
 
-    var item = mySlots[slotIndex].getStack();
-    if (!item || item.isEmpty()) return;
+    var slotItem = mySlots[slotIndex].getStack();
+    if (!slotItem || slotItem.isEmpty()) return;
 
     var price = null;
-    var lore = item.getLore();
+    var lore = slotItem.getLore();
     for (var i = 0; i < lore.length; i++) {
         var line = lore[i];
         if (line.indexOf("Price:") !== -1 && line.indexOf("¢") !== -1) {
@@ -752,22 +821,9 @@ function customGuiSlotClicked(event) {
         return;
     }
 
-    var playerCoins = countPlayerCoins(player);
-    if (playerCoins < price) {
-        player.message("§cNot enough coins! Need: §e" + price + "¢ §c, Have: §e" + playerCoins + "¢");
-        return;
-    }
-
-    var itemId = item.getName();
+    var itemId = slotItem.getName();
     var isPotion = false;
-    var potionId = null;
-
-    if (itemId === "minecraft:splash_potion") {
-        isPotion = true;
-        try {
-            potionId = item.getNbt().getString("Potion");
-        } catch(e) {}
-    }
+    if (itemId === "minecraft:splash_potion") isPotion = true;
 
     var boughtFromMarket = false;
     if (currentPage === 0 && !isPotion) {
@@ -799,37 +855,38 @@ function customGuiSlotClicked(event) {
         }
     }
 
-    if (!boughtFromMarket) {
-        playerCoins = countPlayerCoins(player);
-        if (playerCoins < price) {
-            player.message("§cNot enough coins after market attempt! Need: §e" + price + "¢");
-            return;
-        }
-
-        removeCoins(player, price);
-
-        try {
-            if (storedSlotItems[currentPage][globalIndex]) {
-                var purchaseItem = player.world.createItemFromNbt(api.stringToNbt(storedSlotItems[currentPage][globalIndex]));
-                var purchaseLore = purchaseItem.getLore();
-                var cleanLore = [];
-                for (var i = 0; i < purchaseLore.length; i++) {
-                    var line = purchaseLore[i];
-                    if (line.indexOf("Price:") === -1 && line.indexOf("Source:") === -1 && line.indexOf("Click to purchase") === -1) {
-                        cleanLore.push(line);
-                    }
-                }
-                while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") { cleanLore.pop(); }
-                purchaseItem.setLore(cleanLore);
-                player.giveItem(purchaseItem);
-                player.message("§aPurchased item for §e" + price + "¢!");
-            }
-        } catch(e) {
-            player.message("§cError purchasing item: " + e);
-        }
+    if (boughtFromMarket) {
+        refreshSlot(player, api, slotIndex);
+        return;
     }
 
-    refreshGui(player, api);
+    var playerCoins = countPlayerCoins(player);
+    if (playerCoins < price) {
+        player.message("§cNot enough coins! Need: §e" + price + "¢");
+        return;
+    }
+
+    removeCoins(player, price);
+
+    try {
+        if (storedSlotItems[currentPage][globalIndex]) {
+            var purchaseItem = player.world.createItemFromNbt(api.stringToNbt(storedSlotItems[currentPage][globalIndex]));
+            var purchaseLore = purchaseItem.getLore();
+            var cleanLore = [];
+            for (var i = 0; i < purchaseLore.length; i++) {
+                var pline = purchaseLore[i];
+                if (pline.indexOf("Price:") === -1 && pline.indexOf("Source:") === -1 && pline.indexOf("Click to purchase") === -1) {
+                    cleanLore.push(pline);
+                }
+            }
+            while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") { cleanLore.pop(); }
+            purchaseItem.setLore(cleanLore);
+            player.giveItem(purchaseItem);
+            player.message("§aPurchased item for §e" + price + "¢!");
+        }
+    } catch(e) {
+        player.message("§cError purchasing item: " + e);
+    }
 }
 
 function customGuiClosed(event) {

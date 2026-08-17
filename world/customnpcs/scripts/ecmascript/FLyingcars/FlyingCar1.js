@@ -227,6 +227,7 @@ function showOwnerGUI(player, npc, api, carData) {
 // Component IDs 200-204 = remove buttons
 // Component ID  103     = "None" placeholder
 function renderMemberList(carData) {
+    if (!guiRef) return;
     // Clear previous member rows
     for (var i = 0; i < 5; i++) {
         try { guiRef.removeComponent(120 + i); } catch(e) {}
@@ -369,7 +370,7 @@ function customGuiClosed(event) {
 function customGuiButton(event) {
     var player = event.player;
     var npc = _lastNpcRef;
-    if (!npc) { player.closeGui(); return; }
+    if (!npc || !guiRef) { player.closeGui(); return; }
 
     var carData = getCarData(npc);
     var playerName = player.getName();
