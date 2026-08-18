@@ -20,7 +20,6 @@ var TU_TOPICS = {
     REPLICANTS: 22,
     DELIVERY:   23,
     RESTAURANT: 24,
-    FARMING:    25,
     SMUGGLING:  26,
     BOUNTY:     27,
     FACTIONS:   28,
@@ -88,25 +87,15 @@ TUTORIAL_TOPICS[TU_TOPICS.DELIVERY] = {
     ]
 }
 TUTORIAL_TOPICS[TU_TOPICS.RESTAURANT] = {
-    label: "\u00a7d\ud83c\udf7d Restaurant",
-    title: "\u00a7d\u00a7l\ud83c\udf7d Restaurant Job",
+    label: "\u00a7d\ud83c\udf7d Farming & Restaurant",
+    title: "\u00a7d\u00a7l\ud83c\udf7d Restaurant & Cooking & Farming",
     lines: [
-        "\u00a7e\ud83e\udd69 \u00a7fIngredients drop from \u00a7creplicants\u00a7f & drones",
-        "\u00a7a\ud83d\udcd6 \u00a7fLearn recipes at \u00a7eMarlene's Bar",
-        "\u00a7b\ud83c\udf74 \u00a7fChoose your menu, then serve customers",
-        "\u00a7f  Hunt replicants regularly to restock!"
-    ]
-}
-TUTORIAL_TOPICS[TU_TOPICS.FARMING] = {
-    label: "\u00a7a\ud83c\udf31 Farming",
-    title: "\u00a7a\u00a7l\ud83c\udf31 Farming",
-    lines: [
-        "\u00a7e\ud83c\udf3f \u00a7fYou start with \u00a7e5 starter pots",
-        "\u00a7f  (pots = sugarcane only; other plants",
-        "\u00a7f   grow on dirt normally)",
-        "\u00a7b\ud83d\uded2 \u00a7fBuy seeds & pots at \u00a7eSobiez\u00f3ja's Shop\u00a7f (lvl 2)",
-        "\u00a7a\ud83c\udfe1 \u00a7fGrow in your \u00a7eapartment\u00a7f or \u00a7efaction land",
-        "\u00a7d\ud83c\udf80 \u00a7fSobiez\u00f3ja also sells \u00a7edecorational items"
+        "\u00a7a\ud83c\udf3e \u00a7fFarm crops & and gather ingredent from the vanilla zone (Forest) or in your claim",
+        "\u00a7a\ud83c\udf3e \u00a7fGet there with teleport button at \u00a7Boat Dock",
+        "\u00a7a\ud83c\udf3e \u00a7fMarlene's restaurant kitchen provide the cooking equipments or you can craft them yourself",
+        "\u00a7d\ud83c\udfe1 \u00a7fSell food at \u00a7ePlayer Market\u00a7f to stock vending machines globally",
+        "\u00a7b\ud83c\udfeb \u00a7fOr rent an \u00a7eNPC Shop\u00a7f to sell at a location",
+        "\u00a7f  \u00a77Farm, cook, and profit!",
     ]
 }
 TUTORIAL_TOPICS[TU_TOPICS.SMUGGLING] = {
@@ -208,7 +197,6 @@ var TU_TOPIC_ORDER = [
     TU_TOPICS.REPLICANTS,
     TU_TOPICS.DELIVERY,
     TU_TOPICS.RESTAURANT,
-    TU_TOPICS.FARMING,
     TU_TOPICS.SMUGGLING,
     TU_TOPICS.BOUNTY,
     TU_TOPICS.FACTIONS,
