@@ -126,6 +126,7 @@ function doTeleportWithVehicle(player, vehicle, destX, destY, destZ, yaw, pitch)
 function checkBorder(player) {
     if (!player) return;
     if (player.isCreative() || player.isSpectator()) return;
+    if (player.level.dimension.toString() !== "minecraft:overworld") return;
 
     var vehicle = player.vehicle;
     // Use vehicle position if mounted, since the vehicle is what's moving
@@ -144,6 +145,7 @@ function checkBorder(player) {
 function checkTpBoxes(player) {
     if (!player) return;
     if (player.isCreative() || player.isSpectator()) return;
+    if (player.level.dimension.toString() !== "minecraft:overworld") return;
 
     var vehicle = player.vehicle;
     // Use vehicle position if mounted, since the vehicle is what's moving
