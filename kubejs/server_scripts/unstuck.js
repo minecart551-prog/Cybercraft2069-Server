@@ -185,6 +185,12 @@ ServerEvents.commandRegistry(function(event) {
           player.tell("§cYou are already queued for teleportation!");
           return 0;
         }
+
+        // Block unstuck in the Nether
+        if (player.level.dimension.toString() === "minecraft:the_nether") {
+          player.tell("§cYou cannot use unstuck in the Nether!, use /home instead!");
+          return 0;
+        }
         
         const px = Number(player.getX());
         const pz = Number(player.getZ());
