@@ -36,7 +36,7 @@ var tourStops = [
     { msg: "§aAre you ready for a tour?" },
     { msg: "§aHere at the park you can catch fishes and trade for money on the market above, I've given you some starting money, you can try to catch a fish and we'll go to the market." },
     { msg: "§aYour items will be kept if you die in nopvp area, outside of it they will drop, i'll be showing you the zone later" },
-    { msg: "§aLet's now go to the second level. If you get stuck you can do §e/unstuckme §a, if youre lost do §e/spawnme §a. You can get food from all vending machines around the city", path: [[2338, -48, 848],
+    { msg: "§aLet's now go to the second level. If you get stuck you can do §e/unstuckme §a, if youre lost do §e/spawnme §a. Set home with §e/sethome §aand tp home with §e/home §aYou can get food from all §evending machines §aaround the city", path: [[2338, -48, 848],
      [2396, -41, 848],
      [2418, -41, 828],
      [2462, -41, 842]
