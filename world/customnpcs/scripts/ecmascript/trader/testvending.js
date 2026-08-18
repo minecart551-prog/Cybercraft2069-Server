@@ -631,6 +631,14 @@ function refreshSlot(player, api, slotIndex) {
     if (listings.length === 0) {
         delete selectedMarketListings[globalIndex];
         var fallbackPrice = cfg_price_for_id(itemId);
+
+        if (fallbackPrice === 0) {
+            storedSlotItems[currentPage][globalIndex] = null;
+            mySlots[slotIndex].setStack(null);
+            if (guiRef) guiRef.update();
+            return;
+        }
+
         var cleanLore = [];
         for (var i = 0; i < oldLore.length; i++) {
             if (oldLore[i].indexOf("Price:") === -1 && oldLore[i].indexOf("Source:") === -1) {
@@ -644,6 +652,7 @@ function refreshSlot(player, api, slotIndex) {
         currentItem.setLore(cleanLore);
         storedSlotItems[currentPage][globalIndex] = currentItem.getItemNbt().toJsonString();
         mySlots[slotIndex].setStack(currentItem);
+        if (guiRef) guiRef.update();
         return;
     }
 
@@ -664,6 +673,7 @@ function refreshSlot(player, api, slotIndex) {
     currentItem.setLore(cleanLore);
     storedSlotItems[currentPage][globalIndex] = currentItem.getItemNbt().toJsonString();
     mySlots[slotIndex].setStack(currentItem);
+    if (guiRef) guiRef.update();
 }
 
 function cfg_price_for_id(itemId) {
@@ -816,7 +826,7 @@ function customGuiSlotClicked(event) {
         }
     }
 
-    if (price === null || price === undefined) {
+    if (price === null || price === undefined || price <= 0) {
         player.message("§cThis item has no price set!");
         return;
     }
@@ -850,8 +860,20 @@ function customGuiSlotClicked(event) {
                     } else {
                         player.message("§cMarket error: " + result.error + " §7Falling back to vending stock.");
                     }
+                } else if (cfg_price_for_id(itemId) === 0) {
+                    storedSlotItems[currentPage][globalIndex] = null;
+                    mySlots[slotIndex].setStack(null);
+                    if (guiRef) guiRef.update();
+                    player.message("§cThat item is no longer available!");
+                    return;
                 }
             }
+        } else if (cfg_price_for_id(itemId) === 0) {
+            storedSlotItems[currentPage][globalIndex] = null;
+            mySlots[slotIndex].setStack(null);
+            if (guiRef) guiRef.update();
+            player.message("§cThat item is no longer available!");
+            return;
         }
     }
 
