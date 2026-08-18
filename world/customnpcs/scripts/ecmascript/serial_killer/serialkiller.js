@@ -134,7 +134,7 @@ var TIER_STATS = {
     },
     "S4": {
         name: "S4",
-        health: 200,
+        health: 230,
         healthRegen: 5,
         combatRegen: 5,
         speed: 6.0,
