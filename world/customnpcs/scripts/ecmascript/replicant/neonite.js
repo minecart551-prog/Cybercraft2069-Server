@@ -11,6 +11,7 @@ function init(event){
      var beans = npc.world.createItem("minecraft:air", 1);
      var milk = npc.world.createItem("minecraft:air", 1);
      var mug = npc.world.createItem("minecraft:air", 1);
+     npc.getInventory().setDropItem(0, milk, 100);     
      npc.getInventory().setDropItem(1, coal, 100);
      npc.getInventory().setDropItem(2, beans, 30);
      npc.getInventory().setDropItem(3, milk, 30);
