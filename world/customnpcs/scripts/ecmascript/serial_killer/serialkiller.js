@@ -24,6 +24,8 @@ var EXCEPTIONS = [      "minecraft:fishing_rod",
                          "lockandblock:keycard"];
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
+var NpcFOV = 100;
+var chasingTarget = null;
 
 
 
@@ -179,6 +181,7 @@ var flyDirIndex = 0;
 function init(e) {
     var npc = e.npc;
     crawlTickCount = 0;
+    chasingTarget = null;
     var pos = npc.getPos();
     lastX = pos.getX();
     lastY = pos.getY();
@@ -274,9 +277,6 @@ function init(e) {
     } catch(e) {}
 
 
-    // Scan for nearby players immediately
-    scanForTarget(npc);
-
 }
 
 function tick(e) {
@@ -368,66 +368,52 @@ function tick(e) {
         }
     }
 
-    // Get current target
-    var currentTarget = npc.getAttackTarget();
+    // ==================== CHASE / TARGET LOGIC ====================
+    if (chasingTarget == null) {
+        // No active target — scan for a player in FOV
+        scanForTarget(npc);
 
-    // Track current target name so we can strip them if they die and we lose the reference
-    if (currentTarget && currentTarget.isAlive() && currentTarget.getType() == 1) {
-        npc.storeddata.put("_lastTargetName", currentTarget.getName());
-    }
-
-    // Validate current target
-    if (currentTarget) {
-        try {
-            if (!currentTarget.isAlive()) {
-                var killedName = currentTarget.getName();
-                var killKey = "_kills_" + killedName;
-                var prevKills = 0;
-                try { prevKills = parseInt(npc.storeddata.get(killKey)) || 0; } catch(e) {}
-                if (prevKills >= 1) {
-                    stripInventory(npc, currentTarget);
-                    npc.despawn();
-                    return;
-                }
-                npc.storeddata.put(killKey, "" + (prevKills + 1));
-                stripInventory(npc, currentTarget);
-                npc.setAttackTarget(null);
-                currentTarget = null;
-            }
-        } catch (err) {
+        // If scanForTarget found someone, attack immediately
+        if (chasingTarget != null) {
+            npc.setAttackTarget(chasingTarget);
+        }
+    } else {
+        // Actively targeting
+        if (!chasingTarget.isAlive()) {
+            handleTargetDeath(npc, chasingTarget);
+            chasingTarget = null;
             npc.setAttackTarget(null);
-            currentTarget = null;
+            return;
+        }
+
+        // Only chase players, never other NPCs
+        if (chasingTarget.getType() != 1) {
+            chasingTarget = null;
+            npc.setAttackTarget(null);
+            return;
+        }
+
+        // Track target name in case reference is lost
+        npc.storeddata.put("_lastTargetName", chasingTarget.getName());
+
+        var dist = npc.getPos().distanceTo(chasingTarget.getPos());
+
+        // Lost sight — too far away
+        if (dist > 90) {
+            chasingTarget = null;
+            npc.setAttackTarget(null);
+            return;
         }
     }
 
-    // Only attack players, never other NPCs
-    if (currentTarget && currentTarget.getType() != 1) {
-        npc.setAttackTarget(null);
-        currentTarget = null;
-    }
-
-    // If no target, scan for new target
-    if (!currentTarget) {
-        scanForTarget(npc);
-    }
-
-    // If we still have no target, check if our last target died (e.g. they respawned or we lost reference)
-    if (!npc.getAttackTarget()) {
+    // Check if our last target died (e.g. they respawned or we lost reference)
+    if (!chasingTarget && !npc.getAttackTarget()) {
         var lastName = npc.storeddata.get("_lastTargetName");
         if (lastName) {
             var nearby = world.getNearbyEntities(npc.getPos(), 50, 1);
             for (var i = 0; i < nearby.length; i++) {
                 if (nearby[i].getName() === lastName && !nearby[i].isAlive()) {
-                    var killKey = "_kills_" + lastName;
-                    var prevKills = 0;
-                    try { prevKills = parseInt(npc.storeddata.get(killKey)) || 0; } catch(e) {}
-                    if (prevKills >= 1) {
-                        stripInventory(npc, nearby[i]);
-                        npc.despawn();
-                        return;
-                    }
-                    npc.storeddata.put(killKey, "" + (prevKills + 1));
-                    stripInventory(npc, nearby[i]);
+                    handleTargetDeath(npc, nearby[i]);
                     npc.storeddata.remove("_lastTargetName");
                     break;
                 }
@@ -449,6 +435,8 @@ function scanForTarget(npc) {
     for (var i = 0; i < nearby.length; i++) {
         var player = nearby[i];
         if (!player.isAlive()) continue;
+        if (!CheckFOV(npc, player, NpcFOV)) continue;
+        if (!npc.canSeeEntity(player)) continue;
 
         var dist = pos.distanceTo(player.getPos());
         if (dist < nearestDist) {
@@ -458,8 +446,26 @@ function scanForTarget(npc) {
     }
 
     if (nearestPlayer) {
-        npc.setAttackTarget(nearestPlayer);
+        chasingTarget = nearestPlayer;
     }
+}
+
+function handleTargetDeath(npc, player) {
+    try {
+        if (!player.isAlive()) {
+            var killedName = player.getName();
+            var killKey = "_kills_" + killedName;
+            var prevKills = 0;
+            try { prevKills = parseInt(npc.storeddata.get(killKey)) || 0; } catch(e) {}
+            if (prevKills >= 1) {
+                stripInventory(npc, player);
+                npc.despawn();
+                return;
+            }
+            npc.storeddata.put(killKey, "" + (prevKills + 1));
+            stripInventory(npc, player);
+        }
+    } catch (err) {}
 }
 
 function detectArea(x, z) {
@@ -504,6 +510,28 @@ function isSolid(block) {
     var name = block.getName();
     return name !== "minecraft:air" && name !== "minecraft:cave_air" && name !== "minecraft:void_air"
         && name.indexOf("water") === -1 && name.indexOf("lava") === -1;
+}
+
+function CheckFOV(seer, seen, FOV) {
+    var P = seer.getRotation();
+    if (P < 0) P = P + 360;
+    var rot = Math.abs(GetPlayerRotation(seer, seen) - P);
+    if (rot > 180) rot = Math.abs(rot - 360);
+    return (rot < FOV / 2);
+}
+
+function GetPlayerRotation(npc, player) {
+    var dx = npc.getX() - player.getX();
+    var dz = player.getZ() - npc.getZ();
+    var angle;
+    if (dz >= 0) {
+        angle = (Math.atan(dx / dz) * 180 / Math.PI);
+        if (angle < 0) angle = 360 + angle;
+    } else {
+        dz = -dz;
+        angle = 180 - (Math.atan(dx / dz) * 180 / Math.PI);
+    }
+    return angle;
 }
 
 function stripInventory(npc, player) {
