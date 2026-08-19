@@ -3,7 +3,7 @@
     "stabilizer": 0.1,
     "fuel": 1.25,
     "yawSpeed": 5.0,
-    "engineSpeed": 0.0175,
+    "engineSpeed": 0.035,
     "verticalSpeed": 0.02,
     "glideFactor": 0.0,
     "driftDrag": 0.01,

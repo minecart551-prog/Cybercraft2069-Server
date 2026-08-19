@@ -4,7 +4,7 @@
     "stabilizer": 0.1,
     "yawSpeed": 0.15,
     "pitchSpeed": 1.5,
-    "engineSpeed": 0.0325,
+    "engineSpeed": 0.065,
     "verticalSpeed": 0.0325,
     "glideFactor": 0.0,
     "driftDrag": 0.005,

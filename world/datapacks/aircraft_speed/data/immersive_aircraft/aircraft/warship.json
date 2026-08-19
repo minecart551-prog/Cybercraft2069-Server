@@ -4,7 +4,7 @@
     "durability": 3.0,
     "stabilizer": 0.1,
     "yawSpeed": 2.5,
-    "engineSpeed": 0.035,
+    "engineSpeed": 0.07,
     "verticalSpeed": 0.025,
     "glideFactor": 0.0,
     "driftDrag": 0.01,
