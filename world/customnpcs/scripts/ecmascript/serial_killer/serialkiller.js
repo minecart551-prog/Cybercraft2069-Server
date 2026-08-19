@@ -171,7 +171,7 @@ var lastX = null;
 var lastY = null;
 var lastZ = null;
 var stuckTicks = 0;
-var STUCK_THRESHOLD = 4;  // ticks before considered stuck
+var STUCK_THRESHOLD = 8;  // ticks before considered stuck
 var FLY_DURATION = 6;     // 10 CNPC ticks = 100 MC ticks = 5 seconds
 var flyTimer = 0;
 var isFlying = false;
@@ -366,41 +366,78 @@ function tick(e) {
         }
     }
 
-    // ==================== TARGET LOGIC ====================
+    // Get current target
     var currentTarget = npc.getAttackTarget();
 
-    // Always clear attack target if it's not a player (prevents faction AI from targeting other NPCs)
+    // Only attack players, never other NPCs — clear immediately if faction AI targeted one
     if (currentTarget && currentTarget.getType() != 1) {
         npc.setAttackTarget(null);
         currentTarget = null;
     }
 
+    // Track current target name so we can strip them if they die and we lose the reference
+    if (currentTarget && currentTarget.isAlive() && currentTarget.getType() == 1) {
+        npc.storeddata.put("_lastTargetName", currentTarget.getName());
+    }
+
     // Validate current target
     if (currentTarget) {
-        if (!currentTarget.isAlive()) {
-            handleTargetDeath(npc, currentTarget);
-            npc.setAttackTarget(null);
-            currentTarget = null;
-        } else {
-            var dist = npc.getPos().distanceTo(currentTarget.getPos());
-            // Lost sight — too far away
-            if (dist > 90) {
+        try {
+            if (!currentTarget.isAlive()) {
+                var killedName = currentTarget.getName();
+                var killKey = "_kills_" + killedName;
+                var prevKills = 0;
+                try { prevKills = parseInt(npc.storeddata.get(killKey)) || 0; } catch(e) {}
+                if (prevKills >= 1) {
+                    stripInventory(npc, currentTarget);
+                    npc.despawn();
+                    return;
+                }
+                npc.storeddata.put(killKey, "" + (prevKills + 1));
+                stripInventory(npc, currentTarget);
                 npc.setAttackTarget(null);
                 currentTarget = null;
             }
+        } catch (err) {
+            npc.setAttackTarget(null);
+            currentTarget = null;
         }
     }
 
-    // If no target, scan for a player in FOV
+    // If no target, scan for new target
     if (!currentTarget) {
         scanForTarget(npc);
+    }
+
+    // If we still have no target, check if our last target died (e.g. they respawned or we lost reference)
+    if (!npc.getAttackTarget()) {
+        var lastName = npc.storeddata.get("_lastTargetName");
+        if (lastName) {
+            var nearby = world.getNearbyEntities(npc.getPos(), 50, 1);
+            for (var i = 0; i < nearby.length; i++) {
+                if (nearby[i].getName() === lastName && !nearby[i].isAlive()) {
+                    var killKey = "_kills_" + lastName;
+                    var prevKills = 0;
+                    try { prevKills = parseInt(npc.storeddata.get(killKey)) || 0; } catch(e) {}
+                    if (prevKills >= 1) {
+                        stripInventory(npc, nearby[i]);
+                        npc.despawn();
+                        return;
+                    }
+                    npc.storeddata.put(killKey, "" + (prevKills + 1));
+                    stripInventory(npc, nearby[i]);
+                    npc.storeddata.remove("_lastTargetName");
+                    break;
+                }
+            }
+        }
     }
 }
 
 function scanForTarget(npc) {
     var world = npc.getWorld();
     var pos = npc.getPos();
-    var scanRange = 40;
+    var scanRange = 50;
 
     var nearby = world.getNearbyEntities(pos, scanRange, 1); // 1 = players
 
@@ -423,24 +460,6 @@ function scanForTarget(npc) {
     if (nearestPlayer) {
         npc.setAttackTarget(nearestPlayer);
     }
-}
-
-function handleTargetDeath(npc, player) {
-    try {
-        if (!player.isAlive()) {
-            var killedName = player.getName();
-            var killKey = "_kills_" + killedName;
-            var prevKills = 0;
-            try { prevKills = parseInt(npc.storeddata.get(killKey)) || 0; } catch(e) {}
-            if (prevKills >= 1) {
-                stripInventory(npc, player);
-                npc.despawn();
-                return;
-            }
-            npc.storeddata.put(killKey, "" + (prevKills + 1));
-            stripInventory(npc, player);
-        }
-    } catch (err) {}
 }
 
 function detectArea(x, z) {
