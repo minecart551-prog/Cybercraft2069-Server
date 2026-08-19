@@ -25,7 +25,6 @@ var EXCEPTIONS = [      "minecraft:fishing_rod",
 var NIGHT_START = 13000;
 var NIGHT_END = 23000;
 var NpcFOV = 100;
-var chasingTarget = null;
 
 
 
@@ -181,7 +180,6 @@ var flyDirIndex = 0;
 function init(e) {
     var npc = e.npc;
     crawlTickCount = 0;
-    chasingTarget = null;
     var pos = npc.getPos();
     lastX = pos.getX();
     lastY = pos.getY();
@@ -368,70 +366,41 @@ function tick(e) {
         }
     }
 
-    // ==================== UNIVERSAL NON-PLAYER FILTER ====================
+    // ==================== TARGET LOGIC ====================
+    var currentTarget = npc.getAttackTarget();
+
     // Always clear attack target if it's not a player (prevents faction AI from targeting other NPCs)
-    var currentAttackTarget = npc.getAttackTarget();
-    if (currentAttackTarget && currentAttackTarget.getType() != 1) {
+    if (currentTarget && currentTarget.getType() != 1) {
         npc.setAttackTarget(null);
-        currentAttackTarget = null;
+        currentTarget = null;
     }
 
-    // ==================== CHASE / TARGET LOGIC ====================
-    if (chasingTarget == null) {
-        // No active target — scan for a player in FOV
-        scanForTarget(npc);
-
-        // If scanForTarget found someone, attack immediately
-        if (chasingTarget != null) {
-            npc.setAttackTarget(chasingTarget);
-        }
-    } else {
-        // Actively targeting
-        if (!chasingTarget.isAlive()) {
-            handleTargetDeath(npc, chasingTarget);
-            chasingTarget = null;
+    // Validate current target
+    if (currentTarget) {
+        if (!currentTarget.isAlive()) {
+            handleTargetDeath(npc, currentTarget);
             npc.setAttackTarget(null);
-            return;
-        }
-
-        // Track target name in case reference is lost
-        npc.storeddata.put("_lastTargetName", chasingTarget.getName());
-
-        var dist = npc.getPos().distanceTo(chasingTarget.getPos());
-
-        // Lost sight — too far away
-        if (dist > 90) {
-            chasingTarget = null;
-            npc.setAttackTarget(null);
-            return;
-        }
-
-        // Re-set attack target if the AI cleared it (pathfinding failure, etc.)
-        if (npc.getAttackTarget() == null) {
-            npc.setAttackTarget(chasingTarget);
-        }
-    }
-
-    // Check if our last target died (e.g. they respawned or we lost reference)
-    if (!chasingTarget && !npc.getAttackTarget()) {
-        var lastName = npc.storeddata.get("_lastTargetName");
-        if (lastName) {
-            var nearby = world.getNearbyEntities(npc.getPos(), 50, 1);
-            for (var i = 0; i < nearby.length; i++) {
-                if (nearby[i].getName() === lastName && !nearby[i].isAlive()) {
-                    handleTargetDeath(npc, nearby[i]);
-                    npc.storeddata.remove("_lastTargetName");
-                    break;
-                }
+            currentTarget = null;
+        } else {
+            var dist = npc.getPos().distanceTo(currentTarget.getPos());
+            // Lost sight — too far away
+            if (dist > 90) {
+                npc.setAttackTarget(null);
+                currentTarget = null;
             }
         }
+    }
+
+    // If no target, scan for a player in FOV
+    if (!currentTarget) {
+        scanForTarget(npc);
     }
 }
 
 function scanForTarget(npc) {
     var world = npc.getWorld();
     var pos = npc.getPos();
-    var scanRange = 50;
+    var scanRange = 40;
 
     var nearby = world.getNearbyEntities(pos, scanRange, 1); // 1 = players
 
@@ -452,7 +421,7 @@ function scanForTarget(npc) {
     }
 
     if (nearestPlayer) {
-        chasingTarget = nearestPlayer;
+        npc.setAttackTarget(nearestPlayer);
     }
 }
 
