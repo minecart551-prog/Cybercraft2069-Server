@@ -368,6 +368,14 @@ function tick(e) {
         }
     }
 
+    // ==================== UNIVERSAL NON-PLAYER FILTER ====================
+    // Always clear attack target if it's not a player (prevents faction AI from targeting other NPCs)
+    var currentAttackTarget = npc.getAttackTarget();
+    if (currentAttackTarget && currentAttackTarget.getType() != 1) {
+        npc.setAttackTarget(null);
+        currentAttackTarget = null;
+    }
+
     // ==================== CHASE / TARGET LOGIC ====================
     if (chasingTarget == null) {
         // No active target — scan for a player in FOV
@@ -386,13 +394,6 @@ function tick(e) {
             return;
         }
 
-        // Only chase players, never other NPCs
-        if (chasingTarget.getType() != 1) {
-            chasingTarget = null;
-            npc.setAttackTarget(null);
-            return;
-        }
-
         // Track target name in case reference is lost
         npc.storeddata.put("_lastTargetName", chasingTarget.getName());
 
@@ -403,6 +404,11 @@ function tick(e) {
             chasingTarget = null;
             npc.setAttackTarget(null);
             return;
+        }
+
+        // Re-set attack target if the AI cleared it (pathfinding failure, etc.)
+        if (npc.getAttackTarget() == null) {
+            npc.setAttackTarget(chasingTarget);
         }
     }
 
