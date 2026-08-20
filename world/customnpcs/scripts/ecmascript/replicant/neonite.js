@@ -16,6 +16,7 @@ function init(event){
      npc.getInventory().setDropItem(3, air, 0);
      npc.getInventory().setDropItem(4, air, 0);
      npc.getInventory().setExp(3,3);
+	 
     npc.getStats().setRespawnType(0);
 
 }
