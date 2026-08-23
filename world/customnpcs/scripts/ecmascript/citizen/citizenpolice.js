@@ -34,7 +34,7 @@ function init(e) {
         npc.setMainhandItem(gun);
         npc.getInventory().setProjectile(npc.world.createItem("minecraft:gold_nugget", 1));
 
-        npc.getStats().getRanged().setStrength(2);
+        npc.getStats().getRanged().setStrength(1);
         npc.getStats().getRanged().setAccuracy(80);
         npc.getStats().getRanged().setRange(100);
         npc.getStats().getRanged().setDelay(1, 1);
