@@ -15,6 +15,25 @@
             "when": {
                 "entityId": ["minecraft:llama", "minecraft:donkey", "minecraft:mule", "minecraft:phantom"]
             }
+        },
+        {
+            "what": "DISALLOW_SPAWN",
+            "when": {
+                "entityId": [
+                    "minecraft:blaze", "minecraft:cave_spider", "minecraft:creeper", "minecraft:drowned",
+                    "minecraft:elder_guardian", "minecraft:enderman", "minecraft:endermite", "minecraft:evoker",
+                    "minecraft:ghast", "minecraft:guardian", "minecraft:hoglin", "minecraft:husk",
+                    "minecraft:magma_cube", "minecraft:phantom", "minecraft:piglin", "minecraft:piglin_brute",
+                    "minecraft:pillager", "minecraft:ravager", "minecraft:shulker", "minecraft:silverfish",
+                    "minecraft:skeleton", "minecraft:slime", "minecraft:spider", "minecraft:stray",
+                    "minecraft:vex", "minecraft:vindicator", "minecraft:witch", "minecraft:wither_skeleton",
+                    "minecraft:zoglin", "minecraft:zombie", "minecraft:zombie_villager", "minecraft:zombified_piglin"
+                ],
+                "dimensionId": ["minecraft:overworld"],
+                "blockX": [-4656, -2142],
+                "blockY": ["MIN", "MAX"],
+                "blockZ": [-3508, -1792]
+            }
         }
     ]
 }
