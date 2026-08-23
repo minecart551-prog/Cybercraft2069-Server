@@ -1,0 +1,20 @@
+{
+    "rules": [
+        {
+            "what": "DISALLOW_SPAWN",
+            "when": {
+                "entityId": ["minecraft:blaze", "minecraft:cave_spider", "minecraft:creeper", "minecraft:drowned", "minecraft:elder_guardian", "minecraft:enderman", "minecraft:endermite", "minecraft:evoker", "minecraft:ghast", "minecraft:guardian", "minecraft:hoglin", "minecraft:husk", "minecraft:magma_cube", "minecraft:phantom", "minecraft:piglin", "minecraft:piglin_brute", "minecraft:pillager", "minecraft:ravager", "minecraft:shulker", "minecraft:silverfish", "minecraft:skeleton", "minecraft:slime", "minecraft:spider", "minecraft:stray", "minecraft:vex", "minecraft:vindicator", "minecraft:witch", "minecraft:wither_skeleton", "minecraft:zoglin", "minecraft:zombie", "minecraft:zombie_villager", "minecraft:zombified_piglin","minecraft:allay", "minecraft:bee", "minecraft:cat", "minecraft:camel", "minecraft:chicken", "minecraft:cow", "minecraft:donkey", "minecraft:fox", "minecraft:frog", "minecraft:goat", "minecraft:horse", "minecraft:llama", "minecraft:mooshroom", "minecraft:mule", "minecraft:ocelot", "minecraft:panda", "minecraft:parrot", "minecraft:pig", "minecraft:rabbit", "minecraft:sheep", "minecraft:sniffer", "minecraft:skeleton_horse", "minecraft:strider", "minecraft:tadpole", "minecraft:trader_llama", "minecraft:turtle", "minecraft:villager", "minecraft:wandering_trader", "minecraft:wolf", "minecraft:zombie_horse","minecraft:bat","minecraft:axolotl","minecraft:glow_squid","minecraft:oak_boat"],
+                "dimensionId": ["minecraft:overworld"],
+                "blockX": [500, 3280],
+                "blockY": ["MIN", "MAX"],
+                "blockZ": [-1551, 2318]
+            }
+        },
+        {
+            "what": "DISALLOW_SPAWN",
+            "when": {
+                "entityId": ["minecraft:llama", "minecraft:donkey", "minecraft:mule", "minecraft:phantom"]
+            }
+        }
+    ]
+}
