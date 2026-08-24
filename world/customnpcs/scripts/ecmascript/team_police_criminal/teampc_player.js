@@ -16,41 +16,6 @@ function init(event) {
     player.getTimers().forceStart(playerTimerId, 5, true)
     player.getTimers().forceStart(dailyContribTimerId, 1000, true)
     removeBombIfNotCriminal(player)
-    
-    // Auto-assign team if player has no team and hasn't opted out
-    var g = getGame()
-    if (!g) return
-    var players = getPlayers(g)
-    var pIdx = -1
-    for (var i = 0; i < players.length; i++) if (players[i].uuid === uuid) { pIdx = i; break }
-    
-    // If player is not in any team and hasn't opted out, assign to balance teams
-    if (pIdx < 0 && !isPlayerOptedOut(g, uuid)) {
-        var policeCount = countTeam(TEAM_POLICE)
-        var criminalCount = countTeam(TEAM_CRIMINAL)
-        var assignedTeam
-        if (policeCount <= criminalCount) {
-            assignedTeam = TEAM_POLICE
-        } else {
-            assignedTeam = TEAM_CRIMINAL
-        }
-        var teamNameStr = assignedTeam === TEAM_POLICE ? "§bPolice" : "§cCriminal"
-        var respawn = assignedTeam === TEAM_POLICE ? POLICE_RESPAWN : CRIMINAL_RESPAWN
-        
-        players.push({
-            uuid: uuid,
-            name: player.getName(),
-            team: assignedTeam,
-            contributed: 0,
-            lastDayTick: SYS.currentTimeMillis()
-        })
-        setPlayers(g, players)
-        saveGame(g)
-        
-        try { player.setSpawnpoint(respawn.x, respawn.y, respawn.z) } catch(e) {}
-        player.message("§e[Auto] Assigned to " + teamNameStr + " §eteam!")
-        player.message("§7Use §e.teampc §7to view team info or click §7Leave to opt-out.")
-    }
 }
 
 function removeBombIfNotCriminal(player) {
