@@ -10,6 +10,11 @@ var playerSugar = {}; // uuid -> true/undefined
 // Keep track so we don't scan a player more than once per detection
 var scannedPlayers = {}; // uuid -> true
 
+// Fly state for chasing sugar carriers
+var flyTimer = 0;
+var isFlying = false;
+var FLY_DURATION = 30; // 15 seconds (30 CNPC ticks = 300 MC ticks)
+
 var isPolice = 0;
 
 function init(e) {
@@ -235,6 +240,15 @@ function tick(e) {
     if (isPolice == 1) {
         var npc = e.npc;
 
+        // Fly timer — disable flight after 15 seconds
+        if (isFlying) {
+            flyTimer--;
+            if (flyTimer <= 0) {
+                npc.getAi().setNavigationType(0);
+                isFlying = false;
+            }
+        }
+
         if (chasingTarget == null) {
 
             npc.getStats().setCombatRegen(0);
@@ -242,26 +256,28 @@ function tick(e) {
             var ents = npc.world.getNearbyEntities(npc.getPos(), 30, 1); // 1 = players
             for (var i = 0; i < ents.length; i++) {
                 var player = ents[i];
-                if (CheckFOV(npc, player, NpcFOV) && npc.canSeeEntity(player)) {
-                    var uuid = player.getUUID();
-                    if (!scannedPlayers[uuid]) {
-                        // mark scanned so we don't rescan immediately
-                        scannedPlayers[uuid] = true;
+                var uuid = player.getUUID();
+                if (!scannedPlayers[uuid]) {
+                    // mark scanned so we don't rescan immediately
+                    scannedPlayers[uuid] = true;
 
-                        var sugarItem = npc.world.createItem("minecraft:sugar", 1);
-                        var sugarCount = player.getInventory().count(sugarItem, true, true);
+                    var sugarItem = npc.world.createItem("minecraft:sugar", 1);
+                    var sugarCount = player.getInventory().count(sugarItem, true, true);
 
-                        if (sugarCount > 0) {
-                            player.message("§e[Scanner] Police detected sugar on you!");
-                            playerSugar[uuid] = true; // per-player sugar flag
-                            chasingTarget = player;
-                            npc.getAi().setWalkingSpeed(3);
-                            npc.getStats().setCombatRegen(300);
-                             npc.getStats().setMaxHealth(300);
-                        } else {
-                            // if no sugar, allow future re-scan by removing the scanned mark
-                            delete scannedPlayers[uuid];
-                        }
+                    if (sugarCount > 0) {
+                        player.message("§e[Scanner] Police detected sugar on you!");
+                        playerSugar[uuid] = true; // per-player sugar flag
+                        chasingTarget = player;
+                        npc.getAi().setWalkingSpeed(3);
+                        npc.getStats().setCombatRegen(300);
+                        npc.getStats().setMaxHealth(300);
+                        // Enable flight for 15 seconds
+                        isFlying = true;
+                        flyTimer = FLY_DURATION;
+                        npc.getAi().setNavigationType(1);
+                    } else {
+                        // if no sugar, allow future re-scan by removing the scanned mark
+                        delete scannedPlayers[uuid];
                     }
                 }
             }
@@ -285,8 +301,10 @@ function tick(e) {
             }
 
             if (dist < 2) {
-                // turn aggressive now
-                npc.setAttackTarget(chasingTarget);
+                // turn aggressive now — only if in FOV
+                if (CheckFOV(npc, chasingTarget, NpcFOV) && npc.canSeeEntity(chasingTarget)) {
+                    npc.setAttackTarget(chasingTarget);
+                }
             }
         }
     }
@@ -320,6 +338,9 @@ function meleeAttack(e) {
 
 function resetChase(npc, player) {
     npc.getAi().setWalkingSpeed(5);
+    npc.getAi().setNavigationType(0);
+    isFlying = false;
+    flyTimer = 0;
     if (player) {
         var uuid = player.getUUID();
         // remove scanned and sugar flags so the player can be detected again next time
@@ -329,12 +350,24 @@ function resetChase(npc, player) {
     chasingTarget = null;
 }
 
+var VERTICAL_FOV = 60; // degrees total (±30° up/down)
+
 function CheckFOV(seer, seen, FOV) {
+    // Horizontal check
     var P = seer.getRotation();
     if (P < 0) P = P + 360;
     var rot = Math.abs(GetPlayerRotation(seer, seen) - P);
     if (rot > 180) rot = Math.abs(rot - 360);
-    return (rot < FOV / 2);
+    if (rot >= FOV / 2) return false;
+
+    // Vertical check
+    var dy = seen.getY() + seen.getEyeHeight() - (seer.getY() + seer.getEyeHeight());
+    var dxh = seen.getX() - seer.getX();
+    var dzh = seen.getZ() - seer.getZ();
+    var hDist = Math.sqrt(dxh * dxh + dzh * dzh);
+    if (hDist < 0.01) hDist = 0.01;
+    var vertAngle = Math.atan2(dy, hDist) * 180 / Math.PI;
+    return Math.abs(vertAngle) < VERTICAL_FOV / 2;
 }
 
 function GetPlayerRotation(npc, player) {
