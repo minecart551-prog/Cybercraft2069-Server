@@ -2,13 +2,15 @@
 //  SHOP CONFIGURATION — Edit everything here
 // ============================================================
 
-var CONFIG_MAX_PAGES = 12;
+var CONFIG_MAX_PAGES = 8;
 var SELL_LOSS_PERCENTAGE = 0.3;
 var CONFIG_TAB_ICONS = [
     { id: "cyberwarecore:cyberware_scanner"},
-    { id: "minecraft:barrier"},
-    { id: "minecraft:barrier"},
-    { id: "minecraft:barrier"},
+    { id: "cyberwarecore:clairvoyant"},
+    { id: "cyberwarecore:neural_overclock"},
+    { id: "cyberwarecore:gorilla_arms"},
+    { id: "cyberwarecore:blood_pump"},
+    { id: "cyberwarecore:thermal_plating"},
     { id: "cyberwarecore:epimorphic_skeleton"},
     { id: "cyberwarecore:reinforced_tendons"},
 ];
@@ -16,10 +18,12 @@ var CONFIG_TAB_ICONS = [
 var CONFIG_TAB_NAMES = [
     "OS",
     "Face",
-    "Arm",
+    "Neural",
+    "Arms",
     "Blood",
+    "Armor",
     "Skeleton",
-    "Leg",
+    "Legs",
 ];
 
 var CONFIG_TAB_ROWS = [
@@ -27,37 +31,69 @@ var CONFIG_TAB_ROWS = [
     6,
     6,
     6,
-
+    6,
+    6,
+    6,
+    6,
 ];
 
 var CONFIG_SHOP_ITEMS = [
 //OS
 [
-{ id: "cyberwarecore:cyberware_scanner", count: 1, price: 10},
-{ id: "cyberwarecore:basic_os", count: 1, price: 100},
+{ id: "cyberwarecore:cyberware_scanner", count: 1, price: 1},
+{ id: "cyberwarecore:basic_os", count: 1, price: 1000},
+{ id: "cyberwarecore:advanced_os", count: 1, price: 6700},
+{ id: "cyberwarecore:military_os", count: 1, price: 20000},
 ],
 //Face
 [
-
+{ id: "cyberwarecore:clairvoyant", count: 1, price: 2500},
+{ id: "cyberwarecore:doomsayer", count: 1, price: 5000},
+{ id: "cyberwarecore:the_oracle", count: 1, price: 10000},
+{ id: "cyberwarecore:stalker", count: 1, price: 50000},
 ],
-//Arm
+//Neural
 [
-
+{ id: "cyberwarecore:neural_overclock", count: 1, price: 5000},
+],
+//Arms
+[
+{ id: "cyberwarecore:plasma_palm", count: 1, price: 10000},
+{ id: "cyberwarecore:gorilla_arms", count: 1, price: 25000},
+{ id: "cyberwarecore:para_bellum", count: 1, price: 30000},
 ],
 //Blood
 [
-
-
+{ id: "cyberwarecore:adrenal_booster", count: 1, price: 25000},
+{ id: "cyberwarecore:axolotl", count: 1, price: 30000},
+{ id: "cyberwarecore:universal_booster", count: 1, price: 50000},
+{ id: "cyberwarecore:blood_pump", count: 1, price: 100000},
+{ id: "cyberwarecore:inmunosupresores", count: 1, price: 200000},
+],
+//Armor
+[
+{ id: "cyberwarecore:thermal_plating", count: 1, price: 30000},
+{ id: "cyberwarecore:scarab", count: 1, price: 50000},
+{ id: "cyberwarecore:scar_coalescer", count: 1, price: 400000},
 ],
 //Skeleton
 [
-{ id: "cyberwarecore:titanium_bones", count: 1, price: 100},
-//{ id: "cyberwarecore:bionic_joints", count: 1, price: null},
+{ id: "cyberwarecore:titanium_bones", count: 1, price: 2500},
+{ id: "cyberwarecore:bionic_joints", count: 1, price: 5000},
+{ id: "cyberwarecore:epimorphic_skeleton", count: 1, price: 10000},
+{ id: "cyberwarecore:impact_absorbers", count: 1, price: 10000},
+{ id: "cyberwarecore:dense_marrow", count: 1, price: 25000},
+{ id: "cyberwarecore:kinetic_frame", count: 1, price: 55000},
 ],
-//Leg
+//Legs
 [
-{ id: "cyberwarecore:fortified_ankles", count: 1, price: 100},
-//{ id: "cyberwarecore:hollow_bones", count: 1, price: null},
+{ id: "cyberwarecore:fortified_ankles", count: 1, price: 2500},
+{ id: "cyberwarecore:hydraulic_tendons", count: 1, price: 10000},
+{ id: "cyberwarecore:hollow_bones", count: 1, price: 25000},
+{ id: "cyberwarecore:gravity_stabilizer", count: 1, price: 25000},
+{ id: "cyberwarecore:reinforced_tendons", count: 1, price: 25000},
+{ id: "cyberwarecore:rara_avis", count: 1, price: 30000},
+{ id: "cyberwarecore:spring_joints", count: 1, price: 55000},
 ],
 
 
