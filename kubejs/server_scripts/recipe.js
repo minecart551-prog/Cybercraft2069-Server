@@ -37,4 +37,44 @@ ServerEvents.recipes(event => {
       C: 'minecraft:gold_block',
     }
   )
+
+  event.shaped(
+    Item.of('cyberwarecore:cyber_repair_kit_1', 1),
+    [
+      ' C ',
+      ' I ',
+      '   '
+    ],
+    {
+      I: 'minecraft:shaper_armor_trim_smithing_template',
+      C: 'minecraft:copper_block',
+    }
+  )
+  
+  event.shaped(
+    Item.of('cyberwarecore:cyber_repair_kit_2', 1),
+    [
+      ' C ',
+      ' I ',
+      '   '
+    ],
+    {
+      I: 'minecraft:dune_armor_trim_smithing_template',
+      C: 'minecraft:iron_block',
+    }
+  )  
+  
+  event.shaped(
+    Item.of('cyberwarecore:cyber_repair_kit_3', 1),
+    [
+      ' C ',
+      ' I ',
+      '   '
+    ],
+    {
+      I: 'minecraft:silence_armor_trim_smithing_template',
+      C: 'minecraft:gold_block',
+    }
+  )  
+  
 })
