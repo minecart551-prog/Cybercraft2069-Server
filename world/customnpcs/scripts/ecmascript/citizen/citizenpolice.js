@@ -31,6 +31,7 @@ function init(e) {
         display.setSkinTexture("cyberpunkskins:textures/lcpd.png");
         display.setName("LCPD");
         npc.getAi().setRetaliateType(0);
+		npc.getAi().setAttackInvisible(1);
         npc.getStats().setMaxHealth(100);
 
         var gun = npc.world.createItem("tacz:modern_kinetic_gun", 1);
