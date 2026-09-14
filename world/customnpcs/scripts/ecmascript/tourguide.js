@@ -281,6 +281,10 @@ function interact(e) {
                 player.setPosition(target[0], target[1], target[2]);
                 isMoving = false;
 
+                if (thisStep === 4) {
+                    player.setSpawnpoint(2426, 43, 858);
+                }
+
                 if (thisStep === tourStops.length - 1) {
                     npc.despawn();
                     currentTourStep = 0;
