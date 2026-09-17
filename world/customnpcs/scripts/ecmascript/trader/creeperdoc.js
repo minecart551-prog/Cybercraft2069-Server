@@ -50,7 +50,7 @@ var CONFIG_SHOP_ITEMS = [
 { id: "cyberwarecore:clairvoyant", count: 1, price: 2500},
 { id: "cyberwarecore:doomsayer", count: 1, price: 5000},
 { id: "cyberwarecore:the_oracle", count: 1, price: 10000},
-{ id: "cyberwarecore:stalker", count: 1, price: 50000},
+//{ id: "cyberwarecore:stalker", count: 1, price: 50000},
 ],
 //Neural
 [
