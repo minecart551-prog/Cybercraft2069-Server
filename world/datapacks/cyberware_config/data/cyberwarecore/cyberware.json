@@ -102,7 +102,7 @@
       "name": "Stalker",
       "type": "face",
       "loadCost": 32,
-      "powers": ["speed", "night_vision", "invisibility"],
+      "powers": ["speed", "night_vision"],
       "duration": 6000,
       "cooldown": 2400,
       "maxDurability": 400,
