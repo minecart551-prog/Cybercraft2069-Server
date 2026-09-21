@@ -23,8 +23,8 @@ var CONFIG_SHOP_ITEMS = [
         { id: "minecraft:baked_potato",   count: 1, price: 3,  lore: [] },
         { id: "minecraft:cooked_chicken", count: 1, price: 3,  lore: [] },
         { id: "minecraft:cooked_beef",    count: 1, price: 6,  lore: [] },
-        { id: "minecraft:golden_carrot",  count: 1, price: 10, lore: [] },
-        { id: "minecraft:golden_apple",   count: 1, price: 20, lore: [] },
+     //   { id: "minecraft:golden_carrot",  count: 1, price: 10, lore: [] },
+     //   { id: "minecraft:golden_apple",   count: 1, price: 20, lore: [] },
     ],
     [
         { id: "potion:strong_swiftness", count: 1, price: 5,   lore: [] },
