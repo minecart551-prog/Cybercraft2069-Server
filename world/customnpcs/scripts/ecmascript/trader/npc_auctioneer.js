@@ -51,7 +51,7 @@ var NpcAPI_Class = Java.type("noppes.npcs.api.NpcAPI")
 // ============================================================================
 // CONFIGURATION
 // ============================================================================
-var MAX_DAYS = 7
+var MAX_DAYS = 10
 var MIN_PRICE = 1
 var MAX_PRICE = 10000000
 var MAX_LISTINGS = 10
