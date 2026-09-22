@@ -94,7 +94,7 @@ TUTORIAL_TOPICS[TU_TOPICS.RESTAURANT] = {
         "\u00a7a\ud83c\udf3e \u00a7fGet there with teleport button at \u00a7Boat Dock",
         "\u00a7a\ud83c\udf3e \u00a7fMarlene's restaurant kitchen provide the cooking equipments or you can craft them yourself",
         "\u00a7d\ud83c\udfe1 \u00a7fSell food at \u00a7ePlayer Market\u00a7f to stock vending machines globally",
-        "\u00a7b\ud83c\udfeb \u00a7fOr rent an \u00a7eNPC Shop\u00a7f to sell at a location",
+        "\u00a7b\ud83c\udfeb \u00a7fOr rent an \u00a7eNPC Shop\u00a7f to sell your Player Market listings at more locations around the map",
         "\u00a7f  \u00a77Farm, cook, and profit!",
     ]
 }
