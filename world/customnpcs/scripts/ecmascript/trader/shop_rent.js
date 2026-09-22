@@ -538,8 +538,7 @@ function buildListingSlots(player, api, world) {
         lore.push("");
         lore.push("§aPrice: §e" + formatPrice(unitP));
         if (remaining > 1) lore.push("§7Remaining: §f" + remaining);
-        if (isOwner) lore.push("§8Your listing");
-        else lore.push("§7Click to purchase");
+        lore.push("§7Click to purchase");
         item.setLore(lore);
 
         storedSlotItems[slotIdx] = item.getItemNbt().toJsonString();
@@ -659,11 +658,6 @@ function doMarketPurchase(player, api, slotIndex) {
         refreshShop(player, api);
         return;
     }
-    if (freshListing.sellerUuid === player.getUUID()) {
-        player.message("§cYou cannot buy your own listing!");
-        return;
-    }
-
     var remainingQty = freshListing.remainingQty || freshListing.originalQty || 1;
     if (remainingQty < 1) {
         player.message("§cNo items remaining!");
