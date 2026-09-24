@@ -170,7 +170,21 @@
     "_comment_enabled": "Whether the faction bank system is enabled",
     "enabled": true,
     "_comment_maxBalance": "Maximum bank balance per faction (-1 = unlimited)",
-    "maxBalance": -1
+    "maxBalance": -1.0
+  },
+  "breakPenalty": {
+    "_comment_enabled": "Whether unauthorized breaks in foreign claims deal damage and cost the claim owner's faction wealth power",
+    "enabled": true,
+    "_comment_bankCostPerBlock": "Wealth power deducted from the claim owner's faction per denied break (JSON key kept for config compatibility)",
+    "bankCostPerBlock": 0.10,
+    "_comment_damageMode": "NORMAL = reduced by armor; ARMOR_BYPASS = ignores armor",
+    "damageMode": "NORMAL",
+    "_comment_normalDamage": "Damage dealt when damageMode is NORMAL",
+    "normalDamage": 1.0,
+    "_comment_armorBypassDamage": "Damage dealt when damageMode is ARMOR_BYPASS",
+    "armorBypassDamage": 4.0,
+    "_comment_uniformBreakTimeSeconds": "Fixed seconds to complete each penalized break attempt regardless of block/tool (<= 0 disables)",
+    "uniformBreakTimeSeconds": 2.0
   },
   "bluemap": {
     "_comment_markerMinY": "Minimum Y value for extruded claim markers on BlueMap",
