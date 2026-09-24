@@ -137,7 +137,15 @@ TUTORIAL_TOPICS[TU_TOPICS.FACTIONS] = {
         "\u00a7c\u2694 \u00a7fFactions can \u00a7cfight & take over\u00a7f land",
         "\u00a7b\ud83c\udfe0 \u00a7fApartments via \u00a7eLena\u00a7f or \u00a7e#real-estate\u00a7f",
         "\u00a7f  on Discord",
-        "\u00a7f\ud83d\udcac \u00a7fSee \u00a7e#faction\u00a7f on Discord for commands"
+        "\u00a7f\ud83d\udcac \u00a7fSee \u00a7e#faction\u00a7f on Discord for commands",
+		"",
+        "\u00a7c\u00a7l\ud83d\udca5 Faction Raiding",
+        "\u00a7c\u26cf \u00a7fBreak blocks in an enemy claim \u2192 steal \u00a7a$0.10\u00a7f wealth",
+        "\u00a7f  from them and add it to \u00a7eyour faction\u00a7f",
+        "\u00a7c\u2764 \u00a7fEach break deals \u00a7c1 heart\u00a7f damage to you",
+        "\u00a7e\u23f1 \u00a7fEvery block takes \u00a7e2 seconds\u00a7f, any block or tool",
+        "\u00a7b\ud83d\udd0d \u00a7fUse \u00a7e/f info <factionname>\u00a7f to check",
+        "\u00a7f  their wealth before raiding"
     ]
 }
 TUTORIAL_TOPICS[TU_TOPICS.COSMETIC] = {
