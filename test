@@ -1,0 +1,216 @@
+{
+  "version": 3,
+  "_comment_blockTNT": "Whether TNT explosions are blocked in claimed territory",
+  "blockTNT": false,
+  "power": {
+    "_comment_base": "Base power granted to every faction",
+    "base": 0,
+    "_comment_member": "Max power each member contributes to the faction",
+    "member": 20,
+    "_comment_claimWeight": "Power required per claimed chunk",
+    "claimWeight": 5,
+    "_comment_deathPenalty": "Power lost by a player when they die",
+    "deathPenalty": 10,
+    "_comment_enemyDeathMultiplier": "Multiplier applied to death penalty when killed by enemy faction",
+    "enemyDeathMultiplier": 2,
+    "powerTicks": {
+      "_comment_ticks": "Interval in ticks for power regeneration (20 ticks = 1 second)",
+      "ticks": 12000,
+      "_comment_reward": "Power gained per tick interval while online",
+      "reward": 1
+    },
+    "_comment_powerPerAlly": "Bonus power for each mutual ally",
+    "powerPerAlly": 0,
+    "_comment_inactivityTiers": "Power multiplier based on days since last login (must be sorted by days ascending)",
+    "inactivityTiers": [
+      {
+        "days": 7,
+        "multiplier": 0.75
+      },
+      {
+        "days": 15,
+        "multiplier": 0.5
+      },
+      {
+        "days": 30,
+        "multiplier": 0.0
+      }
+    ],
+    "wealth": {
+      "_comment_decayPerDay": "Wealth power lost per real day since last sacrifice",
+      "decayPerDay": 5,
+      "_comment_decayDivisor": "Scaling factor: effective decay = decayPerDay + (wealthPower / decayDivisor). Higher divisor = slower scaling. Set to 0 to disable scaling.",
+      "decayDivisor": 1.5,
+      "_comment_items": "Items that can be sacrificed and their power value",
+      "items": [
+        {
+          "itemId": "coins:coal_coin",
+          "value": 1
+        },
+        {
+          "itemId": "coins:emerald_coin",
+          "value": 100
+        }
+      ]
+    },
+    "_comment_decayCheckTicks": "How often to check for claim decay in ticks (20 ticks = 1 second)",
+    "decayCheckTicks": 12000,
+    "_comment_claimDecayEnabled": "Whether claims are automatically removed when faction power is insufficient",
+    "claimDecayEnabled": true,
+    "_comment_unclaimCooldownSeconds": "Cooldown in seconds before a recently unclaimed chunk can be claimed again by any faction (0 = disabled)",
+    "unclaimCooldownSeconds": 0,
+    "war": {
+      "_comment_maxValue": "Maximum war power a faction can accumulate",
+      "maxValue": 200,
+      "_comment_killReward": "Base war power gained when killing a player from another faction",
+      "killReward": 5,
+      "_comment_enemyMultiplier": "Multiplier applied to kill reward when killing enemy faction members",
+      "enemyMultiplier": 2,
+      "_comment_decayPerDay": "War power lost per real day since last kill",
+      "decayPerDay": 5
+    },
+    "fame": {
+      "_comment_maxValue": "Maximum fame power a faction can accumulate",
+      "maxValue": 100,
+      "_comment_decayPerDay": "Fame power lost per real day since last fame gain",
+      "decayPerDay": 5
+    }
+  },
+  "safe": null,
+  "home": null,
+  "display": {
+    "factionNameMaxLength": -1,
+    "changeChat": true,
+    "tabMenu": true,
+    "nameBlackList": [
+      "wilderness",
+      "factionless"
+    ],
+    "powerMessage": true,
+    "_comment_territoryNotification": "Territory entry/exit notifications: chat, actionBar and title can be enabled independently",
+    "territoryNotification": {
+      "chat": false,
+      "actionBar": true,
+      "title": false,
+      "_comment_titleFade": "Title animation durations in ticks (20 ticks = 1 second)",
+      "titleFadeIn": 10,
+      "titleStay": 50,
+      "titleFadeOut": 20
+    }
+  },
+  "relationships": {
+    "allyOverridesPermissions": false,
+    "_comment_xAsGuest": "When enabled and no explicit relationship permissions are set, the faction's guest permissions are used as a fallback",
+    "neutralAsGuest": true,
+    "friendlyAsGuest": true,
+    "allyAsGuest": false,
+    "defaultGuestPermissions": [
+      "USE_BLOCKS",
+      "USE_ENTITIES"
+    ],
+    "compatSkillDamageProtectionfor": "NEUTRAL"
+  },
+  "vassal": {
+    "_comment_enabled": "Whether the vassal system is enabled",
+    "enabled": true,
+    "_comment_powerPercent": "Percentage of vassal's power granted to overlord (0-100)",
+    "powerPercent": 0,
+    "_comment_requireAlly": "Whether factions must be mutual allies before becoming vassal",
+    "requireAlly": false
+  },
+  "gods": {
+    "_comment_enabled": "Whether the god's blessings system is enabled",
+    "enabled": true,
+    "_comment_applyToVassals": "Whether blessings also apply to vassal faction members",
+    "applyToVassals": false,
+    "_comment_maxActiveEffects": "Maximum number of active blessings per faction (-1 = unlimited)",
+    "maxActiveEffects": 2,
+    "_comment_globalCooldownSeconds": "Cooldown in seconds between prayers for each faction",
+    "globalCooldownSeconds": 300,
+    "_comment_gods": "List of gods that can be prayed to. Effect uses minecraft effect IDs (e.g. minecraft:strength)",
+    "gods": [
+      {
+        "name": "Ares",
+        "effect": "minecraft:strength",
+        "durationSeconds": 300,
+        "amplifier": 0,
+        "powerCost": 25
+      },
+      {
+        "name": "Athena",
+        "effect": "minecraft:resistance",
+        "durationSeconds": 300,
+        "amplifier": 0,
+        "powerCost": 30
+      },
+      {
+        "name": "Hermes",
+        "effect": "minecraft:speed",
+        "durationSeconds": 300,
+        "amplifier": 1,
+        "powerCost": 20
+      },
+      {
+        "name": "Apollo",
+        "effect": "minecraft:regeneration",
+        "durationSeconds": 180,
+        "amplifier": 0,
+        "powerCost": 35
+      },
+      {
+        "name": "Hephaestus",
+        "effect": "minecraft:haste",
+        "durationSeconds": 300,
+        "amplifier": 1,
+        "powerCost": 15
+      }
+    ]
+  },
+  "bank": {
+    "_comment_enabled": "Whether the faction bank system is enabled",
+    "enabled": true,
+    "_comment_maxBalance": "Maximum bank balance per faction (-1 = unlimited)",
+    "maxBalance": -1
+  },
+  "bluemap": {
+    "_comment_markerMinY": "Minimum Y value for extruded claim markers on BlueMap",
+    "markerMinY": -64,
+    "_comment_markerMaxY": "Maximum Y value for extruded claim markers on BlueMap",
+    "markerMaxY": 320
+  },
+  "_comment_carryOnEntityPlacement": "Whether CarryOn mod entity placement (putting down a carried mob/player) is blocked by claim protection",
+  "carryOnEntityPlacement": false,
+  "_comment_inventoryBlocks": "Blocks treated as inventories for permission purposes (USE_INVENTORIES instead of USE_BLOCKS). Supports @modid, namespace:prefix*, and exact patterns. Example: numismatic-overhaul:piggy_bank",
+  "inventoryBlocks": [],
+  "_comment_blockList": "Block filter lists. Blacklist: only listed blocks are subject to claim protection. Whitelist: listed blocks always bypass protection. Whitelist takes priority when both enabled.",
+  "blockList": {
+    "blacklistEnabled": false,
+    "blacklist": [],
+    "whitelistEnabled": false,
+    "whitelist": []
+  },
+  "_comment_mobList": "Mob filter lists. Blacklist: only listed mobs are subject to claim protection. Whitelist: listed mobs always bypass protection. Whitelist takes priority when both enabled.",
+  "mobList": {
+    "blacklistEnabled": false,
+    "blacklist": [],
+    "whitelistEnabled": false,
+    "whitelist": []
+  },
+  "_comment_maxFactionSize": "Maximum members per faction (-1 = unlimited)",
+  "maxFactionSize": -1,
+  "_comment_friendlyFire": "Whether faction members can damage each other",
+  "friendlyFire": true,
+  "_comment_requiredBypassLevel": "Permission level required for admin commands (0-4)",
+  "requiredBypassLevel": 2,
+  "_comment_claimProtections": "Whether claimed chunks are protected from non-members",
+  "claimProtections": true,
+  "_comment_restrictedWilderness": "When enabled, unclaimed wilderness follows wildernessPermissions instead of being fully open",
+  "restrictedWilderness": false,
+  "wildernessPermissions": [
+    "USE_BLOCKS",
+    "USE_ENTITIES"
+  ],
+  "wildernessRestrictedDimensions": [
+    "minecraft:overworld"
+  ]
+}
