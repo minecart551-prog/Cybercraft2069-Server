@@ -60,7 +60,7 @@ var tourStops = [
     { msg: "", path: [[2426, 42, 859],[2436, 46, 858],[2437, 47, 843]] },
     { msg: "§aIn here you will find cooking equipments, the ingredients can be farmed in your claim or in vanilla zone (Forest), get there with tp button at §eBoat Dock", coords: [2437, 47, 843] },
     { msg: "§aFarm crops, cook food, and sell them at the §ePlayer Market §ato stock vending machines globally, or rent an §eNPC Shop §ato sell at a location" },
-    { msg: "§aOver here is the faction commands guides, you can check our LIVE Map at §etinyurl.com/cybercraftmap §ato see where factions claim are, check out more on #faction-guide on discord", path: [[2436, 46, 858],[2482, 47, 852]]},
+    { msg: "§aFor faction related commands, permissions, faction raiding, and a lot more, you can ask §eJoi ai §adirectly in the game chat. We have LIVE Map at §etinyurl.com/cybercraftlivemap §ato see where factions claim are", path: [[2436, 46, 858],[2482, 47, 852]]},
     { msg: "§aYou can claim land in the freezone and build there or there are some buildings in the main city area that you can claim, factions can fight and take over each other's land/buildings as well"},
     { msg: "§aNow we will go check out the delivery job", path: [[2503, 42, 843],[2497, 42,846]] },
     { msg: "§aYou can check the guides here, you don't have to complete the delivery now, you can deliver it later", coords: [2497, 42,846] },
