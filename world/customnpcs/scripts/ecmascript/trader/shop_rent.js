@@ -5,7 +5,9 @@
 //
 // FEATURES:
 // - Rent shop for 1-10 days (configurable daily cost)
-// - Shop slots show ONLY the current renter's active auctioneer listings
+// - RENTED: shop slots show ONLY the current renter's active auctioneer listings
+// - UNRENTED: stock works exactly like vendingmachine1 (static config +
+//   market overlay + market-only items, tabs/scroll, vending fallback)
 // - Purchases credit AUCTION_MARKET_DATA payouts[seller] (claim at Auctioneer)
 // - 1 unit per click, remainingQty decrements, listing marks sold at 0
 // - NPC-stored rental info (persists per NPC)
@@ -43,7 +45,43 @@ var DAY_MS = 86400000;
 var MARKET_ID = 1;
 var WORLD_DATA_PREFIX = "AUCTION_MARKET_DATA:";
 
+// ============================================================================
+// VENDING STOCK (active while nobody is renting) - from vendingmachine1.js
+// ============================================================================
+var CONFIG_MAX_PAGES = 2;
+
+var CONFIG_TAB_ICONS = [
+    "minecraft:sweet_berries",
+    "minecraft:splash_potion",
+];
+
+var CONFIG_TAB_NAMES = [
+    "Food",
+    "Potions",
+];
+
+var CONFIG_TAB_ROWS = [
+    6,
+    6,
+];
+
+var CONFIG_SHOP_ITEMS = [
+    [
+        { id: "minecraft:sweet_berries",  count: 1, price: 1,  lore: [] },
+        { id: "minecraft:carrot",         count: 1, price: 2,  lore: [] },
+        { id: "minecraft:apple",          count: 1, price: 2,  lore: [] },
+        { id: "minecraft:baked_potato",   count: 1, price: 3,  lore: [] },
+        { id: "minecraft:cooked_chicken", count: 1, price: 3,  lore: [] },
+        { id: "minecraft:cooked_beef",    count: 1, price: 6,  lore: [] },
+    ],
+    [
+        { id: "potion:strong_swiftness", count: 1, price: 5,   lore: [] },
+        { id: "potion:strong_healing",   count: 1, price: 12,  lore: [] },
+    ],
+];
+
 // GUI IDs
+var GUI_SHOP = 176;
 var GUI_RENT = 2001;
 var GUI_ADMIN = 2003;
 var GUI_APPEARANCE = 2004;
@@ -56,6 +94,11 @@ var RENT_BTN_CANCEL = 7;
 // Component IDs - Admin
 var ADM_BTN_CLEAR = 26;
 var ADM_BTN_CLOSE = 27;
+
+// Grid component IDs (vending stock mode)
+var ID_TAB_BASE = 102;
+var ID_SCROLL_UP = 111;
+var ID_SCROLL_DOWN = 112;
 
 // Left panel IDs
 var ID_LBL_INFO_TITLE = 200;
@@ -93,6 +136,15 @@ var startX = 0;
 var startY = -50;
 var rowSpacing = 18;
 var colSpacing = 18;
+
+// Vending stock state (unrented mode)
+var stockMode = "market";
+var tabSlots = [];
+var selectedMarketListings = {};
+var currentPage = 0;
+var maxPages = CONFIG_MAX_PAGES;
+var totalRows = CONFIG_TAB_ROWS[0];
+var viewportRow = 0;
 
 for (var row = 0; row < viewportRows; row++) {
     var y = startY + row * rowSpacing;
@@ -205,6 +257,374 @@ function deserializeItem(nbtStr, world) {
         var nbt = api.stringToNbt(nbtStr);
         return world.createItemFromNbt(nbt);
     } catch(e) { return null; }
+}
+
+// ============================================================================
+// VENDING STOCK HELPERS (active while nobody is renting) - from vendingmachine1.js
+// ============================================================================
+function getActiveListings(marketData) {
+    if (!marketData || !marketData.listings) return [];
+    var result = [];
+    var nowMs = Date.now();
+    for (var i = 0; i < marketData.listings.length; i++) {
+        var L = marketData.listings[i];
+        if (L.status === "active" && nowMs < L.createdAt + L.days * DAY_MS) result.push(L);
+    }
+    return result;
+}
+
+function getItemIdFromListing(listing, world) {
+    var item = deserializeItem(listing.itemNbt, world);
+    if (!item) return null;
+    return item.getName();
+}
+
+function getListingsForItem(marketData, itemId, world) {
+    var active = getActiveListings(marketData);
+    var matches = [];
+    for (var i = 0; i < active.length; i++) {
+        var L = active[i];
+        var remainingQty = L.remainingQty || L.originalQty || 1;
+        if (remainingQty < 1) continue;
+        if (getItemIdFromListing(L, world) === itemId) matches.push(L);
+    }
+    matches.sort(function(a, b) { return getUnitPrice(a) - getUnitPrice(b); });
+    return matches;
+}
+
+function pickRandomFromCheapest(listings) {
+    if (listings.length === 0) return null;
+    var poolSize = Math.min(3, listings.length);
+    return listings[Math.floor(Math.random() * poolSize)];
+}
+
+function findListingById(marketData, id) {
+    for (var i = 0; i < marketData.listings.length; i++) {
+        if (marketData.listings[i].id === id) return marketData.listings[i];
+    }
+    return null;
+}
+
+function getMarketFoodIds(world) {
+    var active = getActiveListings(loadMarketData(world));
+    var ids = {};
+    for (var i = 0; i < active.length; i++) {
+        var itemId = getItemIdFromListing(active[i], world);
+        if (itemId) ids[itemId] = true;
+    }
+    return ids;
+}
+
+function viewportToGlobal(slotIndex) {
+    var localRow = Math.floor(slotIndex / numCols);
+    var localCol = slotIndex % numCols;
+    return (viewportRow + localRow) * numCols + localCol;
+}
+
+function createPotionItem(world, potionId) {
+    var item = world.createItem("minecraft:splash_potion", 1);
+    item.getNbt().putString("Potion", potionId);
+    return item;
+}
+
+function cfg_price_for_id(itemId) {
+    var foods = CONFIG_SHOP_ITEMS[0] || [];
+    for (var i = 0; i < foods.length; i++) {
+        if (foods[i].id === itemId) return foods[i].price;
+    }
+    return 0;
+}
+
+function buildShopDataFromConfig(player) {
+    var world = player.getWorld();
+    var shopData = {};
+    selectedMarketListings = {};
+
+    var foodRows = CONFIG_TAB_ROWS[0] || 6;
+    var totalFoodSlots = foodRows * numCols;
+    var foodArr = makeNullArray(totalFoodSlots);
+    var slotIdx = 0;
+
+    var marketData = loadMarketData(world);
+    var marketFoodIds = getMarketFoodIds(world);
+
+    var staticFoods = CONFIG_SHOP_ITEMS[0] || [];
+    for (var i = 0; i < staticFoods.length && slotIdx < totalFoodSlots; i++) {
+        var cfg = staticFoods[i];
+        if (!cfg) continue;
+
+        var listings = getListingsForItem(marketData, cfg.id, world);
+        var displayPrice = cfg.price;
+        var source = "Vending";
+
+        if (listings.length > 0) {
+            var selected = pickRandomFromCheapest(listings);
+            selectedMarketListings[slotIdx] = selected.id;
+            displayPrice = getUnitPrice(selected);
+            source = "Market";
+        }
+
+        try {
+            var item = world.createItem(cfg.id, cfg.count || 1);
+            var loreArr = cfg.lore ? cfg.lore.slice() : [];
+            loreArr.push("");
+            loreArr.push("§aPrice: §e" + displayPrice + "¢");
+            loreArr.push("§7Source: " + source);
+            item.setLore(loreArr);
+            item.setCustomName(item.getDisplayName());
+            foodArr[slotIdx] = item.getItemNbt().toJsonString();
+        } catch (e) {
+            foodArr[slotIdx] = null;
+        }
+        slotIdx++;
+    }
+
+    if (marketFoodIds) {
+        var marketIds = Object.keys(marketFoodIds);
+        for (var i = 0; i < marketIds.length && slotIdx < totalFoodSlots; i++) {
+            var foodId = marketIds[i];
+            var alreadyStatic = false;
+            for (var s = 0; s < staticFoods.length; s++) {
+                if (staticFoods[s] && staticFoods[s].id === foodId) {
+                    alreadyStatic = true;
+                    break;
+                }
+            }
+            if (alreadyStatic) continue;
+
+            var mListings = getListingsForItem(marketData, foodId, world);
+            if (mListings.length === 0) continue;
+
+            var mSelected = pickRandomFromCheapest(mListings);
+            var mPrice = getUnitPrice(mSelected);
+
+            try {
+                var mItem = world.createItem(foodId, 1);
+                var mLore = [];
+                mLore.push("");
+                mLore.push("§aPrice: §e" + mPrice + "¢");
+                mLore.push("§7Source: Market");
+                mItem.setLore(mLore);
+                mItem.setCustomName(mItem.getDisplayName());
+                foodArr[slotIdx] = mItem.getItemNbt().toJsonString();
+                selectedMarketListings[slotIdx] = mSelected.id;
+                slotIdx++;
+            } catch (e) {}
+        }
+    }
+
+    shopData[0] = foodArr;
+
+    var potionRows = CONFIG_TAB_ROWS[1] || 6;
+    var totalPotionSlots = potionRows * numCols;
+    var potionArr = makeNullArray(totalPotionSlots);
+    var potions = CONFIG_SHOP_ITEMS[1] || [];
+    for (var i = 0; i < potions.length && i < totalPotionSlots; i++) {
+        var cfg = potions[i];
+        if (!cfg) continue;
+        try {
+            var pitem;
+            if (cfg.id.indexOf("potion:") === 0) {
+                var potionId = cfg.id.substring(7);
+                pitem = createPotionItem(world, potionId);
+                var displayName = potionId.replace(/_/g, " ").replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+                pitem.setCustomName("§bSplash Potion of " + displayName);
+            } else {
+                pitem = world.createItem(cfg.id, cfg.count || 1);
+            }
+            var ploreArr = cfg.lore ? cfg.lore.slice() : [];
+            ploreArr.push("");
+            ploreArr.push("§aPrice: §e" + (cfg.price || 0) + "¢");
+            ploreArr.push("§7Source: Vending");
+            pitem.setLore(ploreArr);
+            potionArr[i] = pitem.getItemNbt().toJsonString();
+        } catch (e) {
+            potionArr[i] = null;
+        }
+    }
+    shopData[1] = potionArr;
+
+    return shopData;
+}
+
+function updateScrollIndicator() {
+    if (!guiRef) return;
+    var maxViewportRow = Math.max(0, totalRows - viewportRows);
+    try {
+        guiRef.removeComponent(10);
+        var scrollX = startX + (numCols * colSpacing) + 2;
+        var scrollY = startY;
+        guiRef.addLabel(10, "§7" + (viewportRow + 1) + "/" + (maxViewportRow + 1), scrollX + 1, scrollY + 42, 0.7, 0.7);
+    } catch(e) {}
+}
+
+function refreshSlot(player, api, slotIndex) {
+    if (!api) {
+        try { api = Java.type("noppes.npcs.api.NpcAPI").Instance(); } catch(e) {}
+    }
+    var world = player.getWorld();
+    var globalIndex = viewportToGlobal(slotIndex);
+    var marketData = loadMarketData(world);
+
+    if (!storedSlotItems[currentPage]) return;
+    var currentNbt = storedSlotItems[currentPage][globalIndex];
+    if (!currentNbt) return;
+
+    var currentItem = player.world.createItemFromNbt(api.stringToNbt(currentNbt));
+    var itemId = currentItem.getName();
+    var oldLore = currentItem.getLore();
+
+    var sourceLine = "";
+    for (var i = 0; i < oldLore.length; i++) {
+        if (oldLore[i].indexOf("Source:") !== -1) sourceLine = oldLore[i];
+    }
+
+    if (sourceLine.indexOf("Vending") !== -1) return;
+
+    var listings = getListingsForItem(marketData, itemId, world);
+    if (listings.length === 0) {
+        delete selectedMarketListings[globalIndex];
+        var fallbackPrice = cfg_price_for_id(itemId);
+
+        if (fallbackPrice === 0) {
+            storedSlotItems[currentPage][globalIndex] = null;
+            mySlots[slotIndex].setStack(null);
+            if (guiRef) guiRef.update();
+            return;
+        }
+
+        var cleanLore = [];
+        for (var i = 0; i < oldLore.length; i++) {
+            if (oldLore[i].indexOf("Price:") === -1 && oldLore[i].indexOf("Source:") === -1) {
+                cleanLore.push(oldLore[i]);
+            }
+        }
+        while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") cleanLore.pop();
+        cleanLore.push("");
+        cleanLore.push("§aPrice: §e" + fallbackPrice + "¢");
+        cleanLore.push("§7Source: Vending");
+        currentItem.setLore(cleanLore);
+        storedSlotItems[currentPage][globalIndex] = currentItem.getItemNbt().toJsonString();
+        mySlots[slotIndex].setStack(currentItem);
+        if (guiRef) guiRef.update();
+        return;
+    }
+
+    var selected = pickRandomFromCheapest(listings);
+    selectedMarketListings[globalIndex] = selected.id;
+    var newPrice = getUnitPrice(selected);
+
+    var cleanLore = [];
+    for (var i = 0; i < oldLore.length; i++) {
+        if (oldLore[i].indexOf("Price:") === -1 && oldLore[i].indexOf("Source:") === -1) {
+            cleanLore.push(oldLore[i]);
+        }
+    }
+    while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") cleanLore.pop();
+    cleanLore.push("");
+    cleanLore.push("§aPrice: §e" + newPrice + "¢");
+    cleanLore.push("§7Source: Market");
+    currentItem.setLore(cleanLore);
+    storedSlotItems[currentPage][globalIndex] = currentItem.getItemNbt().toJsonString();
+    mySlots[slotIndex].setStack(currentItem);
+    if (guiRef) guiRef.update();
+}
+
+// Market purchase returning {success, error} (vendingmachine1 style) -
+// credits AUCTION_MARKET_DATA payouts[seller] for claim at Auctioneer.
+function doVendingPurchase(player, listing) {
+    var world = player.getWorld();
+    var marketData = loadMarketData(world);
+    var freshListing = findListingById(marketData, listing.id);
+
+    if (!freshListing || freshListing.status !== "active") {
+        return { success: false, error: "Listing no longer available" };
+    }
+    if (isListingExpired(freshListing)) {
+        return { success: false, error: "Listing has expired" };
+    }
+
+    var remainingQty = freshListing.remainingQty || freshListing.originalQty || 1;
+    if (remainingQty < 1) {
+        return { success: false, error: "No items remaining" };
+    }
+
+    var priceToPay = getUnitPrice(freshListing);
+    if (countPlayerCoins(player) < priceToPay) {
+        return { success: false, error: "Not enough coins. Need: " + priceToPay + "¢" };
+    }
+    if (!removeCoins(player, priceToPay)) {
+        return { success: false, error: "Payment failed" };
+    }
+
+    freshListing.remainingQty = remainingQty - 1;
+    if (freshListing.remainingQty <= 0) {
+        freshListing.status = "sold";
+        freshListing.soldAt = Date.now();
+        freshListing.buyerName = player.getName();
+    }
+
+    if (!marketData.payouts[freshListing.sellerUuid]) marketData.payouts[freshListing.sellerUuid] = 0;
+    marketData.payouts[freshListing.sellerUuid] += priceToPay;
+    saveMarketData(world, marketData);
+
+    var item = deserializeItem(freshListing.itemNbt, world);
+    if (item) {
+        item.setStackSize(1);
+        if (!player.giveItem(item)) player.dropItem(item);
+    }
+
+    player.updatePlayerInventory();
+    return { success: true, price: priceToPay };
+}
+
+function drawTabHighlight() {
+    if (!guiRef) return;
+    try {
+        guiRef.removeComponent(20);
+        guiRef.removeComponent(21);
+        guiRef.removeComponent(22);
+        guiRef.removeComponent(23);
+    } catch(e) {}
+    try {
+        var tw = 25, th = 28, ts = 2, tx = 0, ty = -80;
+        var hx = tx + currentPage * (tw + ts);
+        guiRef.addColoredLine(20, hx - 1,      ty - 1,      hx + tw + 1, ty - 1,      0xFFFF00, 2);
+        guiRef.addColoredLine(21, hx - 1,      ty + th + 1, hx + tw + 1, ty + th + 1, 0xFFFF00, 2);
+        guiRef.addColoredLine(22, hx - 1,      ty - 1,      hx - 1,      ty + th + 1, 0xFFFF00, 2);
+        guiRef.addColoredLine(23, hx + tw + 1, ty - 1,      hx + tw + 1, ty + th + 1, 0xFFFF00, 2);
+    } catch(e) {}
+}
+
+function buildShopVendingUi(player) {
+    var tabWidth = 25;
+    var tabHeight = 28;
+    var tabSpacing = 2;
+    var tabStartX = 0;
+    var tabY = -80;
+    tabSlots = [];
+    for (var i = 0; i < maxPages; i++) {
+        var tabX = tabStartX + i * (tabWidth + tabSpacing);
+        var tabSlot = guiRef.addItemSlot(tabX + 4, tabY + 5);
+        tabSlots.push(tabSlot);
+        guiRef.addButton(ID_TAB_BASE + i, "", tabX, tabY, tabWidth, tabHeight);
+    }
+
+    var scrollX = startX + (numCols * colSpacing) + 2;
+    var scrollY = startY;
+    guiRef.addButton(ID_SCROLL_UP, "↑", scrollX, scrollY, 18, 18);
+    guiRef.addButton(ID_SCROLL_DOWN, "↓", scrollX, scrollY + 20, 18, 18);
+    guiRef.addLabel(10, "", scrollX + 1, scrollY + 42, 0.7, 0.7);
+
+    for (var i = 0; i < tabSlots.length; i++) {
+        try {
+            var iconItem = player.getWorld().createItem(CONFIG_TAB_ICONS[i] || "minecraft:barrier", 1);
+            iconItem.setCustomName(CONFIG_TAB_NAMES[i] || ("Tab " + (i + 1)));
+            tabSlots[i].setStack(iconItem);
+        } catch(e) {}
+    }
+
+    drawTabHighlight();
 }
 
 // ============================================================================
@@ -557,7 +977,7 @@ function openShop(player, api, npcData) {
     var isOwner = rentalInfo.renterUUID === player.getUUID();
     var isActivelyRenting = rentalInfo.renterUUID && !isExpired(rentalInfo);
 
-    guiRef = api.createCustomGui(176, 166, 0, true, player);
+    guiRef = api.createCustomGui(GUI_SHOP, 166, 0, true, player);
     mySlots = slotPositions.map(function(pos) {
         return guiRef.addItemSlot(pos.x, pos.y);
     });
@@ -578,6 +998,9 @@ function openShop(player, api, npcData) {
             guiRef.addButton(ID_BTN_RENT, "§a§l+ Extend", -128, 26, 80, 18);
             guiRef.addButton(ID_BTN_APPEARANCE, "§d§lAppearance", -128, 48, 80, 18);
         }
+
+        stockMode = "rented";
+        buildListingSlots(player, api, world);
     } else {
         guiRef.addLabel(ID_LBL_INFO_TITLE, "§6§lShop Rental", -128, -76, 118, 12);
         guiRef.addLabel(ID_LBL_RENTER, "§7Status: §aAvailable", -128, -62, 118, 10);
@@ -587,23 +1010,41 @@ function openShop(player, api, npcData) {
         guiRef.addTextField(RENT_TF_DAYS, -128, -14, 50, 16).setText("1");
         guiRef.addLabel(ID_LBL_HINT + 3, "§7Total: §a" + formatPrice(RENT_COST_PER_DAY), -128, 6, 118, 10);
         guiRef.addButton(RENT_BTN_PAY, "§a§lRent Shop", -128, 24, 80, 18);
-    }
 
-    buildListingSlots(player, api, world);
+        // UNRENTED: stock works exactly like vendingmachine1
+        stockMode = "market";
+        currentPage = 0;
+        viewportRow = 0;
+        totalRows = CONFIG_TAB_ROWS[0] || 6;
+        buildShopVendingUi(player);
+
+        storedSlotItems = buildShopDataFromConfig(player);
+        if (!storedSlotItems[currentPage]) {
+            storedSlotItems[currentPage] = makeNullArray(totalRows * numCols);
+        }
+    }
 
     player.showCustomGui(guiRef);
     playerGuiRef[player.getUUID()] = guiRef;
 
     updateVisibleSlots(player, api);
+    if (stockMode === "market") updateScrollIndicator();
     if (guiRef) guiRef.update();
 }
 
 function updateVisibleSlots(player, api) {
     for (var i = 0; i < mySlots.length; i++) {
         mySlots[i].setStack(null);
-        if (storedSlotItems[i]) {
+        var nbtStr = null;
+        if (stockMode === "market") {
+            var pageArr = storedSlotItems[currentPage];
+            if (pageArr) nbtStr = pageArr[viewportToGlobal(i)];
+        } else {
+            nbtStr = storedSlotItems[i];
+        }
+        if (nbtStr) {
             try {
-                var item = player.world.createItemFromNbt(api.stringToNbt(storedSlotItems[i]));
+                var item = player.world.createItemFromNbt(api.stringToNbt(nbtStr));
                 mySlots[i].setStack(item);
             } catch(e) {}
         }
@@ -706,6 +1147,50 @@ function customGuiButton(event) {
     var gui = event.gui;
     var buttonId = event.buttonId;
     var npcData = lastNpc ? lastNpc.getStoreddata() : null;
+
+    // Vending-stock controls (unrented mode only)
+    if (stockMode === "market" && gui.getID() === GUI_SHOP) {
+        var maxViewportRow = Math.max(0, totalRows - viewportRows);
+
+        if (buttonId === ID_SCROLL_UP) {
+            if (viewportRow > 0) {
+                viewportRow--;
+                updateVisibleSlots(player, api);
+                updateScrollIndicator();
+                if (guiRef) guiRef.update();
+            }
+            return;
+        }
+
+        if (buttonId === ID_SCROLL_DOWN) {
+            if (viewportRow < maxViewportRow) {
+                viewportRow++;
+                updateVisibleSlots(player, api);
+                updateScrollIndicator();
+                if (guiRef) guiRef.update();
+            }
+            return;
+        }
+
+        if (buttonId >= ID_TAB_BASE && buttonId < ID_TAB_BASE + maxPages) {
+            var tabIndex = buttonId - ID_TAB_BASE;
+            if (tabIndex !== currentPage) {
+                currentPage = tabIndex;
+                viewportRow = 0;
+                totalRows = CONFIG_TAB_ROWS[currentPage] || 5;
+                storedSlotItems = buildShopDataFromConfig(player);
+                if (!storedSlotItems[currentPage]) {
+                    storedSlotItems[currentPage] = makeNullArray(totalRows * numCols);
+                }
+                drawTabHighlight();
+                updateVisibleSlots(player, api);
+                updateScrollIndicator();
+                if (guiRef) guiRef.update();
+            }
+            return;
+        }
+    }
+
     if (!npcData) return;
 
     rentalInfo = loadRentalInfo(npcData);
@@ -798,7 +1283,133 @@ function customGuiSlotClicked(event) {
     var slotIndex = mySlots.indexOf(clickedSlot);
     if (slotIndex === -1) return;
 
+    if (stockMode === "market") {
+        doVendingSlotClick(player, api, slotIndex);
+        return;
+    }
+
     doMarketPurchase(player, api, slotIndex);
+}
+
+// ============================================================================
+// VENDING STOCK PURCHASE (unrented mode) - from vendingmachine1.js
+// ============================================================================
+function doVendingSlotClick(player, api, slotIndex) {
+    var world = player.getWorld();
+    var globalIndex = viewportToGlobal(slotIndex);
+
+    // Shop may have been rented while this GUI was open
+    rentalInfo = loadRentalInfo(lastNpc.getStoreddata());
+    if (rentalInfo.renterUUID && !isExpired(rentalInfo)) {
+        player.message("§cThis shop has been rented - refreshing!");
+        refreshShop(player, api);
+        return;
+    }
+
+    var pageArr = storedSlotItems[currentPage];
+    if (!pageArr || globalIndex >= pageArr.length) return;
+
+    var slotItem = mySlots[slotIndex].getStack();
+    if (!slotItem || slotItem.isEmpty()) return;
+
+    var price = null;
+    var lore = slotItem.getLore();
+    for (var i = 0; i < lore.length; i++) {
+        var line = lore[i];
+        if (line.indexOf("Price:") !== -1 && line.indexOf("¢") !== -1) {
+            var priceStr = line.replace(/§./g, "");
+            var match = priceStr.match(/Price:\s*(\d+)¢/);
+            if (match && match[1]) { price = parseInt(match[1]); break; }
+        }
+    }
+
+    if (price === null || price === undefined || price <= 0) {
+        player.message("§cThis item has no price set!");
+        return;
+    }
+
+    var itemId = slotItem.getName();
+    var isPotion = (itemId === "minecraft:splash_potion");
+
+    var boughtFromMarket = false;
+    if (currentPage === 0 && !isPotion) {
+        var storedListingId = selectedMarketListings[globalIndex];
+        if (storedListingId) {
+            var marketData = loadMarketData(world);
+            var listing = findListingById(marketData, storedListingId);
+            if (listing && listing.status === "active") {
+                var result = doVendingPurchase(player, listing);
+                if (result.success) {
+                    boughtFromMarket = true;
+                    player.message("§aBought from §f" + listing.sellerName + " §afor §e" + result.price + "¢!");
+                } else if (result.error.indexOf("Not enough coins") !== -1) {
+                    player.message("§c" + result.error);
+                } else {
+                    player.message("§cMarket error: " + result.error + " §7Falling back to vending stock.");
+                }
+            } else {
+                var listings = getListingsForItem(marketData, itemId, world);
+                if (listings.length > 0) {
+                    var fallback = pickRandomFromCheapest(listings);
+                    var fallbackResult = doVendingPurchase(player, fallback);
+                    if (fallbackResult.success) {
+                        boughtFromMarket = true;
+                        player.message("§aBought from §f" + fallback.sellerName + " §afor §e" + fallbackResult.price + "¢!");
+                    } else if (fallbackResult.error.indexOf("Not enough coins") !== -1) {
+                        player.message("§c" + fallbackResult.error);
+                    } else {
+                        player.message("§cMarket error: " + fallbackResult.error + " §7Falling back to vending stock.");
+                    }
+                } else if (cfg_price_for_id(itemId) === 0) {
+                    pageArr[globalIndex] = null;
+                    mySlots[slotIndex].setStack(null);
+                    if (guiRef) guiRef.update();
+                    player.message("§cThat item is no longer available!");
+                    return;
+                }
+            }
+        } else if (cfg_price_for_id(itemId) === 0) {
+            pageArr[globalIndex] = null;
+            mySlots[slotIndex].setStack(null);
+            if (guiRef) guiRef.update();
+            player.message("§cThat item is no longer available!");
+            return;
+        }
+    }
+
+    if (boughtFromMarket) {
+        refreshSlot(player, api, slotIndex);
+        return;
+    }
+
+    // Static vending purchase
+    var playerCoins = countPlayerCoins(player);
+    if (playerCoins < price) {
+        player.message("§cNot enough coins! Need: §e" + price + "¢");
+        return;
+    }
+
+    removeCoins(player, price);
+
+    try {
+        if (pageArr[globalIndex]) {
+            var purchaseItem = player.world.createItemFromNbt(api.stringToNbt(pageArr[globalIndex]));
+            var purchaseLore = purchaseItem.getLore();
+            var cleanLore = [];
+            for (var i = 0; i < purchaseLore.length; i++) {
+                var pline = purchaseLore[i];
+                if (pline.indexOf("Price:") === -1 && pline.indexOf("Source:") === -1 && pline.indexOf("Click to purchase") === -1) {
+                    cleanLore.push(pline);
+                }
+            }
+            while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") { cleanLore.pop(); }
+            purchaseItem.setLore(cleanLore);
+            player.giveItem(purchaseItem);
+            player.message("§aPurchased item for §e" + price + "¢!");
+        }
+    } catch(e) {
+        player.message("§cError purchasing item: " + e);
+    }
 }
 
 // ============================================================================
@@ -806,6 +1417,10 @@ function customGuiSlotClicked(event) {
 // ============================================================================
 function customGuiClosed(event) {
     // Nothing persists locally - listings live in market world data
+    currentPage = 0;
+    viewportRow = 0;
+    totalRows = CONFIG_TAB_ROWS[0] || 6;
+    tabSlots = [];
 }
 
 function getPlayerNpc(player) {

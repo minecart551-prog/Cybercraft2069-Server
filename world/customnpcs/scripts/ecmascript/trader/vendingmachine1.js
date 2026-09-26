@@ -846,6 +846,8 @@ function customGuiSlotClicked(event) {
                 if (result.success) {
                     boughtFromMarket = true;
                     player.message("§aBought from §f" + listing.sellerName + " §afor §e" + result.price + "¢!");
+                } else if (result.error.indexOf("Not enough coins") !== -1) {
+                    player.message("§c" + result.error);
                 } else {
                     player.message("§cMarket error: " + result.error + " §7Falling back to vending stock.");
                 }
@@ -857,6 +859,8 @@ function customGuiSlotClicked(event) {
                     if (result.success) {
                         boughtFromMarket = true;
                         player.message("§aBought from §f" + fallback.sellerName + " §afor §e" + result.price + "¢!");
+                    } else if (result.error.indexOf("Not enough coins") !== -1) {
+                        player.message("§c" + result.error);
                     } else {
                         player.message("§cMarket error: " + result.error + " §7Falling back to vending stock.");
                     }
