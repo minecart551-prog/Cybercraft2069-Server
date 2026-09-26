@@ -1,6 +1,6 @@
 // ===== CONFIGURATION =====
 var deliveryOfficePos = {x: 2492, z: 839}; // Set the delivery office coordinates here
-var coinRate = 8; // Coins per 100 blocks distance
+var coinRate = 11; // Coins per 100 blocks distance
 var sugarCoinMultiplier = 0.7; // Percentage of normal coin reward for sugar deliveries (0.5 = 50%, 1.0 = 100%, etc.)
 var secretChance= 0.2;
 // =========================
