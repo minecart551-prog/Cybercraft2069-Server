@@ -20,6 +20,7 @@ var EXCEPTIONS = [      "minecraft:fishing_rod",
                         "automobility:automobile_wheel",
                         "automobility:crowbar",
                         "minecraft:stick",
+                        "minedevice:phone",
                         "armourers_workshop:skin",
                          "lockandblock:keycard"];
 var NIGHT_START = 13000;
