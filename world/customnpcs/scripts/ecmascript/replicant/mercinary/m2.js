@@ -19,6 +19,10 @@ function init(e) {
      npc.getInventory().setExp(8,8);
      npc.getStats().setRespawnType(3);
      npc.setFaction(27);
+     var coin = npc.world.createItem("coins:stone_coin", 75);
+	 var template = npc.world.createItem("minecraft:dune_armor_trim_smithing_template", 1);
+     npc.getInventory().setDropItem(0, template, 10);     
+     npc.getInventory().setDropItem(1, coin, 100);	 	 
 }
 
 function tick(e) {

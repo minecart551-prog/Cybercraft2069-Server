@@ -17,5 +17,9 @@ function init(event){
    //  var reward = world.createItem("minecraft:silence_armor_trim_smithing_template", 1);
    //  npc.getInventory().setDropItem(0, reward, 1);
      npc.getInventory().setExp(16,16);
+     var coin = npc.world.createItem("coins:coal_coin", 3);
+	 var template = npc.world.createItem("minecraft:silence_armor_trim_smithing_template", 1);
+     npc.getInventory().setDropItem(0, template, 10);     
+     npc.getInventory().setDropItem(1, coin, 100);	 		 
 }
 

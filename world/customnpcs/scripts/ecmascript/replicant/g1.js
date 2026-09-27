@@ -25,4 +25,12 @@ function init(e) {
         var gun = npc.world.createItem("tacz:modern_kinetic_gun", 1);
         gun.getNbt().putString("GunId", "tacz:p320");
         npc.setMainhandItem(gun);
+     var coin = npc.world.createItem("coins:stone_coin", 20);
+     var air = npc.world.createItem("minecraft:air", 1);
+     var template = npc.world.createItem("minecraft:shaper_armor_trim_smithing_template", 1);
+     npc.getInventory().setDropItem(0, template, 10);     
+     npc.getInventory().setDropItem(1, coin, 100);
+     npc.getInventory().setDropItem(2, air, 0);
+     npc.getInventory().setDropItem(3, air, 0);
+     npc.getInventory().setDropItem(4, air, 0);		
 }

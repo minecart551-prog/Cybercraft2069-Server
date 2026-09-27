@@ -11,7 +11,6 @@ var SCAN_RANGE = 25;
 
 function init(e) {
     var npc = e.npc;
-    var item = npc.world.createItem("minecraft:silence_armor_trim_smithing_template", 1);
     npc.getAi().setRetaliateType(0);
     npc.getAi().setAvoidsWater(true);    
     npc.getStats().setRespawnType(3);
@@ -19,8 +18,11 @@ function init(e) {
     npc.getStats().setMaxHealth(200);
     npc.getStats().setHealthRegen(1);    
     npc.getStats().getRanged().setStrength(12);
-    npc.getInventory().setDropItem(1, item, 100);
     npc.getInventory().setExp(16,16);
+     var coin = npc.world.createItem("coins:coal_coin", 3);
+	 var template = npc.world.createItem("minecraft:silence_armor_trim_smithing_template", 1);
+     npc.getInventory().setDropItem(0, template, 10);     
+     npc.getInventory().setDropItem(1, coin, 100);	 		
 }
 
 function tick(e) {
