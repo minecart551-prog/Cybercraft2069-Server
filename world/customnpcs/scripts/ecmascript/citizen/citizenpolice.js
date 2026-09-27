@@ -281,6 +281,7 @@ function tick(e) {
                         playerSugar[uuid] = true; // per-player sugar flag
                         chasingTarget = player;
                         npc.getAi().setWalkingSpeed(4);
+                        npc.getAi().setReturnsHome(false);
                         npc.getStats().setCombatRegen(300);
                         npc.getStats().setMaxHealth(300);
                         // Enable flight immediately
@@ -363,6 +364,7 @@ function meleeAttack(e) {
 function resetChase(npc, player) {
     npc.getAi().setWalkingSpeed(5);
     npc.getAi().setNavigationType(0);
+    npc.getAi().setReturnsHome(true);
     isFlying = false;
     flyTimer = 0;
     groundTimer = 0;
