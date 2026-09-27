@@ -19,10 +19,7 @@ var groundTimer = 0;
 var GROUND_DURATION = FLY_DURATION;
 
 // Motion-based flight (same approach as FlyingCar1.js)
-var motionX = 0, motionY = 0, motionZ = 0;
-var npcYaw = 0;
-var FLY_SPEED = 0.8;
-var MOTION_LERP = 0.2;
+var FLY_SPEED = 1;
 
 var isPolice = 0;
 
@@ -381,7 +378,6 @@ function resetChase(npc, player) {
 function startFlight(npc) {
     isFlying = true;
     flyTimer = FLY_DURATION;
-    npcYaw = npc.getRotation();
     npc.getAi().setNavigationType(1);
 }
 
@@ -395,39 +391,15 @@ function flyToward(npc, targetPos) {
 
     // Fly straight at the target, slowing down as we close in
     var speedScale = Math.min(1, dist / 2);
-    var desiredX = (dx / dist) * FLY_SPEED * speedScale;
-    var desiredY = (dy / dist) * FLY_SPEED * speedScale;
-    var desiredZ = (dz / dist) * FLY_SPEED * speedScale;
-
-    // Smoothly interpolate towards target motion
-    motionX = lerp(motionX, desiredX, MOTION_LERP);
-    motionY = lerp(motionY, desiredY, MOTION_LERP);
-    motionZ = lerp(motionZ, desiredZ, MOTION_LERP);
-
-    // Apply motion
-    npc.setMotionX(motionX);
-    npc.setMotionY(motionY);
-    npc.setMotionZ(motionZ);
-
-    // Face the target while flying
-    var yaw = Math.atan2(-dx, dz) * 180 / Math.PI;
-    npcYaw = lerpAngle(npcYaw, yaw, MOTION_LERP);
-    npc.setRotation(npcYaw);
+    npc.setMotionX((dx / dist) * FLY_SPEED * speedScale);
+    npc.setMotionY((dy / dist) * FLY_SPEED * speedScale);
+    npc.setMotionZ((dz / dist) * FLY_SPEED * speedScale);
 }
 
 function stopMotion(npc) {
-    motionX = 0;
-    motionY = 0;
-    motionZ = 0;
     npc.setMotionX(0);
     npc.setMotionY(0);
     npc.setMotionZ(0);
-}
-
-function lerp(a, b, t) { return a + (b - a) * t; }
-function lerpAngle(a, b, t) {
-    var diff = ((b - a + 540) % 360) - 180;
-    return (a + diff * t + 360) % 360;
 }
 
 var VERTICAL_FOV = 60; // degrees total (±30° up/down)
