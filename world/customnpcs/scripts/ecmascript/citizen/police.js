@@ -136,7 +136,7 @@ function tick(e) {
                 return;
             }
 
-            if (dist < 2) {
+            if (dist < 2 && npc.canSeeEntity(chasingTarget)) {
                 npc.setAttackTarget(chasingTarget);
             }
         }
