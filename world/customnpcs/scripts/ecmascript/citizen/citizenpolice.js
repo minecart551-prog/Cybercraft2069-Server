@@ -19,7 +19,7 @@ var groundTimer = 0;
 var GROUND_DURATION = FLY_DURATION;
 
 // Motion-based flight (same approach as FlyingCar1.js)
-var FLY_SPEED = 1;
+var FLY_SPEED = 0.8;
 
 var isPolice = 0;
 
@@ -265,6 +265,8 @@ function tick(e) {
             var ents = npc.world.getNearbyEntities(npc.getPos(), 30, 1); // 1 = players
             for (var i = 0; i < ents.length; i++) {
                 var player = ents[i];
+                // only detect sugar on players inside the NPC's FOV
+                if (!CheckFOV(npc, player, NpcFOV)) continue;
                 var uuid = player.getUUID();
                 if (!scannedPlayers[uuid]) {
                     // mark scanned so we don't rescan immediately
@@ -323,10 +325,7 @@ function tick(e) {
             }
 
             if (dist < 2) {
-                // turn aggressive now — only if in FOV
-                if (CheckFOV(npc, chasingTarget, NpcFOV) && npc.canSeeEntity(chasingTarget)) {
-                    npc.setAttackTarget(chasingTarget);
-                }
+                npc.setAttackTarget(chasingTarget);
             }
         }
     }
