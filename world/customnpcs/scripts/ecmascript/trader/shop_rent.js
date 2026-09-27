@@ -999,8 +999,23 @@ function openShop(player, api, npcData) {
             guiRef.addButton(ID_BTN_APPEARANCE, "§d§lAppearance", -128, 48, 80, 18);
         }
 
-        stockMode = "rented";
-        buildListingSlots(player, api, world);
+        // Rented but no listings: show default vending stock instead of an empty grid
+        var renterListings = getRenterListings(world, rentalInfo.renterUUID);
+        if (renterListings.length === 0) {
+            stockMode = "market";
+            currentPage = 0;
+            viewportRow = 0;
+            totalRows = CONFIG_TAB_ROWS[0] || 6;
+            buildShopVendingUi(player);
+
+            storedSlotItems = buildShopDataFromConfig(player);
+            if (!storedSlotItems[currentPage]) {
+                storedSlotItems[currentPage] = makeNullArray(totalRows * numCols);
+            }
+        } else {
+            stockMode = "rented";
+            buildListingSlots(player, api, world);
+        }
     } else {
         guiRef.addLabel(ID_LBL_INFO_TITLE, "§6§lShop Rental", -128, -76, 118, 12);
         guiRef.addLabel(ID_LBL_RENTER, "§7Status: §aAvailable", -128, -62, 118, 10);
@@ -1298,12 +1313,15 @@ function doVendingSlotClick(player, api, slotIndex) {
     var world = player.getWorld();
     var globalIndex = viewportToGlobal(slotIndex);
 
-    // Shop may have been rented while this GUI was open
+    // If a renter listed items while this GUI was open, switch to their listings
     rentalInfo = loadRentalInfo(lastNpc.getStoreddata());
     if (rentalInfo.renterUUID && !isExpired(rentalInfo)) {
-        player.message("§cThis shop has been rented - refreshing!");
-        refreshShop(player, api);
-        return;
+        var world2 = lastNpc.getWorld();
+        if (getRenterListings(world2, rentalInfo.renterUUID).length > 0) {
+            player.message("§cThis shop now has listings - refreshing!");
+            refreshShop(player, api);
+            return;
+        }
     }
 
     var pageArr = storedSlotItems[currentPage];
