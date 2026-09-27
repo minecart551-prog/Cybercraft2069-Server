@@ -14,6 +14,9 @@ var scannedPlayers = {}; // uuid -> true
 var flyTimer = 0;
 var isFlying = false;
 var FLY_DURATION = 30; // 15 seconds (30 CNPC ticks = 300 MC ticks)
+// Ground phase between flights — same length as the air phase
+var groundTimer = 0;
+var GROUND_DURATION = FLY_DURATION;
 
 // Motion-based flight (same approach as FlyingCar1.js)
 var motionX = 0, motionY = 0, motionZ = 0;
@@ -247,12 +250,13 @@ function tick(e) {
     if (isPolice == 1) {
         var npc = e.npc;
 
-        // Fly timer — disable flight after 15 seconds
+        // Fly timer — drop to ground after the air phase, then re-take-off later
         if (isFlying) {
             flyTimer--;
             if (flyTimer <= 0) {
                 npc.getAi().setNavigationType(0);
                 isFlying = false;
+                groundTimer = GROUND_DURATION;
                 stopMotion(npc);
             }
         }
@@ -279,11 +283,9 @@ function tick(e) {
                         npc.getAi().setWalkingSpeed(4);
                         npc.getStats().setCombatRegen(300);
                         npc.getStats().setMaxHealth(300);
-                        // Enable flight for 15 seconds
-                        isFlying = true;
-                        flyTimer = FLY_DURATION;
-                        npcYaw = npc.getRotation();
-                        npc.getAi().setNavigationType(1);
+                        // Enable flight immediately
+                        groundTimer = 0;
+                        startFlight(npc);
                     } else {
                         // if no sugar, allow future re-scan by removing the scanned mark
                         delete scannedPlayers[uuid];
@@ -301,7 +303,16 @@ function tick(e) {
             if (isFlying) {
                 flyToward(npc, pos);
             } else {
-                npc.navigateTo(pos.getX(), pos.getY(), pos.getZ(), 10);
+                // Ground phase — count down, then take off again
+                if (groundTimer > 0) {
+                    groundTimer--;
+                    if (groundTimer <= 0) {
+                        startFlight(npc);
+                    }
+                }
+                if (!isFlying) {
+                    npc.navigateTo(pos.getX(), pos.getY(), pos.getZ(), 10);
+                }
             }
 
             var dist = npc.getPos().distanceTo(pos);
@@ -354,6 +365,7 @@ function resetChase(npc, player) {
     npc.getAi().setNavigationType(0);
     isFlying = false;
     flyTimer = 0;
+    groundTimer = 0;
     stopMotion(npc);
     if (player) {
         var uuid = player.getUUID();
@@ -362,6 +374,13 @@ function resetChase(npc, player) {
         delete playerSugar[uuid];
     }
     chasingTarget = null;
+}
+
+function startFlight(npc) {
+    isFlying = true;
+    flyTimer = FLY_DURATION;
+    npcYaw = npc.getRotation();
+    npc.getAi().setNavigationType(1);
 }
 
 function flyToward(npc, targetPos) {
