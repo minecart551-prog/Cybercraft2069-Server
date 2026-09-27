@@ -16,10 +16,10 @@ var COIN_DENOMINATIONS = [
 ];
 
 var CLONE_TYPES = [
-    { tab: 5, name: "M1", displayName: "§9M1", price: 18 },
-    { tab: 5, name: "M2", displayName: "§eM2", price: 70 },
-    { tab: 5, name: "M3", displayName: "§bM3", price: 290 },
-    { tab: 5, name: "M4", displayName: "§dM4", price: 1580 }
+    { tab: 5, name: "M1", displayName: "§9M1", price: 20 },
+    { tab: 5, name: "M2", displayName: "§eM2", price: 75 },
+    { tab: 5, name: "M3", displayName: "§bM3", price: 300 },
+    { tab: 5, name: "M4", displayName: "§dM4", price: 1600 }
 ];
 
 // ----------------- GUI LAYOUT -----------------
