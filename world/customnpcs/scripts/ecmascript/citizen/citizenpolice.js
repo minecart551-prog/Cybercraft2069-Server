@@ -15,6 +15,12 @@ var flyTimer = 0;
 var isFlying = false;
 var FLY_DURATION = 30; // 15 seconds (30 CNPC ticks = 300 MC ticks)
 
+// Motion-based flight (same approach as FlyingCar1.js)
+var motionX = 0, motionY = 0, motionZ = 0;
+var npcYaw = 0;
+var FLY_SPEED = 0.8;
+var MOTION_LERP = 0.2;
+
 var isPolice = 0;
 
 function init(e) {
@@ -247,6 +253,7 @@ function tick(e) {
             if (flyTimer <= 0) {
                 npc.getAi().setNavigationType(0);
                 isFlying = false;
+                stopMotion(npc);
             }
         }
 
@@ -269,12 +276,13 @@ function tick(e) {
                         player.message("§e[Scanner] Police detected sugar on you!");
                         playerSugar[uuid] = true; // per-player sugar flag
                         chasingTarget = player;
-                        npc.getAi().setWalkingSpeed(3);
+                        npc.getAi().setWalkingSpeed(4);
                         npc.getStats().setCombatRegen(300);
                         npc.getStats().setMaxHealth(300);
                         // Enable flight for 15 seconds
                         isFlying = true;
                         flyTimer = FLY_DURATION;
+                        npcYaw = npc.getRotation();
                         npc.getAi().setNavigationType(1);
                     } else {
                         // if no sugar, allow future re-scan by removing the scanned mark
@@ -290,7 +298,11 @@ function tick(e) {
             }
 
             var pos = chasingTarget.getPos();
-            npc.navigateTo(pos.getX(), pos.getY(), pos.getZ(), 10);
+            if (isFlying) {
+                flyToward(npc, pos);
+            } else {
+                npc.navigateTo(pos.getX(), pos.getY(), pos.getZ(), 10);
+            }
 
             var dist = npc.getPos().distanceTo(pos);
 
@@ -342,6 +354,7 @@ function resetChase(npc, player) {
     npc.getAi().setNavigationType(0);
     isFlying = false;
     flyTimer = 0;
+    stopMotion(npc);
     if (player) {
         var uuid = player.getUUID();
         // remove scanned and sugar flags so the player can be detected again next time
@@ -349,6 +362,51 @@ function resetChase(npc, player) {
         delete playerSugar[uuid];
     }
     chasingTarget = null;
+}
+
+function flyToward(npc, targetPos) {
+    var myPos = npc.getPos();
+    var dx = targetPos.getX() - myPos.getX();
+    var dy = targetPos.getY() - myPos.getY();
+    var dz = targetPos.getZ() - myPos.getZ();
+    var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (dist < 0.01) dist = 0.01;
+
+    // Fly straight at the target, slowing down as we close in
+    var speedScale = Math.min(1, dist / 2);
+    var desiredX = (dx / dist) * FLY_SPEED * speedScale;
+    var desiredY = (dy / dist) * FLY_SPEED * speedScale;
+    var desiredZ = (dz / dist) * FLY_SPEED * speedScale;
+
+    // Smoothly interpolate towards target motion
+    motionX = lerp(motionX, desiredX, MOTION_LERP);
+    motionY = lerp(motionY, desiredY, MOTION_LERP);
+    motionZ = lerp(motionZ, desiredZ, MOTION_LERP);
+
+    // Apply motion
+    npc.setMotionX(motionX);
+    npc.setMotionY(motionY);
+    npc.setMotionZ(motionZ);
+
+    // Face the target while flying
+    var yaw = Math.atan2(-dx, dz) * 180 / Math.PI;
+    npcYaw = lerpAngle(npcYaw, yaw, MOTION_LERP);
+    npc.setRotation(npcYaw);
+}
+
+function stopMotion(npc) {
+    motionX = 0;
+    motionY = 0;
+    motionZ = 0;
+    npc.setMotionX(0);
+    npc.setMotionY(0);
+    npc.setMotionZ(0);
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+function lerpAngle(a, b, t) {
+    var diff = ((b - a + 540) % 360) - 180;
+    return (a + diff * t + 360) % 360;
 }
 
 var VERTICAL_FOV = 60; // degrees total (±30° up/down)

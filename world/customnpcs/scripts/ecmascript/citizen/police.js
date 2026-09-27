@@ -1,4 +1,4 @@
-var NpcFOV = 100;
+var NpcFOV = 200;
 var TeleportDestination = [2380, 43, 955];
 
 // Track which player is being chased (entity)
@@ -70,7 +70,7 @@ function tick(e) {
                             player.message("§e[Scanner] Police detected sugar on you!");
                             playerSugar[uuid] = true; // per-player sugar flag
                             chasingTarget = player;
-                            npc.getAi().setWalkingSpeed(3);
+                            npc.getAi().setWalkingSpeed(4);
                             npc.getStats().setCombatRegen(300);
                              npc.getStats().setMaxHealth(300);
                         } else {
