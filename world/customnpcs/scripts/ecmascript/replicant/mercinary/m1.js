@@ -21,6 +21,14 @@ function init(e) {
      npc.getInventory().setExp(3,3);
     npc.getStats().setRespawnType(3);
     npc.getStats().setHealthRegen(0);
+     var coin = npc.world.createItem("coins:stone_coin", 25);
+     var air = npc.world.createItem("minecraft:air", 1);
+     var template = npc.world.createItem("minecraft:shaper_armor_trim_smithing_template", 1);
+     npc.getInventory().setDropItem(0, template, 10);     
+     npc.getInventory().setDropItem(1, coin, 100);
+     npc.getInventory().setDropItem(2, air, 0);
+     npc.getInventory().setDropItem(3, air, 0);
+     npc.getInventory().setDropItem(4, air, 0);	
 }
 
 function tick(e) {

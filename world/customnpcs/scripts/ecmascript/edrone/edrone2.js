@@ -16,7 +16,7 @@ function died(event) {
 
     // Case 1: Killed by player
     if (killer.getType() == 1) { // 1 = IPlayer
-        var reward = world.createItem("coins:stone_coin", 80);
+        var reward = world.createItem("coins:coal_coin", 1);
         killer.giveItem(reward);
     }
 
@@ -24,7 +24,7 @@ function died(event) {
     else if (killer.getType() == 2) { // 2 = ICustomNpc
         var owner = killer.getOwner(); // Returns IPlayer if tamed/companion
         if (owner != null) {
-            var reward2 = world.createItem("coins:stone_coin", 80);
+            var reward2 = world.createItem("coins:coal_coin", 1);
             owner.giveItem(reward2);
         }
     }

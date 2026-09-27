@@ -11,7 +11,7 @@ var SHOP_PAGES = [
         // Click either reward slot to purchase both rewards
         // Set reward2: null if only one reward is needed
         { price: { name: "minecraft:shaper_armor_trim_smithing_template", count: 1  }, reward1: { name: "coins:stone_coin",       count: 10 }, reward2: null },
-        { price: { name: "dune_armor_trim_smithing_template", count: 1 }, reward1: { name: "coins:stone_coin", count: 50 }, reward2: null },
+        { price: { name: "dune_armor_trim_smithing_template", count: 1 }, reward1: { name: "coins:stone_coin", count: 75 }, reward2: null },
         { price: { name: "silence_armor_trim_smithing_template",    count: 1  }, reward1: { name: "coins:coal_coin",         count: 2 }, reward2: { name: "coins:stone_coin",         count: 50 } },
     ],
 

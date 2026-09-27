@@ -3,7 +3,7 @@ function init(event){
      npc.getDisplay().setName("Neonite");
      npc.getDisplay().setSkinUrl("https://www.minecraftskins.com/uploads/skins/2025/06/20/cyborg-23348587.png?v951");
      npc.setFaction(3);
-     npc.getStats().setMaxHealth(20);
+     npc.getStats().setMaxHealth(25);
      npc.getStats().getRanged().setStrength(3);
      npc.getStats().getRanged().setDelay(17, 17);
      npc.getStats().getRanged().setBurstDelay(1);
