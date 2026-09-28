@@ -33,6 +33,19 @@ function init(e) {
         npc.getInventory().setDropItem(0, npc.world.createItem("coins:stone_coin", 3), 40);
         npc.getInventory().setDropItem(1, npc.world.createItem("coins:stone_coin", 5), 40);
         npc.getInventory().setDropItem(2, npc.world.createItem("minecraft:apple", 1), 50);
+
+    // Clear any flight state left over from a previous session (e.g. saved
+    // mid-chase as police) so the NPC never starts out flying
+    isFlying = false;
+    flyTimer = 0;
+    groundTimer = 0;
+    chasingTarget = null;
+    npc.getAi().setNavigationType(0);
+    npc.getAi().setReturnsHome(true);
+    npc.setMotionX(0);
+    npc.setMotionY(0);
+    npc.setMotionZ(0);
+
     if (Math.random() < 0.12) {
         display.setSkinTexture("cyberpunkskins:textures/lcpd.png");
         display.setName("LCPD");

@@ -1,6 +1,6 @@
 const MIN_SPEED = 0;
-const MAX_SPEED = 0.12;      // raised so /walk can still reach the new default
-const DEFAULT_SPEED = 0.12; // 1.2x vanilla (0.1)
+const MAX_SPEED = 0.13;      // raised so /walk can still reach the new default
+const DEFAULT_SPEED = 0.13; // 1.2x vanilla (0.1)
 
 // Apply the new default once per player (new joins AND existing players on their next login)
 PlayerEvents.loggedIn(function(event) {
