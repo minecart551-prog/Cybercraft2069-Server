@@ -23,6 +23,11 @@ var isPolice = 1;
 
 function init(e) {
     var npc = e.npc;
+	
+	if (Math.random() < 0.10) {
+	    npc.reset();
+    }
+	
     var display = npc.getDisplay();
     npc.setFaction(17);
     npc.getAi().setAvoidsWater(true);

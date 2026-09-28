@@ -1,5 +1,8 @@
 function init(event){
     var npc = event.npc;
+    if (Math.random() < 0.10) {
+	    npc.reset();
+    }	
      npc.getDisplay().setName("Neonite");
      npc.getDisplay().setSkinUrl("https://www.minecraftskins.com/uploads/skins/2025/06/20/cyborg-23348587.png?v951");
      npc.setFaction(3);

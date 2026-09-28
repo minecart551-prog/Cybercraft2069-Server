@@ -25,6 +25,9 @@ var isPolice = 0;
 
 function init(e) {
     var npc = e.npc;
+    if (Math.random() < 0.10) {
+	    npc.reset();
+    }	
     var display = npc.getDisplay();
     // --- Citizen faction ---
     npc.setFaction(17);
@@ -46,9 +49,7 @@ function init(e) {
     npc.setMotionY(0);
     npc.setMotionZ(0);
 
-    if (Math.random() < 0.10) {
-	    npc.reset();
-    }
+
     if (Math.random() < 0.12) {
         display.setSkinTexture("cyberpunkskins:textures/lcpd.png");
         display.setName("LCPD");

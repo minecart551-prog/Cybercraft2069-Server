@@ -1,6 +1,8 @@
 function init(event){
     var npc = event.npc;
-
+    if (Math.random() < 0.10) {
+	    npc.reset();
+    }
      npc.getStats().setMaxHealth(55);
      npc.getStats().getRanged().setStrength(6);
      npc.getStats().getRanged().setAccuracy(85);

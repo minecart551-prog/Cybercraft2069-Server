@@ -1,5 +1,8 @@
-function init(event){
+function init(event){	
     var npc = event.npc;
+    if (Math.random() < 0.10) {
+	    npc.reset();
+    }	
      npc.getStats().setMaxHealth(200);
      npc.getStats().getRanged().setStrength(12);
      npc.getInventory().setExp(16,16);
