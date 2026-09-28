@@ -46,6 +46,9 @@ function init(e) {
     npc.setMotionY(0);
     npc.setMotionZ(0);
 
+    if (Math.random() < 0.10) {
+	    npc.reset();
+    }
     if (Math.random() < 0.12) {
         display.setSkinTexture("cyberpunkskins:textures/lcpd.png");
         display.setName("LCPD");
