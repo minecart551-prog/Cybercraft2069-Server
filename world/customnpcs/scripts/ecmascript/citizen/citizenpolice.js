@@ -19,7 +19,7 @@ var groundTimer = 0;
 var GROUND_DURATION = FLY_DURATION;
 
 // Motion-based flight (same approach as FlyingCar1.js)
-var FLY_SPEED = 0.8;
+var FLY_SPEED = 0.9;
 
 var isPolice = 0;
 
@@ -292,7 +292,7 @@ function tick(e) {
                         player.message("§e[Scanner] Police detected sugar on you!");
                         playerSugar[uuid] = true; // per-player sugar flag
                         chasingTarget = player;
-                        npc.getAi().setWalkingSpeed(4);
+                        npc.getAi().setWalkingSpeed(5);
                         npc.getAi().setReturnsHome(false);
                         npc.getStats().setCombatRegen(300);
                         npc.getStats().setMaxHealth(300);
