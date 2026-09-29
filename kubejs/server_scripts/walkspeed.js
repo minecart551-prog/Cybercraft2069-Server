@@ -1,14 +1,21 @@
 const MIN_SPEED = 0;
-const MAX_SPEED = 0.13;      // raised so /walk can still reach the new default
-const DEFAULT_SPEED = 0.13; // 1.2x vanilla (0.1)
+const MAX_SPEED = 0.13;
+const DEFAULT_SPEED = 0.13;
 
-// Apply the new default once per player (new joins AND existing players on their next login)
+const ATTRIBUTE_ID = 'minecraft:generic.movement_speed';
+
+const INIT_FLAG = "walkSpeedInit_v5";
+
+function applyDefaultSpeed(player) {
+  var attr = player.getAttribute(ATTRIBUTE_ID);
+  if (!attr) return;
+  attr.setBaseValue(DEFAULT_SPEED);
+}
+
 PlayerEvents.loggedIn(function(event) {
   var player = event.player;
-  if (player.persistentData.getBoolean("walkSpeedInit")) return;
-
-  player.server.runCommand('attribute ' + player.username + ' minecraft:generic.movement_speed base set ' + DEFAULT_SPEED);
-  player.persistentData.putBoolean("walkSpeedInit", true);
+  applyDefaultSpeed(player);
+  player.persistentData.putBoolean(INIT_FLAG, true);
 });
 
 ServerEvents.commandRegistry(function(event) {
@@ -20,7 +27,7 @@ ServerEvents.commandRegistry(function(event) {
       .executes(function(ctx) {
         var player = ctx.source.player;
         if (!player) return 0;
-        player.tell("§eUsage: /walk <0-0.12> or /walk clear");
+        player.tell("§eUsage: /walk <0-0.13> or /walk clear");
         return 1;
       })
       .then(
@@ -28,7 +35,7 @@ ServerEvents.commandRegistry(function(event) {
           .executes(function(ctx) {
             var player = ctx.source.player;
             if (!player) return 0;
-            player.server.runCommand('attribute ' + player.username + ' minecraft:generic.movement_speed base set ' + DEFAULT_SPEED);
+            applyDefaultSpeed(player);
             player.tell("§aWalk speed reset to default");
             return 1;
           })
@@ -40,7 +47,8 @@ ServerEvents.commandRegistry(function(event) {
             if (!player) return 0;
             var speed = Arguments.DOUBLE.getResult(ctx, "speed");
             speed = Math.max(MIN_SPEED, Math.min(MAX_SPEED, speed));
-            player.server.runCommand('attribute ' + player.username + ' minecraft:generic.movement_speed base set ' + speed);
+            var attr = player.getAttribute(ATTRIBUTE_ID);
+            attr.setBaseValue(speed);
             player.tell("§aWalk speed set to §e" + speed);
             return 1;
           })
