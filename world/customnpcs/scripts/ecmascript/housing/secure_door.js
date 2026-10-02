@@ -1,9 +1,8 @@
 // ===============================================================
 // Secure Door - name whitelist + money-protection door
 //
-// - Right-click opens the management GUI directly (no sneak needed)
-// - Only whitelisted players can use the GUI while door has balance
-// - Balance = 0 => door is unlocked, anyone can use GUI + open door
+// - Right-click opens / closes the door
+// - Shift + right-click opens the management GUI
 // - Left-click with the break tool drains the door balance
 // - Hold ADMIN_TOOL and right-click to open GUI without whitelist check
 // ===============================================================
@@ -13,7 +12,7 @@
 var DOOR_MODEL     = "minecraft:iron_door";  // default door model (edit to taste)
 var BREAK_TOOL     = "minecraft:stick";      // item used to drain door balance
 var ADMIN_TOOL     = "minecraft:barrier";    // item that opens GUI without whitelist check
-var BREAK_COOLDOWN = 4;                      // ticks between break attempts (40 = 2 seconds)
+var BREAK_COOLDOWN = 40;                      // ticks between break attempts (40 = 2 seconds)
 var BREAK_DAMAGE   = 2.0;                    // damage to attacker (2.0 = 1 heart)
 var BREAK_COST     = 10;                     // balance drained per hit in cents ($0.10 = 10)
 var OPEN_DURATION  = 60;                     // ticks door stays open (60 = 3 seconds)
@@ -32,7 +31,6 @@ var TF_AMOUNT     = 11;
 var BTN_SAVE_WL   = 20;
 var BTN_DEPOSIT   = 22;
 var BTN_WITHDRAW  = 23;
-var BTN_TOGGLE    = 24;
 
 // ----------------- PENDING STATE -----------------
 // Stored during interact() so customGuiButton can read them
@@ -67,9 +65,23 @@ function interact(e) {
         return;
     }
 
-    pendingBlock = block;
-    pendingWorld = block.world;
-    openDoorGui(e, player, balance, white, unlocked, isAdmin);
+    // --- Shift + right-click = open management GUI ---
+    if (player.isSneaking() || isAdmin) {
+        pendingBlock = block;
+        pendingWorld = block.world;
+        openDoorGui(e, player, balance, white, unlocked, isAdmin);
+        return;
+    }
+
+    // --- Normal right-click = toggle door ---
+    if (block.getOpen()) {
+        safeSetOpen(block, false);
+        player.message("§7Door closed.");
+    } else {
+        safeSetOpen(block, true);
+        block.getTimers().forceStart(1, OPEN_DURATION, false);
+        player.message("§aDoor opened.");
+    }
 }
 
 // Left-click on the door (attack event)
@@ -128,9 +140,8 @@ function doorToggle(e) {
 
 function openDoorGui(e, player, balance, white, unlocked, isAdmin) {
     var width  = 260;
-    var height = 175;
+    var height = 155;
     var api    = e.API;
-    var isOpen = pendingBlock ? pendingBlock.getOpen() : false;
 
     var gui = api.createCustomGui(GUI_DOOR, width, height, false, player);
 
@@ -150,11 +161,7 @@ function openDoorGui(e, player, balance, white, unlocked, isAdmin) {
     gui.addButton(BTN_DEPOSIT,  "§aDeposit",  120, 105, 65, 16);
     gui.addButton(BTN_WITHDRAW, "§eWithdraw", 190, 105, 65, 16);
 
-    // --- Door toggle ---
-    var openLabel = block_getOpen() ? "§cClose Door" : "§aOpen Door";
-    gui.addButton(BTN_TOGGLE, openLabel, width / 2 - 40, 130, 80, 18);
-
-    gui.addLabel(LBL_INFO, "§8Left-click with stick to raid the door", 15, 155, width - 30, 10);
+    gui.addLabel(LBL_INFO, "§8Left-click with stick to raid the door", 15, 135, width - 30, 10);
 
     player.showCustomGui(gui);
 }
@@ -175,7 +182,6 @@ function customGuiButton(e) {
     if      (bid === BTN_SAVE_WL)   handleSaveWhitelist(e, player, block);
     else if (bid === BTN_DEPOSIT)   handleDeposit(e, player, block);
     else if (bid === BTN_WITHDRAW)  handleWithdraw(e, player, block);
-    else if (bid === BTN_TOGGLE)    handleToggleDoor(e, player, block);
 }
 
 function customGuiClosed(e) {
@@ -274,18 +280,6 @@ function handleWithdraw(e, player, block) {
     refreshGui(e, player, block);
 }
 
-function handleToggleDoor(e, player, block) {
-    if (block.getOpen()) {
-        safeSetOpen(block, false);
-        player.message("§7Door closed.");
-    } else {
-        safeSetOpen(block, true);
-        block.getTimers().forceStart(1, OPEN_DURATION, false);
-        player.message("§aDoor opened. It will auto-close in 3s.");
-    }
-    refreshGui(e, player, block);
-}
-
 // ----------------- GUI HELPERS -----------------
 
 function readField(e, id) {
@@ -314,10 +308,6 @@ function refreshGui(e, player, block) {
     pendingBlock = block;
     pendingWorld = block.world;
     openDoorGui(e, player, balance, white, unlocked, false);
-}
-
-function block_getOpen() {
-    return pendingBlock ? pendingBlock.getOpen() : false;
 }
 
 // ----------------- DOOR HELPERS -----------------
