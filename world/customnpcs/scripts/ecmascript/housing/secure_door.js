@@ -1,9 +1,9 @@
 // ===============================================================
 // Secure Door - name whitelist + money-protection door
 //
-// - Only whitelisted players can open the door while it has balance
-// - Balance = 0 => door is unlocked, anyone can open + manage GUI
-// - Sneak + right-click opens the management GUI
+// - Right-click opens the management GUI directly (no sneak needed)
+// - Only whitelisted players can use the GUI while door has balance
+// - Balance = 0 => door is unlocked, anyone can use GUI + open door
 // - Left-click with the break tool drains the door balance
 // - Hold ADMIN_TOOL and right-click to open GUI without whitelist check
 // ===============================================================
@@ -13,27 +13,26 @@
 var DOOR_MODEL     = "minecraft:iron_door";  // default door model (edit to taste)
 var BREAK_TOOL     = "minecraft:stick";      // item used to drain door balance
 var ADMIN_TOOL     = "minecraft:barrier";    // item that opens GUI without whitelist check
-var BREAK_COOLDOWN = 4;                     // ticks between break attempts (40 = 2 seconds)
+var BREAK_COOLDOWN = 4;                      // ticks between break attempts (40 = 2 seconds)
 var BREAK_DAMAGE   = 2.0;                    // damage to attacker (2.0 = 1 heart)
 var BREAK_COST     = 10;                     // balance drained per hit in cents ($0.10 = 10)
 var OPEN_DURATION  = 60;                     // ticks door stays open (60 = 3 seconds)
 
 // ----------------- GUI IDS -----------------
 
-var GUI_DOOR     = 9100;
-var LBL_TITLE    = 1;
-var LBL_BALANCE  = 2;
-var LBL_STATUS   = 3;
+var GUI_DOOR      = 9100;
+var LBL_TITLE     = 1;
+var LBL_BALANCE   = 2;
+var LBL_STATUS    = 3;
 var LBL_WHITELIST = 4;
-var LBL_NAME     = 5;
-var LBL_AMOUNT   = 6;
-var LBL_INFO     = 99;
-var TF_NAME      = 10;
-var TF_AMOUNT    = 11;
-var BTN_ADD      = 20;
-var BTN_REMOVE   = 21;
-var BTN_DEPOSIT  = 22;
-var BTN_WITHDRAW = 23;
+var LBL_AMOUNT    = 6;
+var LBL_INFO      = 99;
+var TF_WHITELIST  = 10;
+var TF_AMOUNT     = 11;
+var BTN_SAVE_WL   = 20;
+var BTN_DEPOSIT   = 22;
+var BTN_WITHDRAW  = 23;
+var BTN_TOGGLE    = 24;
 
 // ----------------- PENDING STATE -----------------
 // Stored during interact() so customGuiButton can read them
@@ -59,42 +58,18 @@ function interact(e) {
     var white   = getWhitelist(block);
     var unlocked = balance <= 0;
 
-    // --- Admin tool: right-click while holding barrier opens GUI directly ---
+    // --- Admin tool: right-click while holding barrier opens GUI without whitelist check ---
     var held = player.getMainhandItem();
-    if (held && !held.isEmpty() && held.getName() === ADMIN_TOOL) {
-        pendingBlock = block;
-        pendingWorld = block.world;
-        openDoorGui(e, player, balance, white, unlocked);
+    var isAdmin = held && !held.isEmpty() && held.getName() === ADMIN_TOOL;
+
+    if (!unlocked && !isAdmin && !isAllowed(player, white)) {
+        player.message("§cAccess denied. You are not on the whitelist.");
         return;
     }
 
-    // --- Sneak + right-click = management GUI ---
-    if (player.isSneaking()) {
-        if (!unlocked && !isAllowed(player, white)) {
-            player.message("§cAccess denied. You are not on the whitelist.");
-            return;
-        }
-        pendingBlock = block;
-        pendingWorld = block.world;
-        openDoorGui(e, player, balance, white, unlocked);
-        return;
-    }
-
-    // --- Normal right-click = toggle door if authorized ---
-    if (!unlocked && !isAllowed(player, white)) {
-        player.message("§cAccess denied.");
-        return;
-    }
-
-    if (block.getOpen()) {
-        // Door is open -> close it
-        safeSetOpen(block, false);
-    } else {
-        // Door is closed -> open it and start auto-close timer
-        safeSetOpen(block, true);
-        block.getTimers().forceStart(1, OPEN_DURATION, false);
-        player.message("§aAccess granted.");
-    }
+    pendingBlock = block;
+    pendingWorld = block.world;
+    openDoorGui(e, player, balance, white, unlocked, isAdmin);
 }
 
 // Left-click on the door (attack event)
@@ -151,10 +126,11 @@ function doorToggle(e) {
 
 // ----------------- GUI -----------------
 
-function openDoorGui(e, player, balance, white, unlocked) {
+function openDoorGui(e, player, balance, white, unlocked, isAdmin) {
     var width  = 260;
-    var height = 165;
+    var height = 175;
     var api    = e.API;
+    var isOpen = pendingBlock ? pendingBlock.getOpen() : false;
 
     var gui = api.createCustomGui(GUI_DOOR, width, height, false, player);
 
@@ -162,20 +138,23 @@ function openDoorGui(e, player, balance, white, unlocked) {
     gui.addLabel(LBL_BALANCE, "§7Balance: §6" + fmt(balance), 15, 28, width - 30, 10);
     gui.addLabel(LBL_STATUS, "§7Status: " + (unlocked ? "§aUnlocked" : "§cLocked"), 15, 40, width - 30, 10);
 
-    var wlText = white.length > 0 ? white.join(", ") : "(empty)";
-    gui.addLabel(LBL_WHITELIST, "§7Whitelist: §f" + wlText, 15, 52, width - 30, 10);
+    // --- Whitelist text field (comma-separated, like spawner.js) ---
+    gui.addLabel(LBL_WHITELIST, "§7Whitelist (comma-separated names):", 15, 56, width - 30, 10);
+    var wlText = white.length > 0 ? white.join(", ") : "";
+    gui.addTextField(TF_WHITELIST, 15, 68, 190, 14).setText(wlText);
+    gui.addButton(BTN_SAVE_WL, "§aSave", 210, 67, 40, 16);
 
-    gui.addLabel(LBL_NAME, "§7Player name:", 15, 70, 80, 10);
-    gui.addTextField(TF_NAME, 15, 82, 140, 14);
-    gui.addButton(BTN_ADD,    "§aAdd",    160, 81, 42, 16);
-    gui.addButton(BTN_REMOVE, "§cRemove", 207, 81, 45, 16);
+    // --- Money ---
+    gui.addLabel(LBL_AMOUNT, "§7Amount ($):", 15, 94, 80, 10);
+    gui.addTextField(TF_AMOUNT, 15, 106, 100, 14);
+    gui.addButton(BTN_DEPOSIT,  "§aDeposit",  120, 105, 65, 16);
+    gui.addButton(BTN_WITHDRAW, "§eWithdraw", 190, 105, 65, 16);
 
-    gui.addLabel(LBL_AMOUNT, "§7Amount ($):", 15, 106, 80, 10);
-    gui.addTextField(TF_AMOUNT, 15, 118, 100, 14);
-    gui.addButton(BTN_DEPOSIT,  "§aDeposit",  120, 117, 65, 16);
-    gui.addButton(BTN_WITHDRAW, "§eWithdraw", 190, 117, 65, 16);
+    // --- Door toggle ---
+    var openLabel = block_getOpen() ? "§cClose Door" : "§aOpen Door";
+    gui.addButton(BTN_TOGGLE, openLabel, width / 2 - 40, 130, 80, 18);
 
-    gui.addLabel(LBL_INFO, "§8Sneak + right-click to reopen this menu", 15, 145, width - 30, 10);
+    gui.addLabel(LBL_INFO, "§8Left-click with stick to raid the door", 15, 155, width - 30, 10);
 
     player.showCustomGui(gui);
 }
@@ -193,10 +172,10 @@ function customGuiButton(e) {
 
     var block = pendingBlock;
 
-    if      (bid === BTN_ADD)      handleAddName(e, player, block);
-    else if (bid === BTN_REMOVE)   handleRemoveName(e, player, block);
-    else if (bid === BTN_DEPOSIT)  handleDeposit(e, player, block);
-    else if (bid === BTN_WITHDRAW) handleWithdraw(e, player, block);
+    if      (bid === BTN_SAVE_WL)   handleSaveWhitelist(e, player, block);
+    else if (bid === BTN_DEPOSIT)   handleDeposit(e, player, block);
+    else if (bid === BTN_WITHDRAW)  handleWithdraw(e, player, block);
+    else if (bid === BTN_TOGGLE)    handleToggleDoor(e, player, block);
 }
 
 function customGuiClosed(e) {
@@ -208,51 +187,33 @@ function customGuiClosed(e) {
 
 // ----------------- BUTTON HANDLERS -----------------
 
-function handleAddName(e, player, block) {
-    var name = readField(e, TF_NAME);
-    if (name === "") {
-        player.message("§cPlease enter a player name.");
-        return;
-    }
+function handleSaveWhitelist(e, player, block) {
+    var raw = readField(e, TF_WHITELIST);
+    var names = [];
 
-    var white = getWhitelist(block);
-    for (var i = 0; i < white.length; i++) {
-        if (white[i].toLowerCase() === name.toLowerCase()) {
-            player.message("§e" + name + " is already on the whitelist.");
-            return;
+    if (raw && raw.trim() !== "") {
+        var parts = raw.split(",");
+        for (var i = 0; i < parts.length; i++) {
+            var nm = parts[i].trim();
+            if (nm !== "") names.push(nm);
         }
     }
 
-    white.push(name);
-    block.getStoreddata().put("whitelist", JSON.stringify(white));
-    player.message("§aAdded §f" + name + " §ato the whitelist.");
-    refreshGui(e, player, block);
-}
+    block.getStoreddata().put("whitelist", JSON.stringify(names));
+    player.message("§aWhitelist saved: " + (names.length > 0 ? "§f" + names.join(", ") : "§7(empty)"));
 
-function handleRemoveName(e, player, block) {
-    var name = readField(e, TF_NAME);
-    if (name === "") {
-        player.message("§cPlease enter a player name to remove.");
-        return;
-    }
-
-    var white = getWhitelist(block);
-    var found = false;
-    for (var i = 0; i < white.length; i++) {
-        if (white[i].toLowerCase() === name.toLowerCase()) {
-            white.splice(i, 1);
-            found = true;
-            break;
+    // Make sure the player saving a non-empty list is on it (prevents lockout)
+    if (names.length > 0) {
+        var onList = false;
+        var myName = player.getName().toLowerCase();
+        for (var j = 0; j < names.length; j++) {
+            if (names[j].toLowerCase() === myName) { onList = true; break; }
+        }
+        if (!onList) {
+            // Player is editing the list but removed themselves - that's their choice
         }
     }
 
-    if (!found) {
-        player.message("§c" + name + " is not on the whitelist.");
-        return;
-    }
-
-    block.getStoreddata().put("whitelist", JSON.stringify(white));
-    player.message("§aRemoved §f" + name + " §afrom the whitelist.");
     refreshGui(e, player, block);
 }
 
@@ -313,6 +274,18 @@ function handleWithdraw(e, player, block) {
     refreshGui(e, player, block);
 }
 
+function handleToggleDoor(e, player, block) {
+    if (block.getOpen()) {
+        safeSetOpen(block, false);
+        player.message("§7Door closed.");
+    } else {
+        safeSetOpen(block, true);
+        block.getTimers().forceStart(1, OPEN_DURATION, false);
+        player.message("§aDoor opened. It will auto-close in 3s.");
+    }
+    refreshGui(e, player, block);
+}
+
 // ----------------- GUI HELPERS -----------------
 
 function readField(e, id) {
@@ -340,7 +313,11 @@ function refreshGui(e, player, block) {
 
     pendingBlock = block;
     pendingWorld = block.world;
-    openDoorGui(e, player, balance, white, unlocked);
+    openDoorGui(e, player, balance, white, unlocked, false);
+}
+
+function block_getOpen() {
+    return pendingBlock ? pendingBlock.getOpen() : false;
 }
 
 // ----------------- DOOR HELPERS -----------------
