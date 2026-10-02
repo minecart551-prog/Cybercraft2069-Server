@@ -3,14 +3,13 @@
 //
 // - Right-click opens / closes the door
 // - Shift + right-click opens the management GUI
-// - Left-click with the break tool drains the door balance
+// - Left-click to drains the door balance
 // - Hold ADMIN_TOOL and right-click to open GUI without whitelist check
 // ===============================================================
 
 // ----------------- CONFIGURATION (edit these) -----------------
 
 var DOOR_MODEL     = "minecraft:iron_door";  // default door model (edit to taste)
-var BREAK_TOOL     = "minecraft:stick";      // item used to drain door balance
 var ADMIN_TOOL     = "minecraft:barrier";    // item that opens GUI without whitelist check
 var BREAK_COOLDOWN = 40;                      // ticks between break attempts (40 = 2 seconds)
 var BREAK_DAMAGE   = 2.0;                    // damage to attacker (2.0 = 1 heart)
@@ -61,7 +60,7 @@ function interact(e) {
     var isAdmin = held && !held.isEmpty() && held.getName() === ADMIN_TOOL;
 
     if (!unlocked && !isAdmin && !isAllowed(player, white)) {
-        player.message("§cAccess denied. You are not on the whitelist.");
+        player.message("§cAccess denied. You are not on the whitelist. Left click to raid door");
         return;
     }
 
@@ -80,7 +79,7 @@ function interact(e) {
     } else {
         safeSetOpen(block, true);
         block.getTimers().forceStart(1, OPEN_DURATION, false);
-        player.message("§aDoor opened.");
+        player.message("§aDoor opened. Shift + right click to open panel. Left click to raid door");
     }
 }
 
@@ -89,8 +88,6 @@ function clicked(e) {
     var player = e.player;
     var block  = e.block;
 
-    var hand = player.getMainhandItem();
-    if (!hand || hand.isEmpty() || hand.getName() !== BREAK_TOOL) return;
 
     var now  = block.world.getTotalTime();
     var last = getLastAttack(block);
@@ -161,7 +158,7 @@ function openDoorGui(e, player, balance, white, unlocked, isAdmin) {
     gui.addButton(BTN_DEPOSIT,  "§aDeposit",  120, 105, 65, 16);
     gui.addButton(BTN_WITHDRAW, "§eWithdraw", 190, 105, 65, 16);
 
-    gui.addLabel(LBL_INFO, "§8Left-click with stick to raid the door", 15, 135, width - 30, 10);
+    gui.addLabel(LBL_INFO, "§7Add money to protect door. Left-click with stick to raid the door", 15, 135, width - 30, 10);
 
     player.showCustomGui(gui);
 }
