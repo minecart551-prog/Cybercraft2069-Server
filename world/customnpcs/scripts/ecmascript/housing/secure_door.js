@@ -158,7 +158,7 @@ function openDoorGui(e, player, block, balance, white, unlocked, isAdmin) {
     gui.addButton(BTN_SAVE_WL, "§aSave", 210, 67, 40, 16);
 
     // --- Money ---
-    gui.addLabel(LBL_AMOUNT, "§7Amount ($):", 15, 94, 80, 10);
+    gui.addLabel(LBL_AMOUNT, "§7Add $ to protect door:", 15, 94, 80, 10);
     gui.addTextField(TF_AMOUNT, 15, 106, 100, 14);
     gui.addButton(BTN_DEPOSIT,  "§aDeposit",  120, 105, 65, 16);
     gui.addButton(BTN_WITHDRAW, "§eWithdraw", 190, 105, 65, 16);
