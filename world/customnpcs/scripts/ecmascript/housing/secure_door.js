@@ -9,11 +9,12 @@
 
 // ----------------- CONFIGURATION (edit these) -----------------
 
-var DOOR_MODEL     = "minecraft:iron_door";  // default door model (edit to taste)
+var DOOR_UNLOCKED_MODEL = "customnpcs:npcscripteddoortool"; // always used while balance is 0
+var DOOR_LOCKED_MODEL   = "minecraft:iron_door";            // default skin while locked
 var ADMIN_TOOL     = "minecraft:barrier";    // item that opens GUI without whitelist check
 var BREAK_COOLDOWN = 40;                      // ticks between break attempts (40 = 2 seconds)
 var BREAK_DAMAGE   = 2.0;                    // damage to attacker (2.0 = 1 heart)
-var BREAK_COST     = 10;                     // balance drained per hit in cents ($0.10 = 10)
+var BREAK_COST     = 5;                     // balance drained per hit in cents ($0.10 = 10)
 var OPEN_DURATION  = 60;                     // ticks door stays open (60 = 3 seconds)
 
 // ----------------- GUI IDS -----------------
@@ -24,12 +25,15 @@ var LBL_BALANCE   = 2;
 var LBL_STATUS    = 3;
 var LBL_WHITELIST = 4;
 var LBL_AMOUNT    = 6;
+var LBL_MODEL     = 5;
 var LBL_INFO      = 99;
 var TF_WHITELIST  = 10;
 var TF_AMOUNT     = 11;
+var TF_MODEL      = 12;
 var BTN_SAVE_WL   = 20;
 var BTN_DEPOSIT   = 22;
 var BTN_WITHDRAW  = 23;
+var BTN_SAVE_MODEL = 24;
 
 // ----------------- PENDING STATE -----------------
 // Stored during interact() so customGuiButton can read them
@@ -42,7 +46,7 @@ var scriptOpening = false;   // suppresses doorToggle veto while script opens do
 // ----------------- ENTRY POINTS -----------------
 
 function init(e) {
-    e.block.setBlockModel(DOOR_MODEL);
+    applyModel(e.block);
     e.block.setHardness(-1);   // unbreakable - stick only drains money, never breaks block
 }
 
@@ -68,7 +72,7 @@ function interact(e) {
     if (player.isSneaking() || isAdmin) {
         pendingBlock = block;
         pendingWorld = block.world;
-        openDoorGui(e, player, balance, white, unlocked, isAdmin);
+        openDoorGui(e, player, block, balance, white, unlocked, isAdmin);
         return;
     }
 
@@ -107,9 +111,11 @@ function clicked(e) {
     balance = Math.max(0, balance - BREAK_COST);
     block.getStoreddata().put("balance", String(balance));
     block.getStoreddata().put("lastAttack", String(now));
+    applyModel(block);
 
     if (balance <= 0) {
         player.message("§cDoor protection depleted! The door is now unlocked.");
+        player.message("§7Its texture has returned to §f" + DOOR_UNLOCKED_MODEL);
     } else {
         player.message("§eYou struck the door. Remaining balance: §6" + fmt(balance));
     }
@@ -135,9 +141,9 @@ function doorToggle(e) {
 
 // ----------------- GUI -----------------
 
-function openDoorGui(e, player, balance, white, unlocked, isAdmin) {
+function openDoorGui(e, player, block, balance, white, unlocked, isAdmin) {
     var width  = 260;
-    var height = 155;
+    var height = 180;
     var api    = e.API;
 
     var gui = api.createCustomGui(GUI_DOOR, width, height, false, player);
@@ -158,7 +164,18 @@ function openDoorGui(e, player, balance, white, unlocked, isAdmin) {
     gui.addButton(BTN_DEPOSIT,  "§aDeposit",  120, 105, 65, 16);
     gui.addButton(BTN_WITHDRAW, "§eWithdraw", 190, 105, 65, 16);
 
-    gui.addLabel(LBL_INFO, "§7Add money to protect door. Left-click with stick to raid the door", 15, 135, width - 30, 10);
+    // --- Door texture (only editable while locked) ---
+    gui.addLabel(LBL_MODEL, unlocked ? "§7Door texture (locked while unlocked):"
+                                     : "§7Door texture (any door block id):", 15, 128, width - 30, 10);
+    var modelTf = gui.addTextField(TF_MODEL, 15, 140, 190, 14);
+    modelTf.setText(unlocked ? DOOR_UNLOCKED_MODEL : (getCustomModel(block) || DOOR_LOCKED_MODEL));
+    var applyBtn = gui.addButton(BTN_SAVE_MODEL, "§aApply", 210, 139, 40, 16);
+    if (unlocked) {
+        modelTf.setEnabled(false);
+        applyBtn.setEnabled(false);
+    }
+
+    gui.addLabel(LBL_INFO, "§7Raid: left-click with a stick", 15, 164, width - 30, 10);
 
     player.showCustomGui(gui);
 }
@@ -176,9 +193,10 @@ function customGuiButton(e) {
 
     var block = pendingBlock;
 
-    if      (bid === BTN_SAVE_WL)   handleSaveWhitelist(e, player, block);
-    else if (bid === BTN_DEPOSIT)   handleDeposit(e, player, block);
-    else if (bid === BTN_WITHDRAW)  handleWithdraw(e, player, block);
+    if      (bid === BTN_SAVE_WL)    handleSaveWhitelist(e, player, block);
+    else if (bid === BTN_DEPOSIT)    handleDeposit(e, player, block);
+    else if (bid === BTN_WITHDRAW)   handleWithdraw(e, player, block);
+    else if (bid === BTN_SAVE_MODEL) handleSaveModel(e, player, block);
 }
 
 function customGuiClosed(e) {
@@ -236,6 +254,7 @@ function handleDeposit(e, player, block) {
 
     var balance = getBalance(block) + cents;
     block.getStoreddata().put("balance", String(balance));
+    applyModel(block);
 
     // Auto-add depositor to whitelist so they never lock themselves out
     var white  = getWhitelist(block);
@@ -272,8 +291,51 @@ function handleWithdraw(e, player, block) {
     giveCoins(player, cents);
     balance -= cents;
     block.getStoreddata().put("balance", String(balance));
+    applyModel(block);
 
     player.message("§aWithdrew §6" + fmt(cents) + "§a. Balance: §6" + fmt(balance));
+    refreshGui(e, player, block);
+}
+
+// ----------------- DOOR TEXTURE -----------------
+
+function handleSaveModel(e, player, block) {
+    var balance = getBalance(block);
+    if (balance <= 0) {
+        player.message("§cThe door is unlocked, so its texture is fixed. Deposit money first.");
+        refreshGui(e, player, block);
+        return;
+    }
+
+    var raw = readField(e, TF_MODEL);
+    raw = raw ? raw.trim().toLowerCase() : "";
+
+    if (raw === "") {
+        block.getStoreddata().put("model", "");
+        applyModel(block);
+        player.message("§7Texture reset to §f" + DOOR_LOCKED_MODEL);
+        refreshGui(e, player, block);
+        return;
+    }
+
+    if (!/^[a-z0-9_.-]+:[a-z0-9_./-]+$/.test(raw)) {
+        player.message("§cInvalid id. Use the form namespace:block_name, e.g. minecraft:oak_door");
+        refreshGui(e, player, block);
+        return;
+    }
+
+    var before = block.getBlockModel();
+    block.setBlockModel(raw);
+    var after = block.getBlockModel();
+    if (after !== raw) {
+        block.setBlockModel(before);   // reject, keep whatever skin was active
+        player.message("§c'" + raw + "' is not a door block.");
+        refreshGui(e, player, block);
+        return;
+    }
+
+    block.getStoreddata().put("model", raw);
+    player.message("§aDoor texture set to §f" + raw);
     refreshGui(e, player, block);
 }
 
@@ -304,10 +366,35 @@ function refreshGui(e, player, block) {
 
     pendingBlock = block;
     pendingWorld = block.world;
-    openDoorGui(e, player, balance, white, unlocked, false);
+    openDoorGui(e, player, block, balance, white, unlocked, false);
 }
 
 // ----------------- DOOR HELPERS -----------------
+
+// Texture rule:
+//   balance <= 0  -> always the unlocked skin, player choice is ignored
+//   balance >  0  -> player's saved block id, or the default locked skin
+function applyModel(block) {
+    var want;
+    if (getBalance(block) <= 0) {
+        want = DOOR_UNLOCKED_MODEL;
+    } else {
+        want = getCustomModel(block) || DOOR_LOCKED_MODEL;
+    }
+    try {
+        block.setBlockModel(want);
+    } catch (err) {
+        block.setBlockModel(DOOR_LOCKED_MODEL);
+    }
+}
+
+function getCustomModel(block) {
+    try {
+        var raw = block.getStoreddata().get("model");
+        if (raw !== null && raw !== undefined) return String(raw);
+    } catch (err) {}
+    return "";
+}
 
 // setOpen fires doorToggle which our handler may veto.
 // Set scriptOpening so the veto is bypassed for script-initiated calls.
