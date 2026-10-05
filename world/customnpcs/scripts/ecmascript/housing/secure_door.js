@@ -153,7 +153,7 @@ function openDoorGui(e, player, block, balance, white, unlocked, isAdmin) {
     gui.addLabel(LBL_STATUS, "§7Status: " + (unlocked ? "§aUnlocked" : "§cLocked"), 15, 40, width - 30, 10);
 
     // --- Whitelist text field (comma-separated, like spawner.js) ---
-    gui.addLabel(LBL_WHITELIST, "§7Whitelist (comma-separated names):", 15, 56, width - 30, 10);
+    gui.addLabel(LBL_WHITELIST, "§7Name whitelist (comma-separated):", 15, 56, width - 30, 10);
     var wlText = white.length > 0 ? white.join(", ") : "";
     gui.addTextField(TF_WHITELIST, 15, 68, 190, 14).setText(wlText);
     gui.addButton(BTN_SAVE_WL, "§aSave", 210, 67, 40, 16);
@@ -165,7 +165,7 @@ function openDoorGui(e, player, block, balance, white, unlocked, isAdmin) {
     gui.addButton(BTN_WITHDRAW, "§eWithdraw", 190, 105, 65, 16);
 
     // --- Door texture (only editable while locked) ---
-    gui.addLabel(LBL_MODEL, unlocked ? "§7Door texture (locked while unlocked):"
+    gui.addLabel(LBL_MODEL, unlocked ? "§7Door texture (any door block id):"
                                      : "§7Door texture (any door block id):", 15, 128, width - 30, 10);
     var modelTf = gui.addTextField(TF_MODEL, 15, 140, 190, 14);
     modelTf.setText(unlocked ? DOOR_UNLOCKED_MODEL : (getCustomModel(block) || DOOR_LOCKED_MODEL));
@@ -175,7 +175,7 @@ function openDoorGui(e, player, block, balance, white, unlocked, isAdmin) {
         applyBtn.setEnabled(false);
     }
 
-    gui.addLabel(LBL_INFO, "§7Raid: left-click with a stick", 15, 164, width - 30, 10);
+    gui.addLabel(LBL_INFO, "§7Raid: left-click to attack", 15, 164, width - 30, 10);
 
     player.showCustomGui(gui);
 }
