@@ -115,9 +115,8 @@ function clicked(e) {
 
     if (balance <= 0) {
         player.message("§cDoor protection depleted! The door is now unlocked.");
-        player.message("§7Its texture has returned to §f" + DOOR_UNLOCKED_MODEL);
     } else {
-        player.message("§eYou struck the door. Remaining balance: §6" + fmt(balance));
+        player.message("§eYou struck the door!");
     }
 }
 
