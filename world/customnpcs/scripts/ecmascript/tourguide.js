@@ -68,7 +68,7 @@ var tourStops = [
     { msg: "§aHere is the Elevator down to the §eMetro §awhere you can go to different parts of the city, on street level you can also go to §eDesert Tunnel §afor mining", coords: [2560, 42, 848] },
     { msg: "§aOver here we have a furniture store", coords: [2550, 42, 887] },
     { msg: "§aOver here is the sugar dealer, the coordinates of sugarcane farms is in .menu tutorial, you can take over and spawn mercinaries to protect these farms. The job is the same as delivery but times the ammount of sugar you can carry, LCPD will chase and arrest you if youre in their FOV", path: [[2549, 42, 920],[2578, 42, 936],[2602, 42, 930]] },
-    { msg: "§aOver here are public apartments, you can rent one by putting your money in the door balance to protect it, you can build and decorate inside", coords: [2598, 42, 980]},
+    { msg: "§aOver here are public apartments, you can rent one by putting your money in the door balance to protect it, you can build and decorate inside, the options are limited from factions owned apartments though", coords: [2598, 42, 980]},
     { msg: "§aLastly, there are §eSerial killers §aat night, they varies in strength and loot values, spawn in different areas each night. If they kill you they will steal your loot and you have chance to take it back by killing them before morning ", coords: [2598, 42, 980]},
     { msg: "§aThat's the end of our tour, follow the markers on the map if you get lost, there are more things to explore so feel free to ask other players or §eJoi ai §aif you have any questions(just ask away!) Thanks for joining us, Have fun exploring!", coords: [2427, 43, 858], teleport: true }
 ];
