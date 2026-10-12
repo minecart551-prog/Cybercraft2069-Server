@@ -68,7 +68,8 @@ var CONFIG_TAB_ROWS = [
 var CONFIG_SHOP_ITEMS = [
     // Tab 0 - Electronics
 [
-{ id: "universal_shops:trade_block", count: 1, price: 50, nbt: {}, lore: [] },
+{ id: "yuushya:gui_item", count: 1, price: 5, nbt: {}, lore: [] },	
+{ id: "yuushya:get_showblock_item", count: 1, price: 5, nbt: {}, lore: [] },
 { id: "movingelevators:display_block", count: 1, price: 10, nbt: {}, lore: [] },
 { id: "movingelevators:button_block", count: 1, price: 10, nbt: {}, lore: [] },
 { id: "movingelevators:elevator_block", count: 1, price: 10, nbt: {}, lore: [] },
