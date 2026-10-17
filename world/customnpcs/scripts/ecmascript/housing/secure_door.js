@@ -14,7 +14,7 @@ var DOOR_LOCKED_MODEL   = "minecraft:iron_door";            // default skin whil
 var ADMIN_TOOL     = "minecraft:barrier";    // item that opens GUI without whitelist check
 var BREAK_COOLDOWN = 40;                      // ticks between break attempts (40 = 2 seconds)
 var BREAK_DAMAGE   = 2.0;                    // damage to attacker (2.0 = 1 heart)
-var BREAK_COST     = 5;                     // balance drained per hit in cents ($0.10 = 10)
+var BREAK_COST     = 1;                     // balance drained per hit in cents ($0.10 = 10)
 var OPEN_DURATION  = 60;                     // ticks door stays open (60 = 3 seconds)
 
 // ----------------- GUI IDS -----------------
