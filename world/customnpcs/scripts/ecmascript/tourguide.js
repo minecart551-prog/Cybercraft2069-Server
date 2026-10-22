@@ -281,11 +281,10 @@ function interact(e) {
                 player.setPosition(target[0], target[1], target[2]);
                 isMoving = false;
 
-                if (thisStep === 4) {
-                    player.setSpawnpoint(2426, 43, 858);
-                }
-
                 if (thisStep === tourStops.length - 1) {
+                    // Tour finished — the per-tick spawnpoint sync in tick() stops
+                    // here (NPC despawns), so pin the real spawn point now.
+                    player.setSpawnpoint(2426, 43, 858);
                     npc.despawn();
                     currentTourStep = 0;
                     currentLeaderName = null;
@@ -315,6 +314,11 @@ function tick(e) {
 
         if (lockedPlayer !== null && lockedPlayer !== undefined) {
             missingTicks = 0;
+
+            // Keep the locked player's spawn point pinned to the NPC's current
+            // position, so if they die mid-tour they respawn next to the guide.
+            // This is overwritten once with the real spawn when the tour ends.
+            lockedPlayer.setSpawnpoint(npc.getX(), npc.getY(), npc.getZ());
 
             var pdx = lockedPlayer.getX() - npc.getX();
             var pdy = lockedPlayer.getY() - npc.getY();
