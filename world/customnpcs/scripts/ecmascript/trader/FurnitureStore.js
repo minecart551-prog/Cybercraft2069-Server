@@ -70,6 +70,7 @@ var CONFIG_SHOP_ITEMS = [
 [
 { id: "yuushya:gui_item", count: 1, price: 5, nbt: {}, lore: [] },	
 { id: "yuushya:get_showblock_item", count: 1, price: 5, nbt: {}, lore: [] },
+{ id: "yuushya:destroy_item", count: 1, price: 5, nbt: {}, lore: [] },	
 { id: "movingelevators:display_block", count: 1, price: 10, nbt: {}, lore: [] },
 { id: "movingelevators:button_block", count: 1, price: 10, nbt: {}, lore: [] },
 { id: "movingelevators:elevator_block", count: 1, price: 10, nbt: {}, lore: [] },
