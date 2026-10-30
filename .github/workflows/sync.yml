@@ -74,3 +74,15 @@ jobs:
           remoteDir: "/tacz/tacz_default_gun/data/"
           onlyNewer: true
           options: "--delete --exclude .git/" 
+
+      - name: Sync TaczDefault via SFTP
+        uses: pressidium/lftp-mirror-action@v1
+        with:
+          host: ${{ secrets.SFTP_HOST }}
+          port: ${{ secrets.SFTP_PORT }}
+          user: ${{ secrets.SFTP_USERNAME }}
+          pass: ${{ secrets.SFTP_PASSWORD }}
+          localDir: "./config/server_waypoint/waypoints/minecraft$overworld.json"
+          remoteDir: "config/server_waypoint/waypoints/minecraft$overworld.json"
+          onlyNewer: true
+          options: "--delete --exclude .git/" 
