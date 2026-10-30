@@ -3,7 +3,7 @@
     "list_name": "Guns",
     "n": 8,
     "waypoints": [
-      {"name": "Guns 2", "initials": "", "pos": [2188, -10, 1203], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
+      {"name": "Guns 2s", "initials": "", "pos": [2188, -10, 1203], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "Guns 3", "initials": "", "pos": [2549, -47, 1573], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "Guns 4", "initials": "", "pos": [2301, -47, 2071], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "Guns 5", "initials": "", "pos": [2164, -47, 1358], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
