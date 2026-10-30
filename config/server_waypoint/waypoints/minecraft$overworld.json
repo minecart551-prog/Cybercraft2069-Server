@@ -34,7 +34,7 @@
       {"name": "Furniture Store (Upper)", "initials": "", "pos": [2616, 46, 1042], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Plants & Seeds", "initials": "", "pos": [2393, 44, 760], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:wheat_seeds"},
       {"name": "Cars Shop", "initials": "", "pos": [2423, 44, 806], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:minecart"},
-      {"name": "Flying Car Shop", "initials": "", "pos": [2435, 157, 874], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:elytra"},
+      {"name": "Flying Car Shop", "initials": "", "pos": [2435, 157, 874], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "immersive_aircraft:biplane"},
       {"name": "Money Exchange", "initials": "", "pos": [2433, 44, 815], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:gold_ingot"},
       {"name": "Money Exchange 2", "initials": "", "pos": [2186, -35, 1175], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:gold_ingot"},
       {"name": "Apartments Keys", "initials": "", "pos": [2432, 44, 806], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:tripwire_hook"},
