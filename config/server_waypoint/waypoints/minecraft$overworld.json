@@ -30,6 +30,7 @@
       {"name": "Furniture Store 4", "initials": "", "pos": [1780, -46, 847], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Furniture Store 5", "initials": "", "pos": [1843, -49, 173], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Furniture Store 6", "initials": "", "pos": [2416, -47, 2074], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
+      {"name": "Furniture Store 7", "initials": "", "pos": [2421, -47, 1492], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},      
       {"name": "Furniture Store (Lower)", "initials": "", "pos": [2616, -32, 1042], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Furniture Store (Upper)", "initials": "", "pos": [2616, 46, 1042], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Plants & Seeds", "initials": "", "pos": [2393, 44, 760], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:wheat_seeds"},
