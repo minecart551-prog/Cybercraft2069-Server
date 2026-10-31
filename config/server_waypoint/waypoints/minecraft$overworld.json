@@ -115,7 +115,7 @@
       {"name": "Elvice Apartments", "initials": "", "pos": [2599, 67, 1017], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:white_bed"},
       {"name": "Nether Portal", "initials": "", "pos": [2621, 45, 848], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:obsidian"},
       {"name": "Forest", "initials": "", "pos": [3513, 200, 1068], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:oak_sapling"},
-      {"name": "Rented Shop", "initials": "", "pos": [2494, 44, 813], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "yuushya:poster_0"},
+      {"name": "Rented Shops", "initials": "", "pos": [2494, 44, 813], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "yuushya:small_poster_1"},
       {"name": "Cyberware", "initials": "", "pos": [2438, 44, 838], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "cyberwarecore:the_oracle"},
       {"name": "Criminal Den", "initials": "", "pos": [2500, 44, 903], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:wither_skeleton_skull"},
       {"name": "Police Station", "initials": "", "pos": [2367, 43, 950], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:shield"},
