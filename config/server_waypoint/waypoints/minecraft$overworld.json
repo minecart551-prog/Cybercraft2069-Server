@@ -45,7 +45,7 @@
     "list_name": "Sugar Farms",
     "n": 12,
     "waypoints": [
-      {"name": "Easy Sugar Farm 1", "initials": "", "pos": [2416, -43, 1499], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:sugar"},
+      {"name": "Easy Sugar Farm 1", "initials": "", "pos": [2326, -47, 1452], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:sugar"},
       {"name": "Easy Sugar Farm 2", "initials": "", "pos": [2059, -47, -186], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:sugar"},
       {"name": "Easy Sugar Farm 3", "initials": "", "pos": [2718, -38, 1459], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:sugar"},
       {"name": "Medium Sugar Farm 1", "initials": "", "pos": [2007, -49, 805], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:sugar"},
