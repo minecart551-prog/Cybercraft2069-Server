@@ -120,7 +120,7 @@
       {"name": "Criminal Den", "initials": "", "pos": [2500, 44, 903], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:wither_skeleton_skull"},
       {"name": "Police Station", "initials": "", "pos": [2367, 43, 950], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:shield"},
       {"name": "Desert Tunnel", "initials": "", "pos": [3148, -13, 628], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:sand"},
-      {"name": "Movie Theater", "initials": "", "pos": [2599, 54, 730], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:painting"},
+      {"name": "Movie Theater", "initials": "", "pos": [2599, 54, 730], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "yuushya:mounted_tv_online"},
       {"name": "Freezone", "initials": "", "pos": [1210, -60, 842], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:beacon"},
       {"name": "Casino", "initials": "", "pos": [2168, -48, -467], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:diamond"},
       {"name": "Dealer", "initials": "", "pos": [2600, 42, 926], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:snowball"},
