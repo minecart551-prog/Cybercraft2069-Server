@@ -15,14 +15,14 @@ var availableGangs = [
         tab: 1, name: "G1", count: 5,
         loot: [
             { id: "coins:stone_coin",          count: 100,  weight: 100 },
-            { id: "minecraft:copper_ingot",          count: 1,  weight: 50 }
+            { id: "minecraft:copper_ingot",          count: 1,  weight: 100 }
         ]
     },
     {
         tab: 1, name: "G2", count: 5,
         loot: [
             { id: "coins:coal_coin",          count: 5,  weight: 100 },
-            { id: "minecraft:iron_ingot",          count: 1,  weight: 50 }
+            { id: "minecraft:iron_ingot",          count: 1,  weight: 100 }
         ]
     }
 
