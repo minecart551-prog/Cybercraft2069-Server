@@ -49,7 +49,7 @@ var tourStops = [
     { msg: "§aNow you can buy a gun and ammos to do some gigs,there are also §eBeds §aat every §eTrain Station §afor you to save spawnpoint for quick items retrievals when you die", coords: [2435, 42, 880] },
     { msg: "§aGuns have durability as well, you'll have to go to §eDesert Tunnel §aon the map to mine for materials to repair the gun, the recipes are at the table behind there" },
     { msg: "§aGet a §eGlock17 §aand §e9mm §abullets and we'll continue" },
-    { msg: "§aHere you can get more info about §eReplicants hunting §aand §erewards", path: [[2427, 42, 870],[2425, 42, 845]] },
+    { msg: "§aFor replicants hunting, there are many groups within the city, Neonites are easiest and you can find their areas on the map here, start with hunting Neonites around this market area. There are more that arent listed here but as you explore you will encounter them", path: [[2427, 42, 870],[2425, 42, 845]] },
     { msg: "§aIn here is a drones shop, you can hire them to assist you with hunting replicants, in the back theres §eCreeperdoc §aas well for §ecyberwares", coords: [2432, 42, 833] },
     { msg: "§aOver here is a money exchange", path: [[2421, 42, 834],[2428, 42, 815]] },
     { msg: "§aYou can buy your apartments from faction owners here, or check §e#real-estate §aand message faction owners on discord for one.", coords: [2427, 42, 806] },
