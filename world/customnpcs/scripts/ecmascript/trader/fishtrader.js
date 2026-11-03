@@ -5,6 +5,7 @@
 // ========== PRICING CONFIGURATION ==========
 var BASE_COIN_VALUE = 1.5;    // Base price for 1.5x multiplier fish at typical low size
 var BASE_MULTIPLIER = 1.0;  // Base multiplier (Cave Crawler)
+var SPECTRUM_MODIFIER = 2;  // Stretch rarity curve: 1.0 = linear, higher = rare fish worth MUCH more relative to common ones. Try 1.2–1.8
 var CURRENCY_ITEM = "coins:stone_coin"; // Stone coin currency
 var CURRENCY_FALLBACK = "minecraft:gold_nugget";    // Fallback if currency doesn't exist
 
@@ -150,8 +151,13 @@ function calculatePrice(fishData, fishSize, category) {
     var typicalHigh = fishData[2];
     var recordHigh = fishData[3];
     
-    // Base price from fish type
-    var basePrice = (valueMultiplier / BASE_MULTIPLIER) * BASE_COIN_VALUE;
+    // Apply spectrum: raise multiplier to power so rare fish scale up harder
+    // SPECTRUM_MODIFIER > 1 stretches the high end (rarer = much more valuable)
+    var effectiveMultiplier = Math.pow(valueMultiplier, SPECTRUM_MODIFIER);
+    var baseEffective = Math.pow(BASE_MULTIPLIER, SPECTRUM_MODIFIER);
+    
+    // Base price from fish type (spectrum-adjusted)
+    var basePrice = (effectiveMultiplier / baseEffective) * BASE_COIN_VALUE;
     
     // Size multiplier
     var sizeMultiplier = getSizeMultiplier(fishSize, typicalLow, typicalHigh, recordHigh);
