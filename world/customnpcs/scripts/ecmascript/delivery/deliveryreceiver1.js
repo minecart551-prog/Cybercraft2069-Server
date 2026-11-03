@@ -20,6 +20,9 @@ var delivMessages = [
     "§aThis means a lot to me!",
     "§aExcellent work! Keep it up!",
     "§aYou're doing great!",
+    "§aHold stack of 100 cent and give to me to exchange to Dollar",    
+    "§aHold stack of 100 cent and give to me to exchange to Dollar",    
+    "§aHold stack of 100 cent and give to me to exchange to Dollar",        
     "§aThanks for being reliable!"
 ];
 // Male names and skins
@@ -287,10 +290,9 @@ if (handItem && !handItem.isEmpty() && handItem.getName() === "coins:stone_coin"
         player.removeItem(handItem, 100);
         var coalCoin = npc.world.createItem("coins:coal_coin", 1);
         player.giveItem(coalCoin);
-        npc.say("§aHere's your exchange! 100 stone coins for 1 coal coin.");
-        player.message("§aExchanged 100 stone coins for 1 coal coin!");
+        npc.say("§aHere's your exchange! 100cent for $1.");
     } else {
-        npc.say("§cYou need at least 100 stone coins to exchange!");
+        npc.say("§cYou need at least 100 cents to exchange!");
     }
     return;
 }
