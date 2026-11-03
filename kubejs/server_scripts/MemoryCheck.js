@@ -5,7 +5,7 @@ let nightForced = false;
 ServerEvents.tick(event => {
     let server = event.server;
 
-    if (server.tickCount % 3600 === 0) {
+    if (server.tickCount % 3453 === 0) {
         server.runCommandSilent("save-all");
     }
     if (server.tickCount % 1200 === 0) {
@@ -17,7 +17,7 @@ ServerEvents.tick(event => {
             if (objective) {
                 // Correct method: getOrCreatePlayerScore(playerName, objective)
                 let allocatedPtc = scoreboard.getOrCreatePlayerScore("MEMDATA", objective).getScore();
-                if (allocatedPtc >= 80 && !warningIssued) {
+                if (allocatedPtc >= 90 && !warningIssued) {
                     warningIssued = true;
                     shutdownTickTarget = server.tickCount + 1200;
                     server.runCommandSilent("say Server restarting in 1 minute, remove your ingredients from cooking equipments they will not be saved");
@@ -51,7 +51,6 @@ if (shutdownTickTarget > 0) {
 
         if (server.tickCount >= shutdownTickTarget) {
             shutdownTickTarget = -1;
-            server.runCommandSilent("save-all");
             server.runCommandSilent("stop");
         }
     }
