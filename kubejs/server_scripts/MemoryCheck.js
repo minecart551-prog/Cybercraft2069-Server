@@ -17,7 +17,7 @@ ServerEvents.tick(event => {
             if (objective) {
                 // Correct method: getOrCreatePlayerScore(playerName, objective)
                 let allocatedPtc = scoreboard.getOrCreatePlayerScore("MEMDATA", objective).getScore();
-                if (allocatedPtc >= 90 && !warningIssued) {
+                if (allocatedPtc >= 80 && !warningIssued) {
                     warningIssued = true;
                     shutdownTickTarget = server.tickCount + 1200;
                     server.runCommandSilent("say Server restarting in 1 minute, remove your ingredients from cooking equipments they will not be saved");
