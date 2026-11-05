@@ -4,10 +4,6 @@ let nightForced = false;
 
 ServerEvents.tick(event => {
     let server = event.server;
-
-    if (server.tickCount % 3453 === 0) {
-        server.runCommandSilent("save-all");
-    }
     if (server.tickCount % 1200 === 0) {
         server.runCommandSilent("memcheck");
         try {
@@ -20,6 +16,7 @@ ServerEvents.tick(event => {
                 if (allocatedPtc >= 80 && !warningIssued) {
                     warningIssued = true;
                     shutdownTickTarget = server.tickCount + 1200;
+                    server.runCommandSilent("save-all");
                     server.runCommandSilent("say Server restarting in 1 minute, remove your ingredients from cooking equipments they will not be saved");
                 }
             }
