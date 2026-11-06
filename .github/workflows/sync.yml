@@ -82,7 +82,7 @@ jobs:
           port: ${{ secrets.SFTP_PORT }}
           user: ${{ secrets.SFTP_USERNAME }}
           pass: ${{ secrets.SFTP_PASSWORD }}
-          localDir: "./config/server_waypoint/waypoints/minecraft$overworld.json"
-          remoteDir: "/config/server_waypoint/waypoints/minecraft$overworld.json"
+          localDir: "./config/server_waypoint/waypoints/"
+          remoteDir: "/config/server_waypoint/waypoints/"
           onlyNewer: true
           options: "--delete --exclude .git/" 
