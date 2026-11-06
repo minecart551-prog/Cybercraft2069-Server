@@ -655,21 +655,32 @@ function customGuiSlotClicked(event) {
  
     if (isSellMode) {
         // ===== SELL MODE =====
-        // Find a matching item in player inventory
+        // Find a matching item in player inventory.
+        // Ammo boxes are only ever sold empty (matching by Level), so a full
+        // box can never be sold by accident.
+        var isAmmoBox = cfg.id === "tacz:ammo_box";
         var inv = player.getInventory();
         var foundSlot = -1;
         var foundStack = null;
+        var sawFullAmmoBox = false;
         for (var i = 0; i < inv.getSize(); i++) {
             var stack = inv.getSlot(i);
             if (!stack || stack.isEmpty()) continue;
-            if (nbtMatchesIgnoreDamageAndLore(stack, cfg)) {
-                foundSlot = i;
-                foundStack = stack;
-                break;
+            if (!nbtMatchesIgnoreDamageAndLore(stack, cfg)) continue;
+            if (isAmmoBox && !ammoBoxIsEmpty(stack)) {
+                sawFullAmmoBox = true;
+                continue;
             }
+            foundSlot = i;
+            foundStack = stack;
+            break;
         }
         if (foundSlot === -1) {
-            player.message("§cYou don't have this item to sell!");
+            if (isAmmoBox && sawFullAmmoBox) {
+                player.message("§cEmpty your ammo box before selling it!");
+            } else {
+                player.message("§cYou don't have this item to sell!");
+            }
             return;
         }
 
@@ -752,8 +763,57 @@ function customGuiSlotClicked(event) {
     }
 }
  
-var VARIANT_KEYS = ["GunId", "AmmoId", "AttachmentId"];
- 
+// NBT keys that describe mutable item state (or are checked elsewhere)
+// and must NOT be required to match when identifying which item to sell.
+// Everything else in the shop entry's nbt (e.g. "Level" on ammo boxes)
+// must match exactly, otherwise e.g. an iron ammo box would match a diamond one.
+var IGNORED_NBT_KEYS = [
+    "Damage",              // durability — priced separately
+    "display",             // name/lore
+    "AttributeModifiers",  // UUID-checked separately
+    "GunCurrentAmmoCount", // gun state, changes when fired
+    "HasBulletInBarrel",   // gun state
+    "GunFireMode",         // gun state, changes when toggled
+    "ZoomNumber",          // scope zoom setting, player-adjustable
+    "AmmoCount",           // ammo box contents — blocked separately when selling
+];
+
+function escapeRegex(s) {
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+// Checks that the item's JSON NBT contains "key": value for the given cfg value.
+// Handles both quoted strings and plain numbers, with or without a space after the colon.
+function jsonTagContainsValue(snbt, key, val) {
+    var k = escapeRegex(key);
+    var re;
+    if (typeof val === "number") {
+        re = new RegExp('"' + k + '"\\s*:\\s*' + val + '(?![0-9.])');
+    } else if (typeof val === "boolean") {
+        re = new RegExp('"' + k + '"\\s*:\\s*(?:' + (val ? "true|1b" : "false|0b") + ')');
+    } else {
+        re = new RegExp('"' + k + '"\\s*:\\s*"' + escapeRegex(val) + '"');
+    }
+    return re.test(snbt);
+}
+
+// An ammo box counts as empty when it holds no ammo (or has no ammo data at all).
+// Creative boxes are treated as full so they can never be sold.
+function ammoBoxIsEmpty(stack) {
+    try {
+        var snbt = stack.getItemNbt().toJsonString();
+        if (/"Creative":\s*(?:1b|true)/.test(snbt)) return false;
+        if (/"AllTypeCreative":\s*(?:1b|true)/.test(snbt)) return false;
+        var countMatch = snbt.match(/"AmmoCount":\s*(-?\d+)/);
+        if (countMatch && parseInt(countMatch[1], 10) > 0) return false;
+        var idMatch = snbt.match(/"AmmoId":\s*"([^"]*)"/);
+        if (idMatch && idMatch[1] !== "" && idMatch[1] !== "tacz:empty") return false;
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
+
 function nbtMatchesIgnoreDamageAndLore(playerStack, cfg) {
     try {
         var snbt = playerStack.getItemNbt().toJsonString();
@@ -787,11 +847,12 @@ function nbtMatchesIgnoreDamageAndLore(playerStack, cfg) {
             return true;
         }
   
-        for (var k = 0; k < VARIANT_KEYS.length; k++) {
-            var key = VARIANT_KEYS[k];
+        // Every key in the shop entry's nbt must match the player's item
+        // (identity keys like GunId/AmmoId/AttachmentId/Level, etc.)
+        for (var key in cfgNbt) {
             if (!cfgNbt.hasOwnProperty(key)) continue;
-            var val = String(cfgNbt[key]);
-            if (snbt.indexOf('"' + key + '": "' + val + '"') === -1) return false;
+            if (IGNORED_NBT_KEYS.indexOf(key) !== -1) continue;
+            if (!jsonTagContainsValue(snbt, key, cfgNbt[key])) return false;
         }
         return true;
     } catch(e) {
