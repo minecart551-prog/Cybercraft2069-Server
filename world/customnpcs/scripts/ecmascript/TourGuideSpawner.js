@@ -10,6 +10,15 @@ var TOUR_QUALIFIED = "tourQualified";
 var TOUR_STEP      = "tourStep";       // written by the NPC script's persistProgress()
 var EVER_LOCKED    = "tourEverLocked"; // owned entirely by this block script
 var LOCKED_IN_STEP = 3;                // keep in sync with the NPC script's LOCKED_IN_STEP
+// The NPC script persists tourStep AFTER incrementing it, so the stored value
+// means "next step to display" and is always one ahead of the step the player
+// is currently reading. The real lock (lockToPlayer) only happens when it
+// displays index LOCKED_IN_STEP, and only then does the stored value become
+// LOCKED_IN_STEP + 1. Comparing the stored value against >= LOCKED_IN_STEP
+// releases the gate one step too early — while the "Your items will be kept..."
+// step (index 2) is still on screen and the NPC is NOT locked to anyone yet
+// (so the NPC's own leash does nothing either).
+var LOCKED_PERSISTED_STEP = LOCKED_IN_STEP + 1;
 var CLONE_X        = 2325;
 var CLONE_Y        = -48;
 var CLONE_Z        = 855;
@@ -62,8 +71,11 @@ function tick(event) {
         }
 
         // ── TRACK "ever locked in", purely from tourStep, while they're near us ──
+        // Only once the NPC has ACTUALLY locked (stored step >= 4), never merely
+        // when the lock-in message is on screen — otherwise this flag would be
+        // set one step too early and disable the gate forever.
         var liveStep = player.storeddata.get(TOUR_STEP);
-        if (liveStep !== null && liveStep !== undefined && liveStep >= LOCKED_IN_STEP) {
+        if (liveStep !== null && liveStep !== undefined && liveStep >= LOCKED_PERSISTED_STEP) {
             if (player.storeddata.get(EVER_LOCKED) != 1) {
                 player.storeddata.put(EVER_LOCKED, 1);
             }
@@ -83,7 +95,7 @@ function tick(event) {
         var tourStepValue  = leftPlayer.storeddata.get(TOUR_STEP);
         var everLocked     = leftPlayer.storeddata.get(EVER_LOCKED);
 
-        var isCurrentlyLocked = tourStepValue !== null && tourStepValue !== undefined && tourStepValue >= LOCKED_IN_STEP;
+        var isCurrentlyLocked = tourStepValue !== null && tourStepValue !== undefined && tourStepValue >= LOCKED_PERSISTED_STEP;
         var hasFinishedBefore = everLocked == 1;
 
         // Skip the gate for anyone mid-tour right now, or who has ever completed
