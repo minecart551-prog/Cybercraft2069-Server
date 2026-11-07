@@ -3,9 +3,9 @@
 // Payment based on: Fish type (value multiplier) + Fish size + Category bonus
 
 // ========== PRICING CONFIGURATION ==========
-var BASE_COIN_VALUE = 1.7;    // Base price for 1.5x multiplier fish at typical low size
+var BASE_COIN_VALUE = 2;    // Base price for 1.5x multiplier fish at typical low size
 var BASE_MULTIPLIER = 1.0;  // Base multiplier (Cave Crawler)
-var SPECTRUM_MODIFIER = 3;  // Stretch rarity curve: 1.0 = linear, higher = rare fish worth MUCH more relative to common ones. Try 1.2–1.8
+var SPECTRUM_MODIFIER = 2;  // Stretch rarity curve: 1.0 = linear, higher = rare fish worth MUCH more relative to common ones. Try 1.2–1.8
 var CURRENCY_ITEM = "coins:stone_coin"; // Stone coin currency
 var CURRENCY_FALLBACK = "minecraft:gold_nugget";    // Fallback if currency doesn't exist
 
