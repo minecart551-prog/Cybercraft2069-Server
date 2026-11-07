@@ -83,7 +83,7 @@ function interact(e) {
     } else {
         safeSetOpen(block, true);
         block.getTimers().forceStart(1, OPEN_DURATION, false);
-        player.message("§aDoor opened. Shift + right click to open panel. Left click to raid door");
+        player.message("§aDoor opened. Shift + right click barehand to open panel. Left click to raid door");
     }
 }
 
