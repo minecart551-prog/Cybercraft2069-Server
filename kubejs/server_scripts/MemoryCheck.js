@@ -4,7 +4,7 @@ let nightForced = false;
 
 ServerEvents.tick(event => {
     let server = event.server;
-    if (server.tickCount % 1200 === 0) {
+    if (server.tickCount % 600 === 0) {
         server.runCommandSilent("memcheck");
         try {
             let scoreboard = server.scoreboard;
