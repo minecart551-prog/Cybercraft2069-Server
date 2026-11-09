@@ -5,7 +5,6 @@
     "waypoints": [
       {"name": "Guns 2", "initials": "", "pos": [2188, -10, 1203], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "Guns 3", "initials": "", "pos": [2549, -47, 1573], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
-      {"name": "Guns 4", "initials": "", "pos": [2301, -47, 2071], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "Guns 5", "initials": "", "pos": [2164, -47, 1358], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "Guns 6", "initials": "", "pos": [2570, -36, 1089], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "Guns 7", "initials": "", "pos": [2581, 46, 1042], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
@@ -24,6 +23,7 @@
       {"name": "Shop 5", "initials": "", "pos": [1835, -47, -113], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:candy_bag_pumpkin"},
       {"name": "Shop 6", "initials": "", "pos": [2489, -47, -251], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:candy_bag_pumpkin"},
       {"name": "Shop 7", "initials": "", "pos": [1029, -39, -401], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:candy_bag_pumpkin"},
+      {"name": "Shop 8", "initials": "", "pos": [2301, -47, 2071], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:candy_bag_pumpkin"},
       {"name": "Furniture Store", "initials": "", "pos": [2551, 45, 893], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Furniture Store 2", "initials": "", "pos": [2218, -47, 1233], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Furniture Store 3", "initials": "", "pos": [1383, -37, -79], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
