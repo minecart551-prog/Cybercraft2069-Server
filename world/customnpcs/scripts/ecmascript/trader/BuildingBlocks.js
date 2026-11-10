@@ -88,7 +88,7 @@ var CONFIG_SHOP_ITEMS = [
     { id: "minecraft:chiseled_red_sandstone", count: 1, price: 5, lore: [] },
     { id: "minecraft:smooth_red_sandstone", count: 1, price: 5, lore: [] },
     { id: "minecraft:cut_red_sandstone", count: 1, price: 5, lore: [] },
-    { id: "minecraft:sea_lantern", count: 1, price: 20, lore: [] },
+    { id: "minecraft:sea_lantern", count: 1, price: 7, lore: [] },
     { id: "minecraft:prismarine", count: 1, price: 5, lore: [] },
     { id: "minecraft:prismarine_bricks", count: 1, price: 5, lore: [] },
     { id: "minecraft:dark_prismarine", count: 1, price: 5, lore: [] },
