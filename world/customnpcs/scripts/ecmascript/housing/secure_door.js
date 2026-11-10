@@ -165,7 +165,7 @@ function openDoorGui(e, player, block, balance, white, unlocked, isAdmin) {
 
     // --- Door texture (only editable while locked) ---
     gui.addLabel(LBL_MODEL, unlocked ? "§7Door texture (any door block id):"
-                                     : "§7Door texture (any door block id):", 15, 128, width - 30, 10);
+    : "§7Door texture (any door block id):", 15, 128, width - 30, 10);
     var modelTf = gui.addTextField(TF_MODEL, 15, 140, 190, 14);
     modelTf.setText(unlocked ? DOOR_UNLOCKED_MODEL : (getCustomModel(block) || DOOR_LOCKED_MODEL));
     var applyBtn = gui.addButton(BTN_SAVE_MODEL, "§aApply", 210, 139, 40, 16);

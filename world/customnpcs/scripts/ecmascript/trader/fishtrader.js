@@ -1,11 +1,16 @@
 // ========== FISH SELLING NPC SCRIPT ==========
 // Player right-clicks NPC while holding a fish to sell it
-// Payment based on: Fish type (value multiplier) + Fish size + Category bonus
+// Payment based on: Fish type (value multiplier) + Fish rarity tier + Fish size + Category bonus
 
 // ========== PRICING CONFIGURATION ==========
 var BASE_COIN_VALUE = 2;    // Base price for 1.5x multiplier fish at typical low size
 var BASE_MULTIPLIER = 1.0;  // Base multiplier (Cave Crawler)
+<<<<<<< Updated upstream
 var SPECTRUM_MODIFIER = 2.2;  // Stretch rarity curve: 1.0 = linear, higher = rare fish worth MUCH more relative to common ones. Try 1.2–1.8
+=======
+var SPECTRUM_MODIFIER = 2.5;  // Stretch rarity curve: 1.0 = linear, higher = rare fish worth MUCH more relative to common ones. Try 1.2–1.8
+var RARITY_SPECTRUM_MODIFIER = 1.3;  // Same idea, but for the rarity TIER: 1.0 = tiers add flat bonuses, higher = legendary pulls way ahead of common. Try 1.0–1.6
+>>>>>>> Stashed changes
 var CURRENCY_ITEM = "coins:stone_coin"; // Stone coin currency
 var CURRENCY_FALLBACK = "minecraft:gold_nugget";    // Fallback if currency doesn't exist
 
@@ -15,6 +20,27 @@ var CATEGORY_MULTIPLIERS = {
     "underground": 1.0,     // Base category (no bonus)
     "cold_ocean": 1.2,      
 
+};
+
+// ========== RARITY TIER MULTIPLIERS ==========
+// Rarity tier is DERIVED from the fish's value multiplier (fishData[0]) - see getRarityTier()
+// so no per-fish data needs to be maintained. These get raised to the power of
+// RARITY_SPECTRUM_MODIFIER, exactly like SPECTRUM_MODIFIER does for value multipliers.
+var RARITY_MULTIPLIERS = {
+    "common": 1.0,      // value multiplier < 2.0
+    "uncommon": 1.1,    // 2.0 – 2.99
+    "rare": 1.25,       // 3.0 – 3.99
+    "very_rare": 1.45,  // 4.0 – 4.99
+    "legendary": 1.7    // 5.0+
+};
+
+// ========== RARITY DISPLAY (chat colors) ==========
+var RARITY_LABELS = {
+    "common": "§fCommon",
+    "uncommon": "§aUncommon",
+    "rare": "§bRare",
+    "very_rare": "§dVery Rare",
+    "legendary": "§6Legendary"
 };
 
 // ========== UNDERGROUND FISH DATABASE ========== BIOME:FOREST
@@ -144,6 +170,30 @@ function formatSize(size) {
     return size.toFixed(1) + "cm";
 }
 
+// Derive rarity tier from the fish's value multiplier (no per-fish data needed)
+function getRarityTier(valueMultiplier) {
+    if (valueMultiplier >= 5.0) return "legendary";
+    if (valueMultiplier >= 4.0) return "very_rare";
+    if (valueMultiplier >= 3.0) return "rare";
+    if (valueMultiplier >= 2.0) return "uncommon";
+    return "common";
+}
+
+// Rarity portion of the price: tier multiplier stretched by RARITY_SPECTRUM_MODIFIER
+// Normalized against "common" so common fish always come out at 1.0
+function getRarityMultiplier(valueMultiplier) {
+    var tier = getRarityTier(valueMultiplier);
+    var rarity = RARITY_MULTIPLIERS[tier] || RARITY_MULTIPLIERS["common"];
+    var baseRarity = RARITY_MULTIPLIERS["common"];
+    return Math.pow(rarity, RARITY_SPECTRUM_MODIFIER) / Math.pow(baseRarity, RARITY_SPECTRUM_MODIFIER);
+}
+
+// Colored rarity label for the sell message
+function getRarityLabel(valueMultiplier) {
+    var tier = getRarityTier(valueMultiplier);
+    return RARITY_LABELS[tier] || RARITY_LABELS["common"];
+}
+
 // Calculate total price with category multiplier
 function calculatePrice(fishData, fishSize, category) {
     var valueMultiplier = fishData[0];
@@ -165,8 +215,11 @@ function calculatePrice(fishData, fishSize, category) {
     // Category multiplier
     var categoryMultiplier = CATEGORY_MULTIPLIERS[category] || 1.0;
     
-    // Final price = base × size × category
-    return Math.round(basePrice * sizeMultiplier * categoryMultiplier);
+    // Rarity tier multiplier (spectrum-adjusted)
+    var rarityMultiplier = getRarityMultiplier(valueMultiplier);
+    
+    // Final price = base × size × category × rarity
+    return Math.round(basePrice * sizeMultiplier * categoryMultiplier * rarityMultiplier);
 }
 
 // Get size category for message
@@ -217,6 +270,7 @@ function interact(event) {
     var price = calculatePrice(fishData, fishSize, category);
     var sizeCategory = getSizeCategory(fishSize, fishData[1], fishData[2], fishData[3]);
     var sizeText = formatSize(fishSize);
+    var rarityLabel = getRarityLabel(fishData[0]);
     
     var currency;
     try {
@@ -231,14 +285,14 @@ function interact(event) {
     // NPC message
     if (fishSize && fishSize >= fishData[3]) {
         npc.say("§6§l★ RECORD SIZE! ★");
-        npc.say("§eSold " + fishName + " " + sizeCategory + sizeText + " for §6" + price + " coins§e!");
+        npc.say("§eSold " + fishName + " " + rarityLabel + " " + sizeCategory + sizeText + " for §6" + price + " coins§e!");
         player.message("§6§l★ You caught a RECORD SIZE fish! ★");
     } else if (fishSize && fishSize >= fishData[2]) {
-        npc.say("§eSold " + fishName + " " + sizeCategory + sizeText + " for §6" + price + " coins§e!");
+        npc.say("§eSold " + fishName + " " + rarityLabel + " " + sizeCategory + sizeText + " for §6" + price + " coins§e!");
     } else if (!fishSize) {
-        npc.say("§eSold " + fishName + " for §6" + price + " coins§e!");
+        npc.say("§eSold " + fishName + " " + rarityLabel + " for §6" + price + " coins§e!");
     } else {
-        npc.say("§eSold " + fishName + " " + sizeCategory + sizeText + " for §6" + price + " coins§e!");
+        npc.say("§eSold " + fishName + " " + rarityLabel + " " + sizeCategory + sizeText + " for §6" + price + " coins§e!");
     }
 }
 
