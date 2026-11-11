@@ -17,6 +17,11 @@ var TOUR_QUALIFIED_KEY = "tourQualified";
 // Lock / persistence keys
 var LOCK_NAME_KEY = "lockedPlayerName";
 var STEP_KEY = "tourStep";
+// Pre-lock tour owner (steps index 0-3). lockToPlayer() hasn't run yet at that
+// point, so without this a guide that despawns/respawns forgets whose tour is
+// in progress and the next player to click silently takes it over instead of
+// resetting it.
+var EARLY_OWNER_KEY = "earlyOwner";
 
 // Duplicate detection — when a new clone spawns for a returning player, it
 // checks for an already-existing NPC with the same name and lock key, and
@@ -30,6 +35,7 @@ var MISSING_GRACE_TICKS = 10;  // ~3s at 20 tps before assuming they disconnecte
 var missingTicks = 0;
 
 var currentLeaderName = null;
+var currentEarlyOwner = null; // name of whoever started the tour before lock-in
 var loadedFromStorage = false;
 
 var tourStops = [
@@ -112,13 +118,26 @@ function recoverStepFromPosition(npc) {
 // current step purely from where the NPC is actually standing right now —
 // this covers both a world-restart reload of the original NPC and a fresh
 // clone spawned for a returning player at their last known tour location.
+// storeddata.put(key, null) can come back as the literal string "null" (see
+// the note in tourplayer.js), so null / undefined / "null" / "" all mean
+// "nothing stored here". Without this a cleared lock reads back as the player
+// named "null" and the guide refuses every other player forever.
+function isBlank(v) {
+    return v === null || v === undefined || v === "null" || v === "";
+}
+
 function loadPersistedState(npc) {
     if (loadedFromStorage) return;
     loadedFromStorage = true;
 
     var savedName = npc.storeddata.get(LOCK_NAME_KEY);
-    if (savedName !== null && savedName !== undefined) {
+    if (!isBlank(savedName)) {
         currentLeaderName = savedName;
+    }
+
+    var savedOwner = npc.storeddata.get(EARLY_OWNER_KEY);
+    if (!isBlank(savedOwner)) {
+        currentEarlyOwner = savedOwner;
     }
 
     var recovered = recoverStepFromPosition(npc);
@@ -126,7 +145,7 @@ function loadPersistedState(npc) {
         currentTourStep = recovered;
     } else {
         var savedStep = npc.storeddata.get(STEP_KEY);
-        if (savedStep !== null && savedStep !== undefined) {
+        if (!isBlank(savedStep)) {
             currentTourStep = savedStep;
         }
     }
@@ -136,6 +155,9 @@ function lockToPlayer(npc, player) {
     currentLeaderName = player.getName();
     currentLeaderUUID = player.getUUID();
     npc.storeddata.put(LOCK_NAME_KEY, player.getName());
+    // The real lock takes over from the pre-lock owner tracking.
+    currentEarlyOwner = null;
+    npc.storeddata.put(EARLY_OWNER_KEY, "");
 }
 
 function persistProgress(npc, player) {
@@ -160,7 +182,7 @@ function checkForDuplicateAndDespawn(npc) {
     var myName = npc.getName();
     var myLock = npc.storeddata.get(LOCK_NAME_KEY);
     // Only check duplicates for NPCs that have a lock key set
-    if (myLock === null || myLock === undefined) return false;
+    if (isBlank(myLock)) return false;
 
     var world = npc.world;
     var nearby = world.getNearbyEntities(npc.getPos(), DUPLICATE_SEARCH_RANGE, 2);
@@ -215,20 +237,44 @@ function interact(e) {
         }
     }
 
-    // --- Hard lock: once locked, only that player (by name) can interact ---
-    if (currentLeaderName !== null && currentLeaderName !== player.getName()) {
-        if (currentTourStep >= LOCKED_IN_STEP) {
-            player.message("§c[Tour Guide] Sorry, I'm already guiding someone else!");
-            return;
-        }
-        // Early steps: a different player clicking resets the tour for themself
+    // --- Who may interact, and when the tour becomes theirs alone -----------
+    // currentTourStep is incremented past the message being shown, so a value
+    // of <= LOCKED_IN_STEP still means "index 3 or earlier is the next message"
+    // — i.e. lockToPlayer() has NOT run yet. Only past that point is the tour
+    // genuinely locked to one player.
+    var earlyStep     = currentTourStep <= LOCKED_IN_STEP;
+    var lockedToOther = currentLeaderName !== null && currentLeaderName !== player.getName();
+    // Pre-lock owner. Persisted (earlyOwner) so a guide that despawns and comes
+    // back — player walks out of range, disconnects, world restart — still
+    // remembers whose tour is in progress instead of handing itself to whoever
+    // clicks next.
+    var ownedByOther  = earlyStep && (
+            (!isBlank(currentEarlyOwner) && currentEarlyOwner !== player.getName()) ||
+            (currentLeaderUUID !== null && currentLeaderUUID !== uuid));
+
+    // --- Hard lock: once locked in, only that player (by name) can interact ---
+    if (lockedToOther && !earlyStep) {
+        player.message("§c[Tour Guide] Sorry, I'm already guiding someone else!");
+        return;
+    }
+
+    // --- Early steps (index 0-3): a different player clicking resets the tour ---
+    if (earlyStep && (ownedByOther || lockedToOther)) {
         currentTourStep = 0;
         isMoving = false;
         pathProgress = 0;
         currentLeaderName = null;
         currentLeaderUUID = null;
-        npc.storeddata.put(LOCK_NAME_KEY, null);
+        currentEarlyOwner = null;
+        npc.storeddata.put(LOCK_NAME_KEY, "");
+        npc.storeddata.put(EARLY_OWNER_KEY, "");
         player.message("§a[Tour Guide] Starting a fresh tour for you!");
+    }
+
+    // This player owns the tour from here until lockToPlayer() takes over.
+    if (earlyStep && currentEarlyOwner !== player.getName()) {
+        currentEarlyOwner = player.getName();
+        npc.storeddata.put(EARLY_OWNER_KEY, player.getName());
     }
 
     if (currentLeaderUUID === null) {
@@ -284,11 +330,19 @@ function interact(e) {
                     // Tour finished — the per-tick spawnpoint sync in tick() stops
                     // here (NPC despawns), so pin the real spawn point now.
                     player.setSpawnpoint(2426, 43, 858);
-                    npc.despawn();
                     currentTourStep = 0;
                     currentLeaderName = null;
                     currentLeaderUUID = null;
+                    currentEarlyOwner = null;
                     player.storeddata.put(STEP_KEY, 0); // tour complete, clear resume data
+                    // Free the guide itself too — otherwise the clone the spawner
+                    // brings back still carries this player's lock and refuses
+                    // everyone else from step 4 onwards. Written before despawn()
+                    // so the data actually sticks to the entity.
+                    npc.storeddata.put(STEP_KEY, 0);
+                    npc.storeddata.put(LOCK_NAME_KEY, "");
+                    npc.storeddata.put(EARLY_OWNER_KEY, "");
+                    npc.despawn();
                     return;
                 }
             } else if (stop.coords) {
