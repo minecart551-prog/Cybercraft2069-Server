@@ -1,7 +1,7 @@
 let warningIssued = false;
 let shutdownTickTarget = -1;
 let nightForced = false;
-
+ 
 ServerEvents.tick(event => {
     let server = event.server;
     if (server.tickCount % 600 === 0) {
