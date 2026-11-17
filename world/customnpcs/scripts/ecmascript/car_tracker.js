@@ -5,7 +5,7 @@
 
 var NpcAPI = Java.type("noppes.npcs.api.NpcAPI").Instance();
 
-var GUI_MAIN = 4000;
+var GUI_MAIN = 4000; 
 var ID_LBL_TITLE = 10;
 var ID_LBL_COUNT = 11;
 var ID_SCROLL_CARS = 20;
