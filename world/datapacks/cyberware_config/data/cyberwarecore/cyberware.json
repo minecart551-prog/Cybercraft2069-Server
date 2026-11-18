@@ -25,11 +25,11 @@
       "id": "sandevistan_warp_dancer",
       "name": "Sandevistan Warp Dancer",
       "maxLoad": 300,
-      "durability": 300,
+      "durability": 1200,
       "powers": ["speed", "time_dilation"],
       "duration": 250,
       "cooldown": 1000,
-      "durabilityCost": 5,
+      "durabilityCost": 10,
       "powerAmplifiers": {
         "speed": 3.0,
         "time_dilation": 8.0

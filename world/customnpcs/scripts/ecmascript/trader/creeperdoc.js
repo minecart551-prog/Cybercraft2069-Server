@@ -44,6 +44,7 @@ var CONFIG_SHOP_ITEMS = [
 { id: "cyberwarecore:basic_os", count: 1, price: 1000},
 { id: "cyberwarecore:advanced_os", count: 1, price: 6700},
 { id: "cyberwarecore:military_os", count: 1, price: 20000},
+{ id: "cyberwarecore:sandevistan_warp_dancer", count: 1, price: 25000},
 ],
 //Face
 [
