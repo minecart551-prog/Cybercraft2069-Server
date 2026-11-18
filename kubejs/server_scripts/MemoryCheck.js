@@ -13,7 +13,7 @@ ServerEvents.tick(event => {
             if (objective) {
                 // Correct method: getOrCreatePlayerScore(playerName, objective)
                 let allocatedPtc = scoreboard.getOrCreatePlayerScore("MEMDATA", objective).getScore();
-                if (allocatedPtc >= 75 && !warningIssued) {
+                if (allocatedPtc >= 90 && !warningIssued) {
                     warningIssued = true;
                     shutdownTickTarget = server.tickCount + 1200;
                     server.runCommandSilent("save-all");
