@@ -26,9 +26,12 @@
       "name": "Sandevistan Warp Dancer",
       "maxLoad": 20,
       "durability": 300,
-      "powers": [],
+      "powers": ["speed", "time_dilation"],
+      "duration": 200,
+      "cooldown": 600,
       "powerAmplifiers": {
-
+        "speed": 3.0,
+        "time_dilation": 8.0
       }
     },
     {
@@ -36,9 +39,12 @@
       "name": "Zetatech Sandevistan",
       "maxLoad": 34,
       "durability": 400,
-      "powers": [],
+      "powers": ["speed", "time_dilation"],
+      "duration": 200,
+      "cooldown": 600,
       "powerAmplifiers": {
-
+        "speed": 5.0,
+        "time_dilation": 12.0
       }
     },
     {
@@ -46,9 +52,12 @@
       "name": "Dynalar Sandevistan",
       "maxLoad": 50,
       "durability": 500,
-      "powers": [],
+      "powers": ["speed", "time_dilation"],
+      "duration": 200,
+      "cooldown": 600,
       "powerAmplifiers": {
-
+        "speed": 8.0,
+        "time_dilation": 16.0
       }
     },
     {
@@ -56,9 +65,12 @@
       "name": "Sandevistan Falcon",
       "maxLoad": 68,
       "durability": 600,
-      "powers": [],
+      "powers": ["speed", "time_dilation"],
+      "duration": 200,
+      "cooldown": 600,
       "powerAmplifiers": {
-
+        "speed": 10.0,
+        "time_dilation": 20.0
       }
     },
     {
@@ -66,9 +78,12 @@
       "name": "Sandevistan Apogee",
       "maxLoad": 90,
       "durability": 800,
-      "powers": [],
+      "powers": ["speed", "time_dilation"],
+      "duration": 200,
+      "cooldown": 600,
       "powerAmplifiers": {
-
+        "speed": 12.0,
+        "time_dilation": 24.0
       }
     }
   ],
