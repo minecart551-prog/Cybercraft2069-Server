@@ -66,8 +66,8 @@ var tourStops = [
 { msg: "", path: [[2426, 42, 859],[2436, 46, 858],[2437, 47, 843]] },
 { msg: "§aIn here you will find cooking equipments, the ingredients can be farmed in your claim or in vanilla zone (Forest), get there with tp button at §eBoat Dock", coords: [2437, 47, 843] },
 { msg: "§aFarm crops, cook food, and sell them at the §ePlayer Market §ato stock vending machines globally, or rent an §eNPC Shop §ato sell at a location" },
-{ msg: "§aFor faction related commands, permissions, faction raiding, and a lot more, you can ask §eJoi ai §adirectly in the game chat. We have LIVE Map at §etinyurl.com/cybercraftlivemap §ato see where factions claim are", path: [[2436, 46, 858],[2482, 47, 852]]},
-{ msg: "§aYou can claim land in the freezone and build there or there are some buildings in the main city area that you can claim, factions can fight and take over each other's land/buildings as well"},
+{ msg: "§aFor faction related commands, permissions, faction raiding, and a lot more, you can ask §eJoi ai §adirectly in the game chat.", path: [[2436, 46, 858],[2482, 47, 852]]},
+{ msg: "§aYou can claim land & buildings in the main city area and build there, check whats available on your map. Factions can fight and take over each other's land/buildings as well"},
 { msg: "§aNow we will go check out the delivery job", path: [[2503, 42, 843],[2497, 42,846]] },
 { msg: "§aYou can check the guides here, you don't have to complete the delivery now, you can deliver it later", coords: [2497, 42,846] },
 { msg: "§aThe Neonites are the first level enemy you will deal with, after that are the drones you see around here, the same enemy type will defend each other so watch out for nearby enemies", coords: [2546, 42, 831] },
@@ -75,6 +75,7 @@ var tourStops = [
 { msg: "§aOver here we have a furniture store", coords: [2550, 42, 887] },
 { msg: "§aOver here is the sugar dealer, the coordinates of sugarcane farms is in .menu tutorial, you can take over and spawn mercinaries to protect these farms. The job is the same as delivery but times the ammount of sugar you can carry, LCPD will chase and arrest you if youre in their FOV", path: [[2549, 42, 920],[2578, 42, 936],[2602, 42, 930]] },
 { msg: "§aOver here are public apartments, you can rent one by putting your money in the door balance to protect it, you can build and decorate inside, the options are limited from factions owned apartments though", coords: [2598, 42, 980]},
+    { msg: "§aLastly, you can go in Creative mode to build and decorate areas of city with §e/build <areaname>§a, if you have any areas you would like to add to the build mode list, let us know on discord!", coords: [2598, 42, 980]},
 { msg: "§aThat's the end of our tour, follow the markers on the map if you get lost, there are more things to explore so feel free to ask other players or §eJoi ai §aif you have any questions(just ask away!) Thanks for joining us, Have fun exploring!", coords: [2427, 43, 858], teleport: true }
 ];
 
