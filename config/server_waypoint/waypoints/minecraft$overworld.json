@@ -76,7 +76,7 @@
       {"name": "Lower Town Transport Hub", "initials": "", "pos": [2320, 1, 1721], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "mtr:dashboard"},
       {"name": "Elvice Park Station", "initials": "", "pos": [2548, 0, 1042], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "mtr:dashboard"},
       {"name": "Avala Elvice Station", "initials": "", "pos": [2549, 0, 848], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "mtr:dashboard"},
-      {"name": "Cable Car", "initials": "", "pos": [2132, 42, 849], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:lead"},
+      {"name": "Cable Car", "initials": "", "pos": [2132, 42, 849], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "mtr:dashboard_3"},
       {"name": "Boat Dock", "initials": "", "pos": [2752, -41, 1067], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:oak_boat"}
     ]
   },
