@@ -1,11 +1,3 @@
-// Load shared economy data (if available)
-if (typeof ECONOMY_LOADED === "undefined") {
-    try {
-        var _econSrc = ScriptController.Instance.scripts.get("ecmascript/economy.js");
-        if (_econSrc) eval(_econSrc);
-    } catch(e) {}
-}
-
 var CONFIG_MAX_PAGES = 2;
 
 var CONFIG_TAB_ICONS = [
@@ -25,18 +17,18 @@ var CONFIG_TAB_ROWS = [
 
 var CONFIG_SHOP_ITEMS = [
     [
-        { id: "minecraft:sweet_berries",  count: 1, price: VENDINGMACHINE1_PRICES["minecraft:sweet_berries"],  lore: [] },
-        { id: "minecraft:carrot",         count: 1, price: VENDINGMACHINE1_PRICES["minecraft:carrot"],  lore: [] },
-        { id: "minecraft:apple",          count: 1, price: VENDINGMACHINE1_PRICES["minecraft:apple"],  lore: [] },
-        { id: "minecraft:baked_potato",   count: 1, price: VENDINGMACHINE1_PRICES["minecraft:baked_potato"],  lore: [] },
-        { id: "minecraft:cooked_chicken", count: 1, price: VENDINGMACHINE1_PRICES["minecraft:cooked_chicken"],  lore: [] },
-        { id: "minecraft:cooked_beef",    count: 1, price: VENDINGMACHINE1_PRICES["minecraft:cooked_beef"],  lore: [] },
+        { id: "minecraft:sweet_berries",  count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:sweet_berries"] : 0),  lore: [] },
+        { id: "minecraft:carrot",         count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:carrot"] : 0),  lore: [] },
+        { id: "minecraft:apple",          count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:apple"] : 0),  lore: [] },
+        { id: "minecraft:baked_potato",   count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:baked_potato"] : 0),  lore: [] },
+        { id: "minecraft:cooked_chicken", count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:cooked_chicken"] : 0),  lore: [] },
+        { id: "minecraft:cooked_beef",    count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:cooked_beef"] : 0),  lore: [] },
      //   { id: "minecraft:golden_carrot",  count: 1, price: 10, lore: [] },
      //   { id: "minecraft:golden_apple",   count: 1, price: 20, lore: [] },
     ],
     [
-        { id: "potion:strong_swiftness", count: 1, price: VENDINGMACHINE1_PRICES["potion:strong_swiftness"],   lore: [] },
-        { id: "potion:strong_healing",   count: 1, price: VENDINGMACHINE1_PRICES["potion:strong_healing"],  lore: [] },
+        { id: "potion:strong_swiftness", count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["potion:strong_swiftness"] : 0),   lore: [] },
+        { id: "potion:strong_healing",   count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["potion:strong_healing"] : 0),  lore: [] },
     ],
 ];
 
@@ -496,6 +488,7 @@ function buildShopDataFromConfig(player) {
 }
 
 function init(event) {
+    event.block.addScript("economy.js");
     event.block.setModel("minecraft:barrier");
 }
 
