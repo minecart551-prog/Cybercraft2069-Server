@@ -8,7 +8,7 @@
       {"name": "Guns 3", "initials": "", "pos": [2549, -47, 1573], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},      
       {"name": "Guns 7", "initials": "", "pos": [2581, 46, 1042], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "ThugHunter", "initials": "", "pos": [2428, 45, 846], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
-      {"name": "Niki's Guns", "initials": "", "pos": [2433, 44, 882], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"}
+      {"name": "Niki's Guns", "initials": "", "pos": [2433, 44, 882], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "bbs:gun"},
       {"name": "Special Gears", "initials": "", "pos": [2162, -51, 1361], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "immersive_aircraft:industrial_gears"},
     ]
   },
