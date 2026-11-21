@@ -414,23 +414,9 @@ function interact(event) {
     lastBlock = event.block;
 
     // --- Admin texture editor: right-click while holding minecraft:barrier ---
-    var held = null;
-    try { held = api.getIItemStack(player.getMCEntity().getMainHandItem()); } catch(e) {}
-    var isAdmin = false;
-    try { isAdmin = player.getMCEntity().hasPermissions(4); } catch(e) {}
-    if (!isAdmin) {
-        try {
-            var srv = player.getMCEntity().getServer();
-            var prof = player.getMCEntity().getGameProfile();
-            isAdmin = srv.getPlayerList().isOp(prof);
-        } catch(e) {}
-    }
-    // debug info when holding a barrier
-    if (held && String(held.getName()).indexOf("barrier") !== -1) {
-        player.message("held=" + held.getName() + " admin=" + isAdmin);
-    }
-    var heldName = held ? String(held.getName()) : "";
-    if (isAdmin && heldName.indexOf("barrier") !== -1) {
+    // (matches the spawner.js pattern: trigger item = admin tool)
+    var handItem = player.getMainhandItem();
+    if (handItem && !handItem.isEmpty() && String(handItem.getName()).indexOf("barrier") !== -1) {
         TEXTURE_TARGET = event.block;
         var tgui = api.createCustomGui(9001, 220, 90, true, player);
         tgui.addLabel(1, "Block model (block id), empty = default", 10, 8, 200, 12);
