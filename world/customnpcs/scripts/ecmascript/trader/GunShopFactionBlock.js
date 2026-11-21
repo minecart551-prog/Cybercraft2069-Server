@@ -1,3 +1,8 @@
+var Factions = Java.type("noppes.npcs.util.FactionsInterop");
+
+// Faction gate: set to true to also allow use in unclaimed (wilderness) chunks
+var ALLOW_UNCLAIMED = false;
+
 // ============================================================
 //  SHOP CONFIGURATION — Edit everything here
 // ===========================================================
@@ -388,6 +393,28 @@ function buildShopDataFromConfig(player, api) {
  
 // ========== Open GUI ==========
 function interact(event) {
+    // --- Faction gate: only members of the faction claiming this chunk may use the shop ---
+    if (Factions.isAvailable()) {
+        var claim = event.block.getClaimingFaction();
+        var pf = event.player.getFaction();
+        var allowed = false;
+        if (claim == null) {
+            allowed = ALLOW_UNCLAIMED;          // unclaimed (wilderness) chunk
+        } else if (pf == claim) {
+            allowed = true;                      // member of the claiming faction
+        }
+        // to also allow allied factions, change the condition above to:
+        // } else if (pf == claim || (pf != null && Factions.areAllied(pf, claim))) {
+        if (!allowed) {
+            if (claim == null) {
+                event.player.message("\u00a7cThis shop must be placed in a claimed chunk.");
+            } else {
+                event.player.message("\u00a7cOnly members of \u00a7e" + claim + "\u00a7c may use this shop.");
+            }
+            event.setCanceled(true);
+            return;
+        }
+    }
     var player = event.player;
     var api = event.API;
     lastBlock = event.block;
