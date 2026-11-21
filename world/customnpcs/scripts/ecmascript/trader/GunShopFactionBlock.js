@@ -3,6 +3,11 @@ var Factions = Java.type("noppes.npcs.util.FactionsInterop");
 // Faction gate: set to true to also allow use in unclaimed (wilderness) chunks
 var ALLOW_UNCLAIMED = false;
 
+// Admin texture editor state
+var TEXTURE_GUI = null;
+var TEXTURE_TARGET = null;
+var TEXT_FIELD_REF = null;
+
 // ============================================================
 //  SHOP CONFIGURATION — Edit everything here
 // ===========================================================
@@ -391,8 +396,45 @@ function buildShopDataFromConfig(player, api) {
     return shopData;
 }
  
+// ========== Restore saved texture on load ==========
+function init(event) {
+    try {
+        var model = event.block.getStoreddata().get("model");
+        if (model && typeof model === "string" && model.length > 0) {
+            event.block.setModel(model);
+            event.block.setRotation(0, 0, 0);
+        }
+    } catch(e) {}
+}
+
 // ========== Open GUI ==========
 function interact(event) {
+    var player = event.player;
+    var api = event.API;
+    lastBlock = event.block;
+
+    // --- Admin texture editor: right-click while holding minecraft:barrier ---
+    var held = null;
+    try { held = player.getInventoryHeldItem(); } catch(e) {}
+    var isAdmin = false;
+    try { isAdmin = player.getMCEntity().hasPermissions(4); } catch(e) {}
+    if (isAdmin && held && held.getName() === "minecraft:barrier") {
+        TEXTURE_TARGET = event.block;
+        var tgui = api.createCustomGui(9001, 220, 90, true, player);
+        tgui.addLabel(1, "Block model (block id), empty = default", 10, 8, 200, 12);
+        var current = "";
+        try {
+            var v = event.block.getStoreddata().get("model");
+            if (v) current = String(v);
+        } catch(e) {}
+        TEXT_FIELD_REF = tgui.addTextField(2, 10, 26, 200, 20);
+        TEXT_FIELD_REF.setText(current);
+        tgui.addButton(3, "Apply", 10, 55, 60, 20);
+        tgui.addButton(4, "Clear", 80, 55, 60, 20);
+        player.showCustomGui(tgui);
+        TEXTURE_GUI = tgui;
+        return;
+    }
     // --- Faction gate: only members of the faction claiming this chunk may use the shop ---
     if (Factions.isAvailable()) {
         var claim = event.block.getClaimingFaction();
@@ -415,10 +457,7 @@ function interact(event) {
             return;
         }
     }
-    var player = event.player;
-    var api = event.API;
-    lastBlock = event.block;
- 
+
     maxPages = CONFIG_MAX_PAGES;
     totalRows = CONFIG_TAB_ROWS[currentPage] || 5;
  
@@ -585,6 +624,35 @@ function calcSellPrice(cfg, playerItem) {
 }
  
 function customGuiButton(event) {
+    // --- Admin texture editor handling ---
+    if (TEXTURE_GUI && event.gui === TEXTURE_GUI) {
+        var tplayer = event.player;
+        var tblock = TEXTURE_TARGET;
+        if (event.buttonId === 3) {
+            var text = "";
+            try { text = TEXT_FIELD_REF.getText(); } catch(e) {}
+            text = (text || "").trim();
+            if (text.length > 0) {
+                try { tblock.setModel(text); } catch(e) {}
+                try { tblock.setRotation(0, 0, 0); } catch(e) {}
+                try { tblock.getStoreddata().put("model", text); } catch(e) {}
+                tplayer.message("\\u00a7aTexture set to \\u00a7e" + text);
+            } else {
+                tplayer.message("\\u00a7cNo model id entered.");
+            }
+        } else if (event.buttonId === 4) {
+            try { tblock.getStoreddata().remove("model"); } catch(e) {}
+            try { tblock.setModel(null); } catch(e) {}
+            try { tblock.setRotation(0, 0, 0); } catch(e) {}
+            tplayer.message("\\u00a7aTexture reset to default.");
+        }
+        try { event.gui.close(); } catch(e) {}
+        TEXTURE_GUI = null;
+        TEXTURE_TARGET = null;
+        TEXT_FIELD_REF = null;
+        return;
+    }
+
     if (!guiRef) return;
     var player = event.player;
     var api = event.API;
@@ -912,6 +980,12 @@ function giveCoins(player, amount) {
 }
  
 function customGuiClosed(event) {
+    if (TEXTURE_GUI && event.gui === TEXTURE_GUI) {
+        TEXTURE_GUI = null;
+        TEXTURE_TARGET = null;
+        TEXT_FIELD_REF = null;
+        return;
+    }
     guiRef = null;
     viewportRow = 0;
     currentPage = 0;
