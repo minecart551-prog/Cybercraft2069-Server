@@ -172,7 +172,7 @@ item.setCustomName("§b" + potionName + displayName);
 
 // ========== Block Init ==========
 function init(event) {
-    event.block.addScript("economy.js");
+    event.npc.addScript("economy.js");
 }
 
 // ========== Interact / Open GUI ==========
