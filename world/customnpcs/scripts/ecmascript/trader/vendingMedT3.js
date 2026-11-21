@@ -1,3 +1,11 @@
+// Load shared economy data (if available)
+if (typeof ECONOMY_LOADED === "undefined") {
+    try {
+        var _econSrc = ScriptController.Instance.scripts.get("ecmascript/economy.js");
+        if (_econSrc) eval(_econSrc);
+    } catch(e) {}
+}
+
 // ============================================================
 //  SHOP CONFIGURATION — Edit everything here
 // ============================================================
@@ -22,25 +30,25 @@ var CONFIG_SHOP_ITEMS = [
     // minecraft: is for spacing
     [
        //{ id: "potion:regeneration", type: "lingering", price: 20 }
-         { id: "minecraft:experience_bottle", type: "drink", price: 10 },
-         { id: "potion:swiftness", type: "drink", price: 4 },
-         { id: "potion:swiftness", type: "splash", price: 5 },
-         { id: "minecraft:air", type: "splash", price: 5 },
-         { id: "potion:healing", type: "drink", price: 8 },
-         { id: "potion:healing", type: "splash", price: 10 },
-         { id: "minecraft:air", type: "splash", price: 5 },
-         { id: "potion:leaping", type: "drink", price: 4 },
-         { id: "potion:leaping", type: "splash", price: 5 },
-         { id: "minecraft:air", type: "splash", price: 5 },
-         { id: "potion:strong_swiftness", type: "drink", price: 7 },
-         { id: "potion:strong_swiftness", type: "splash", price: 9 },
-         { id: "minecraft:air", type: "splash", price: 5 },
-         { id: "potion:strong_healing", type: "drink", price: 13 },
-         { id: "potion:strong_healing", type: "splash", price: 15 },
-         { id: "minecraft:air", type: "splash", price: 5 },
-         { id: "potion:strength", type: "drink", price: 18 },
-         { id: "potion:strength", type: "splash", price: 20 },
-         { id: "minecraft:air", type: "splash", price: 5 },
+         { id: "minecraft:experience_bottle", type: "drink", price: VENDINGMEDT3_PRICES["minecraft:experience_bottle"] },
+         { id: "potion:swiftness", type: "drink", price: VENDINGMEDT3_PRICES["potion:swiftness"] },
+         { id: "potion:swiftness", type: "splash", price: VENDINGMEDT3_PRICES["potion:swiftness"] },
+         { id: "minecraft:air", type: "splash", price: VENDINGMEDT3_PRICES["minecraft:air"] },
+         { id: "potion:healing", type: "drink", price: VENDINGMEDT3_PRICES["potion:healing"] },
+         { id: "potion:healing", type: "splash", price: VENDINGMEDT3_PRICES["potion:healing"] },
+         { id: "minecraft:air", type: "splash", price: VENDINGMEDT3_PRICES["minecraft:air"] },
+         { id: "potion:leaping", type: "drink", price: VENDINGMEDT3_PRICES["potion:leaping"] },
+         { id: "potion:leaping", type: "splash", price: VENDINGMEDT3_PRICES["potion:leaping"] },
+         { id: "minecraft:air", type: "splash", price: VENDINGMEDT3_PRICES["minecraft:air"] },
+         { id: "potion:strong_swiftness", type: "drink", price: VENDINGMEDT3_PRICES["potion:strong_swiftness"] },
+         { id: "potion:strong_swiftness", type: "splash", price: VENDINGMEDT3_PRICES["potion:strong_swiftness"] },
+         { id: "minecraft:air", type: "splash", price: VENDINGMEDT3_PRICES["minecraft:air"] },
+         { id: "potion:strong_healing", type: "drink", price: VENDINGMEDT3_PRICES["potion:strong_healing"] },
+         { id: "potion:strong_healing", type: "splash", price: VENDINGMEDT3_PRICES["potion:strong_healing"] },
+         { id: "minecraft:air", type: "splash", price: VENDINGMEDT3_PRICES["minecraft:air"] },
+         { id: "potion:strength", type: "drink", price: VENDINGMEDT3_PRICES["potion:strength"] },
+         { id: "potion:strength", type: "splash", price: VENDINGMEDT3_PRICES["potion:strength"] },
+         { id: "minecraft:air", type: "splash", price: VENDINGMEDT3_PRICES["minecraft:air"] },
 
   //      { id: "potion:revivify_potion",  count: 1, price: 100, lore: [] },
     ],

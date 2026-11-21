@@ -1,3 +1,11 @@
+// Load shared economy data (if available)
+if (typeof ECONOMY_LOADED === "undefined") {
+    try {
+        var _econSrc = ScriptController.Instance.scripts.get("ecmascript/economy.js");
+        if (_econSrc) eval(_econSrc);
+    } catch(e) {}
+}
+
 // ============================================================
 //  SHOP CONFIGURATION — Edit everything here
 // ============================================================
@@ -40,61 +48,61 @@ var CONFIG_TAB_ROWS = [
 var CONFIG_SHOP_ITEMS = [
 //OS
 [
-{ id: "cyberwarecore:cyberware_scanner", count: 1, price: 1},
-{ id: "cyberwarecore:basic_os", count: 1, price: 1000},
-{ id: "cyberwarecore:advanced_os", count: 1, price: 6700},
-{ id: "cyberwarecore:military_os", count: 1, price: 20000},
-{ id: "cyberwarecore:sandevistan_warp_dancer", count: 1, price: 25000},
+{ id: "cyberwarecore:cyberware_scanner", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:cyberware_scanner"]},
+{ id: "cyberwarecore:basic_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:basic_os"]},
+{ id: "cyberwarecore:advanced_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:advanced_os"]},
+{ id: "cyberwarecore:military_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:military_os"]},
+{ id: "cyberwarecore:sandevistan_warp_dancer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:sandevistan_warp_dancer"]},
 ],
 //Face
 [
-{ id: "cyberwarecore:clairvoyant", count: 1, price: 2500},
-{ id: "cyberwarecore:doomsayer", count: 1, price: 5000},
-{ id: "cyberwarecore:the_oracle", count: 1, price: 10000},
+{ id: "cyberwarecore:clairvoyant", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:clairvoyant"]},
+{ id: "cyberwarecore:doomsayer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:doomsayer"]},
+{ id: "cyberwarecore:the_oracle", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:the_oracle"]},
 //{ id: "cyberwarecore:stalker", count: 1, price: 50000},
 ],
 //Neural
 [
-{ id: "cyberwarecore:neural_overclock", count: 1, price: 5000},
+{ id: "cyberwarecore:neural_overclock", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:neural_overclock"]},
 ],
 //Arms
 [
-{ id: "cyberwarecore:plasma_palm", count: 1, price: 10000},
-{ id: "cyberwarecore:gorilla_arms", count: 1, price: 25000},
-{ id: "cyberwarecore:para_bellum", count: 1, price: 30000},
+{ id: "cyberwarecore:plasma_palm", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:plasma_palm"]},
+{ id: "cyberwarecore:gorilla_arms", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:gorilla_arms"]},
+{ id: "cyberwarecore:para_bellum", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:para_bellum"]},
 ],
 //Blood
 [
-{ id: "cyberwarecore:adrenal_booster", count: 1, price: 25000},
-{ id: "cyberwarecore:axolotl", count: 1, price: 30000},
-{ id: "cyberwarecore:universal_booster", count: 1, price: 50000},
-{ id: "cyberwarecore:blood_pump", count: 1, price: 100000},
-{ id: "cyberwarecore:inmunosupresores", count: 1, price: 200000},
+{ id: "cyberwarecore:adrenal_booster", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:adrenal_booster"]},
+{ id: "cyberwarecore:axolotl", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:axolotl"]},
+{ id: "cyberwarecore:universal_booster", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:universal_booster"]},
+{ id: "cyberwarecore:blood_pump", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:blood_pump"]},
+{ id: "cyberwarecore:inmunosupresores", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:inmunosupresores"]},
 ],
 //Armor
 [
-{ id: "cyberwarecore:thermal_plating", count: 1, price: 30000},
-{ id: "cyberwarecore:scarab", count: 1, price: 50000},
-{ id: "cyberwarecore:scar_coalescer", count: 1, price: 400000},
+{ id: "cyberwarecore:thermal_plating", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:thermal_plating"]},
+{ id: "cyberwarecore:scarab", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:scarab"]},
+{ id: "cyberwarecore:scar_coalescer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:scar_coalescer"]},
 ],
 //Skeleton
 [
-{ id: "cyberwarecore:titanium_bones", count: 1, price: 2500},
-{ id: "cyberwarecore:bionic_joints", count: 1, price: 5000},
-{ id: "cyberwarecore:epimorphic_skeleton", count: 1, price: 10000},
-{ id: "cyberwarecore:impact_absorbers", count: 1, price: 10000},
-{ id: "cyberwarecore:dense_marrow", count: 1, price: 25000},
-{ id: "cyberwarecore:kinetic_frame", count: 1, price: 55000},
+{ id: "cyberwarecore:titanium_bones", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:titanium_bones"]},
+{ id: "cyberwarecore:bionic_joints", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:bionic_joints"]},
+{ id: "cyberwarecore:epimorphic_skeleton", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:epimorphic_skeleton"]},
+{ id: "cyberwarecore:impact_absorbers", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:impact_absorbers"]},
+{ id: "cyberwarecore:dense_marrow", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:dense_marrow"]},
+{ id: "cyberwarecore:kinetic_frame", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:kinetic_frame"]},
 ],
 //Legs
 [
-{ id: "cyberwarecore:fortified_ankles", count: 1, price: 2500},
-{ id: "cyberwarecore:hydraulic_tendons", count: 1, price: 10000},
-{ id: "cyberwarecore:hollow_bones", count: 1, price: 25000},
-{ id: "cyberwarecore:gravity_stabilizer", count: 1, price: 25000},
-{ id: "cyberwarecore:reinforced_tendons", count: 1, price: 25000},
-{ id: "cyberwarecore:rara_avis", count: 1, price: 30000},
-{ id: "cyberwarecore:spring_joints", count: 1, price: 55000},
+{ id: "cyberwarecore:fortified_ankles", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:fortified_ankles"]},
+{ id: "cyberwarecore:hydraulic_tendons", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:hydraulic_tendons"]},
+{ id: "cyberwarecore:hollow_bones", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:hollow_bones"]},
+{ id: "cyberwarecore:gravity_stabilizer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:gravity_stabilizer"]},
+{ id: "cyberwarecore:reinforced_tendons", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:reinforced_tendons"]},
+{ id: "cyberwarecore:rara_avis", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:rara_avis"]},
+{ id: "cyberwarecore:spring_joints", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:spring_joints"]},
 ],
 
 
