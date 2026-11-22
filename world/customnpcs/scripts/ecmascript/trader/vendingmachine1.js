@@ -1,3 +1,11 @@
+// Ensure economy.js tables are available on first load
+if (typeof ECONOMY_LOADED === "undefined") {
+    try {
+        var _econSrc = ScriptController.Instance.scripts.get("ecmascript/economy.js");
+        if (_econSrc) eval(_econSrc);
+    } catch(e) {}
+}
+
 var CONFIG_MAX_PAGES = 2;
 
 var CONFIG_TAB_ICONS = [
