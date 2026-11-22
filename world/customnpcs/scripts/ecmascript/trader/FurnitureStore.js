@@ -6546,7 +6546,7 @@ function customGuiButton(event) {
         try { guiRef.removeComponent(ID_MODE_TOGGLE); } catch(e) {}
         var scrollX = startX + (numCols * colSpacing) + 2;
         var scrollY = startY;
-        guiRef.addButton(ID_MODE_TOGGLE, isSellMode ? "Selling" : "Buying", scrollX, scrollY + 90, 50, 18);
+        if (guiRef) guiRef.addButton(ID_MODE_TOGGLE, isSellMode ? "Selling" : "Buying", scrollX, scrollY + 90, 50, 18);
         updateVisibleSlots(player, api);
         // Refresh variant panel lore too if open
         if (variantPanelCfg) buildVariantPanelSlots(player, api);
