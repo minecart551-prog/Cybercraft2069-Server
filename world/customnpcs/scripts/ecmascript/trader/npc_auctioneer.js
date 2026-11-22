@@ -484,10 +484,38 @@ function deserializeItem(nbtStr, world) {
     }
 }
 
+function resolveItemName(item) {
+    var name = item.getDisplayName();
+    if (name.indexOf("item.") === 0 || name.indexOf("block.") === 0) {
+        try {
+            var nbt = item.getNbt();
+            var gunId = nbt.getString("GunId");
+            if (gunId) {
+                var parts = gunId.split(":");
+                var gunName = parts.length > 1 ? parts[1] : gunId;
+                var result = "";
+                var cap = true;
+                for (var ci = 0; ci < gunName.length; ci++) {
+                    var ch = gunName.charAt(ci);
+                    if (ch === "_" || ch === "-") { result += " "; cap = true; }
+                    else if (cap) { result += ch.toUpperCase(); cap = false; }
+                    else { result += ch; }
+                }
+                return result;
+            }
+            var ammoId = nbt.getString("AmmoId");
+            if (ammoId) return ammoId;
+            var attId = nbt.getString("AttachmentId");
+            if (attId) return attId;
+        } catch(e) {}
+    }
+    return name;
+}
+
 function getItemLabel(nbtStr, world) {
     var item = deserializeItem(nbtStr, world)
     if (!item) return "§c[Invalid Item]"
-    var name = item.getDisplayName()
+    var name = resolveItemName(item)
     var count = item.getStackSize()
     if (count > 1) return name + " x" + count
     return "" + name
@@ -880,7 +908,7 @@ function openSellerGui(event) {
     if (hasItem) {
         gui.addTexturedRect(C.BG_ITEM_FRAME, TEX.FRAME, 56, 72, 44, 44)
         addItemDisplay(gui, C.ITEM_PREVIEW, 69, 85, held)
-        var dName = held.getDisplayName()
+        var dName = resolveItemName(held)
         var cnt = held.getStackSize()
         gui.addLabel(C.LBL_HINT, "§f" + dName, 18, 124, 120, 10)
         if (cnt > 1) {

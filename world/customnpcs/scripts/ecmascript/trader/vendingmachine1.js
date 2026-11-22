@@ -42,6 +42,39 @@ var ALLOWED_FOODS = [
     "minecraft:porkchop"
 ];
 
+function createCfgItem(player, api, cfg) {
+    if (cfg && cfg.nbt) {
+        var tagParts = [];
+        for (var key in cfg.nbt) {
+            if (!cfg.nbt.hasOwnProperty(key)) continue;
+            var v = cfg.nbt[key];
+            var valStr;
+            if (typeof v === "string") {
+                var esc = "";
+                for (var ci = 0; ci < v.length; ci++) {
+                    var ch = v.charAt(ci);
+                    if (ch === "\\") esc += "\\\\";
+                    else if (ch === '"') esc += '\\"';
+                    else esc += ch;
+                }
+                valStr = '"' + esc + '"';
+            } else if (typeof v === "boolean") {
+                valStr = v ? "1b" : "0b";
+            } else if (typeof v === "number") {
+                valStr = (v === Math.floor(v)) ? String(v) : (v + "d");
+            } else {
+                valStr = String(v);
+            }
+            tagParts.push(key + ":" + valStr);
+        }
+        var snbt = '{id:"' + cfg.id + '",Count:' + (cfg.count || 1) + 'b,tag:{' + tagParts.join(",") + '}}';
+        try {
+            return player.world.createItemFromNbt(api.stringToNbt(snbt));
+        } catch(e) {}
+    }
+    return player.world.createItem(cfg.id, cfg.count || 1);
+}
+
 var guiRef;
 var mySlots = [];
 var tabSlots = [];
@@ -402,13 +435,12 @@ function buildShopDataFromConfig(player) {
         }
 
         try {
-            var item = player.world.createItem(cfg.id, cfg.count || 1);
+            var item = createCfgItem(player, api, cfg);
             var loreArr = cfg.lore ? cfg.lore.slice() : [];
             loreArr.push("");
             loreArr.push("§aPrice: §e" + displayPrice + "¢");
             loreArr.push("§7Source: " + source);
             item.setLore(loreArr);
-            item.setCustomName(item.getDisplayName());
             foodArr[slotIdx] = item.getItemNbt().toJsonString();
             slotIdx++;
         } catch (e) {
@@ -470,7 +502,7 @@ function buildShopDataFromConfig(player) {
                 var displayName = potionId.replace(/_/g, " ").replace(/\b\w/g, function(c) { return c.toUpperCase(); });
                 item.setCustomName("§bSplash Potion of " + displayName);
             } else {
-                item = player.world.createItem(cfg.id, cfg.count || 1);
+                item = createCfgItem(player, api, cfg);
             }
             var loreArr = cfg.lore ? cfg.lore.slice() : [];
             loreArr.push("");
