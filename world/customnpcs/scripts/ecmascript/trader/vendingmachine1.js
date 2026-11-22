@@ -2,34 +2,34 @@ var CONFIG_MAX_PAGES = 2;
 
 var CONFIG_TAB_ICONS = [
     "minecraft:sweet_berries",
-    "minecraft:splash_potion",
+"minecraft:splash_potion",
 ];
 
 var CONFIG_TAB_NAMES = [
     "Food",
-    "Potions",
+"Potions",
 ];
 
 var CONFIG_TAB_ROWS = [
     6,
-    6,
+6,
 ];
 
 var CONFIG_SHOP_ITEMS = [
     [
         { id: "minecraft:sweet_berries",  count: 1, price: 1,  lore: [] },
-        { id: "minecraft:carrot",         count: 1, price: 2,  lore: [] },
-        { id: "minecraft:apple",          count: 1, price: 2,  lore: [] },
-        { id: "minecraft:baked_potato",   count: 1, price: 3,  lore: [] },
-        { id: "minecraft:cooked_chicken", count: 1, price: 3,  lore: [] },
-        { id: "minecraft:cooked_beef",    count: 1, price: 6,  lore: [] },
-     //   { id: "minecraft:golden_carrot",  count: 1, price: 10, lore: [] },
-     //   { id: "minecraft:golden_apple",   count: 1, price: 20, lore: [] },
+{ id: "minecraft:carrot",         count: 1, price: 2,  lore: [] },
+{ id: "minecraft:apple",          count: 1, price: 2,  lore: [] },
+{ id: "minecraft:baked_potato",   count: 1, price: 3,  lore: [] },
+{ id: "minecraft:cooked_chicken", count: 1, price: 3,  lore: [] },
+{ id: "minecraft:cooked_beef",    count: 1, price: 6,  lore: [] },
+//   { id: "minecraft:golden_carrot",  count: 1, price: 10, lore: [] },
+//   { id: "minecraft:golden_apple",   count: 1, price: 20, lore: [] },
     ],
-    [
-        { id: "potion:strong_swiftness", count: 1, price: 5,   lore: [] },
-        { id: "potion:strong_healing",   count: 1, price: 12,  lore: [] },
-    ],
+[
+    { id: "potion:strong_swiftness", count: 1, price: 5,   lore: [] },
+{ id: "potion:strong_healing",   count: 1, price: 12,  lore: [] },
+],
 ];
 
 var MARKET_ID = 1;

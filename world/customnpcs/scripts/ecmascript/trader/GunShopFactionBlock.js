@@ -232,6 +232,131 @@ var CONFIG_SHOP_ITEMS = [
 ],
 ];
 
+// Snapshot gun config as the "guns" mode
+var GUN_CONFIG_MAX_PAGES = CONFIG_MAX_PAGES;
+var GUN_CONFIG_TAB_ICONS = CONFIG_TAB_ICONS;
+var GUN_CONFIG_TAB_NAMES = CONFIG_TAB_NAMES;
+var GUN_CONFIG_TAB_ROWS = CONFIG_TAB_ROWS;
+var GUN_CONFIG_SHOP_ITEMS = CONFIG_SHOP_ITEMS;
+
+// Cyberware (creeperdoc) config as the "cyber" mode
+var CYBER_CONFIG_MAX_PAGES = 8;
+var CYBER_CONFIG_TAB_ICONS = [
+    { id: "cyberwarecore:cyberware_scanner"},
+    { id: "cyberwarecore:clairvoyant"},
+    { id: "cyberwarecore:neural_overclock"},
+    { id: "cyberwarecore:gorilla_arms"},
+    { id: "cyberwarecore:blood_pump"},
+    { id: "cyberwarecore:thermal_plating"},
+    { id: "cyberwarecore:epimorphic_skeleton"},
+    { id: "cyberwarecore:reinforced_tendons"},
+];
+var CYBER_CONFIG_TAB_NAMES = [
+    "OS",
+    "Face",
+    "Neural",
+    "Arms",
+    "Blood",
+    "Armor",
+    "Skeleton",
+    "Legs",
+];
+var CYBER_CONFIG_TAB_ROWS = [
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+];
+var CYBER_CONFIG_SHOP_ITEMS = [
+//OS
+[
+{ id: "cyberwarecore:cyberware_scanner", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:cyberware_scanner"]},
+{ id: "cyberwarecore:basic_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:basic_os"]},
+{ id: "cyberwarecore:advanced_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:advanced_os"]},
+{ id: "cyberwarecore:military_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:military_os"]},
+{ id: "cyberwarecore:sandevistan_warp_dancer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:sandevistan_warp_dancer"]},
+],
+//Face
+[
+{ id: "cyberwarecore:clairvoyant", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:clairvoyant"]},
+{ id: "cyberwarecore:doomsayer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:doomsayer"]},
+{ id: "cyberwarecore:the_oracle", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:the_oracle"]},
+//{ id: "cyberwarecore:stalker", count: 1, price: 50000},
+],
+//Neural
+[
+{ id: "cyberwarecore:neural_overclock", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:neural_overclock"]},
+],
+//Arms
+[
+{ id: "cyberwarecore:plasma_palm", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:plasma_palm"]},
+{ id: "cyberwarecore:gorilla_arms", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:gorilla_arms"]},
+{ id: "cyberwarecore:para_bellum", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:para_bellum"]},
+],
+//Blood
+[
+{ id: "cyberwarecore:adrenal_booster", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:adrenal_booster"]},
+{ id: "cyberwarecore:axolotl", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:axolotl"]},
+{ id: "cyberwarecore:universal_booster", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:universal_booster"]},
+{ id: "cyberwarecore:blood_pump", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:blood_pump"]},
+{ id: "cyberwarecore:inmunosupresores", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:inmunosupresores"]},
+],
+//Armor
+[
+{ id: "cyberwarecore:thermal_plating", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:thermal_plating"]},
+{ id: "cyberwarecore:scarab", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:scarab"]},
+{ id: "cyberwarecore:scar_coalescer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:scar_coalescer"]},
+],
+//Skeleton
+[
+{ id: "cyberwarecore:titanium_bones", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:titanium_bones"]},
+{ id: "cyberwarecore:bionic_joints", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:bionic_joints"]},
+{ id: "cyberwarecore:epimorphic_skeleton", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:epimorphic_skeleton"]},
+{ id: "cyberwarecore:impact_absorbers", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:impact_absorbers"]},
+{ id: "cyberwarecore:dense_marrow", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:dense_marrow"]},
+{ id: "cyberwarecore:kinetic_frame", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:kinetic_frame"]},
+],
+//Legs
+[
+{ id: "cyberwarecore:fortified_ankles", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:fortified_ankles"]},
+{ id: "cyberwarecore:hydraulic_tendons", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:hydraulic_tendons"]},
+{ id: "cyberwarecore:hollow_bones", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:hollow_bones"]},
+{ id: "cyberwarecore:gravity_stabilizer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:gravity_stabilizer"]},
+{ id: "cyberwarecore:reinforced_tendons", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:reinforced_tendons"]},
+{ id: "cyberwarecore:rara_avis", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:rara_avis"]},
+{ id: "cyberwarecore:spring_joints", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:spring_joints"]},
+],
+
+
+];
+
+var shopMode = "guns";
+
+function applyMode(mode) {
+    shopMode = mode;
+    if (mode === "guns") {
+        CONFIG_MAX_PAGES = GUN_CONFIG_MAX_PAGES;
+        CONFIG_TAB_ICONS = GUN_CONFIG_TAB_ICONS;
+        CONFIG_TAB_NAMES = GUN_CONFIG_TAB_NAMES;
+        CONFIG_TAB_ROWS = GUN_CONFIG_TAB_ROWS;
+        CONFIG_SHOP_ITEMS = GUN_CONFIG_SHOP_ITEMS;
+    } else {
+        CONFIG_MAX_PAGES = CYBER_CONFIG_MAX_PAGES;
+        CONFIG_TAB_ICONS = CYBER_CONFIG_TAB_ICONS;
+        CONFIG_TAB_NAMES = CYBER_CONFIG_TAB_NAMES;
+        CONFIG_TAB_ROWS = CYBER_CONFIG_TAB_ROWS;
+        CONFIG_SHOP_ITEMS = CYBER_CONFIG_SHOP_ITEMS;
+    }
+    maxPages = CONFIG_MAX_PAGES;
+    currentPage = 0;
+    viewportRow = 0;
+    totalRows = CONFIG_TAB_ROWS[0] || 5;
+}
+
 
 // ============================================================
  
@@ -263,6 +388,7 @@ var ID_TAB_BASE    = 50;
 var ID_SCROLL_UP   = 111;
 var ID_SCROLL_DOWN = 112;
 var ID_MODE_TOGGLE = 113;
+var ID_MODE_SWITCH = 114;
  
 // ========== Layout ==========
 var slotPositions = [];
@@ -496,13 +622,16 @@ function interact(event) {
         guiRef.addLabel(10, "", scrollX + 1, scrollY + 42, 0.7, 0.7);
 
         guiRef.addButton(ID_MODE_TOGGLE, "Buying", scrollX, scrollY + 90, 50, 18);
+        guiRef.addButton(ID_MODE_SWITCH, shopMode === "guns" ? "Cyberwares" : "Guns", scrollX, scrollY + 112, 80, 18);
  
         for (var i = 0; i < tabSlots.length; i++) {
             try {
                 var iconName = CONFIG_TAB_NAMES[i] || ("Tab " + (i + 1));
                 var iconCfg = CONFIG_TAB_ICONS[i];
                 var iconItem;
-                if (iconCfg) {
+                if (typeof iconCfg === "string") {
+                    iconItem = player.world.createItem(iconCfg, 1);
+                } else if (iconCfg) {
                     var iconSnbt = buildSnbt({ id: iconCfg.id, count: 1, nbt: iconCfg.nbt || {}, lore: [] }, null);
                     iconItem = player.world.createItemFromNbt(api.stringToNbt(iconSnbt));
                 } else {
@@ -520,7 +649,9 @@ function interact(event) {
                 var iconName = CONFIG_TAB_NAMES[i] || ("Tab " + (i + 1));
                 var iconCfg = CONFIG_TAB_ICONS[i];
                 var iconItem;
-                if (iconCfg) {
+                if (typeof iconCfg === "string") {
+                    iconItem = player.world.createItem(iconCfg, 1);
+                } else if (iconCfg) {
                     var iconSnbt = buildSnbt({ id: iconCfg.id, count: 1, nbt: iconCfg.nbt || {}, lore: [] }, null);
                     iconItem = player.world.createItemFromNbt(api.stringToNbt(iconSnbt));
                 } else {
@@ -530,6 +661,10 @@ function interact(event) {
                 tabSlots[i].setStack(iconItem);
             } catch(e) {}
         }
+        try {
+            var swBtn = guiRef.getComponent(ID_MODE_SWITCH);
+            if (swBtn) swBtn.setText(shopMode === "guns" ? "Cyberwares" : "Guns");
+        } catch(e) {}
     }
  
     try {
@@ -649,6 +784,18 @@ function customGuiButton(event) {
         TEXTURE_GUI = null;
         TEXTURE_TARGET = null;
         TEXT_FIELD_REF = null;
+        return;
+    }
+
+    // --- Shop mode switch (Guns <-> Cyberwares) ---
+    if (event.buttonId === ID_MODE_SWITCH) {
+        var player = event.player;
+        var api = event.API;
+        var newMode = (shopMode === "guns") ? "cyber" : "guns";
+        applyMode(newMode);
+        guiRef = null;
+        var synthEvent = { player: player, API: api, block: lastBlock };
+        interact(synthEvent);
         return;
     }
 
