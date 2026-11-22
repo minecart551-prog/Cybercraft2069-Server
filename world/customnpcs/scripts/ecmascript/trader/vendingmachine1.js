@@ -471,13 +471,17 @@ function buildShopDataFromConfig(player) {
             var mPrice = getUnitPrice(mSelected);
 
             try {
-                var mItem = player.world.createItem(foodId, 1);
+                var mItem;
+                if (mSelected && mSelected.itemNbt) {
+                    mItem = player.world.createItemFromNbt(api.stringToNbt(mSelected.itemNbt));
+                } else {
+                    mItem = player.world.createItem(foodId, 1);
+                }
                 var mLore = [];
                 mLore.push("");
                 mLore.push("§aPrice: §e" + mPrice + "¢");
                 mLore.push("§7Source: Market");
                 mItem.setLore(mLore);
-                mItem.setCustomName(mItem.getDisplayName());
                 foodArr[slotIdx] = mItem.getItemNbt().toJsonString();
                 selectedMarketListings[slotIdx] = mSelected.id;
                 slotIdx++;
