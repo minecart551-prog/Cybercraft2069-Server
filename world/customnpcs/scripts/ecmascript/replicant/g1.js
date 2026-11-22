@@ -13,6 +13,7 @@ function init(e) {
         var skinUrl = urls[Math.floor(Math.random() * urls.length)];
         npc.getDisplay().setSkinUrl(skinUrl);
     }
+    npc.setCanRideVehicles(false);
      npc.getDisplay().setName("G1");
      npc.setFaction(21);
      npc.getStats().setMaxHealth(20);

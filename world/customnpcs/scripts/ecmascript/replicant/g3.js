@@ -12,6 +12,7 @@ function init(event){
         var skinUrl = urls[Math.floor(Math.random() * urls.length)];
         npc.getDisplay().setSkinUrl(skinUrl);
     }
+    npc.setCanRideVehicles(false);
      npc.getStats().setMaxHealth(200);
      npc.getStats().getRanged().setStrength(12);
    //  var reward = world.createItem("minecraft:silence_armor_trim_smithing_template", 1);

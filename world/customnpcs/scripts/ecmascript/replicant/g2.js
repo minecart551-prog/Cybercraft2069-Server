@@ -12,7 +12,7 @@ function init(event){
         var skinUrl = urls[Math.floor(Math.random() * urls.length)];
         npc.getDisplay().setSkinUrl(skinUrl);
     }
-
+     npc.setCanRideVehicles(false);
      npc.getStats().setRespawnType(3);
      npc.getStats().setMaxHealth(55);
      npc.getStats().getRanged().setStrength(6);

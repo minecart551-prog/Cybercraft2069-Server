@@ -213,6 +213,7 @@ function init(e) {
     // If this is a duplicate of an already-existing locked guide, despawn immediately
     if (checkForDuplicateAndDespawn(npc)) return;
     loadPersistedState(npc);
+    npc.setCanRideVehicles(false);
     npc.getStats().setRespawnType(4);
 }
 
