@@ -335,6 +335,19 @@ var CYBER_CONFIG_SHOP_ITEMS = [
 ];
 
 var shopMode = "guns";
+var pendingSwitch = false;
+var lastPlayer = null;
+var lastApi = null;
+
+function timer(event) {
+    if (event.id !== 999) return;
+    if (!pendingSwitch) return;
+    pendingSwitch = false;
+    if (!lastPlayer || !lastApi) return;
+    guiRef = null;
+    var synthEvent = { player: lastPlayer, API: lastApi, block: lastBlock };
+    interact(synthEvent);
+}
 
 function applyMode(mode) {
     shopMode = mode;
@@ -622,7 +635,7 @@ function interact(event) {
         guiRef.addLabel(10, "", scrollX + 1, scrollY + 42, 0.7, 0.7);
 
         guiRef.addButton(ID_MODE_TOGGLE, "Buying", scrollX, scrollY + 90, 50, 18);
-        guiRef.addButton(ID_MODE_SWITCH, shopMode === "guns" ? "Cyberwares" : "Guns", scrollX, scrollY + 112, 80, 18);
+        guiRef.addButton(ID_MODE_SWITCH, shopMode === "guns" ? "Cyberwares" : "Guns", 0, -110, 80, 18);
  
         for (var i = 0; i < tabSlots.length; i++) {
             try {
@@ -663,7 +676,7 @@ function interact(event) {
         }
         try {
             var swBtn = guiRef.getComponent(ID_MODE_SWITCH);
-            if (swBtn) swBtn.setText(shopMode === "guns" ? "Cyberwares" : "Guns");
+            if (swBtn) swBtn.setLabel(shopMode === "guns" ? "Cyberwares" : "Guns");
         } catch(e) {}
     }
  
@@ -793,9 +806,12 @@ function customGuiButton(event) {
         var api = event.API;
         var newMode = (shopMode === "guns") ? "cyber" : "guns";
         applyMode(newMode);
+        lastPlayer = player;
+        lastApi = api;
+        pendingSwitch = true;
+        try { event.gui.close(); } catch(e) {}
         guiRef = null;
-        var synthEvent = { player: player, API: api, block: lastBlock };
-        interact(synthEvent);
+        try { event.block.getTimers().forceStart(999, 1, false); } catch(e) {}
         return;
     }
 
