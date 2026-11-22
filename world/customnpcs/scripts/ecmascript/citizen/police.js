@@ -18,7 +18,7 @@ function init(e) {
 	if (Math.random() < 0.10) {
 	    npc.reset();
     }
-	
+	npc.setCanRideVehicles(false);
     var display = npc.getDisplay();
     npc.setFaction(17);
     npc.getAi().setAvoidsWater(true);

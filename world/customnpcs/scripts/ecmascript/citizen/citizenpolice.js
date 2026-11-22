@@ -39,7 +39,7 @@ function init(e) {
         npc.getAi().setRetaliateType(0);
 		npc.getAi().setAttackInvisible(1);
         npc.getStats().setMaxHealth(100);
-
+        npc.setCanRideVehicles(false);
         var gun = npc.world.createItem("tacz:modern_kinetic_gun", 1);
         gun.getNbt().putString("GunId", "tacz:vector45");
 
