@@ -69,10 +69,10 @@ function createCfgItem(player, api, cfg) {
         }
         var snbt = '{id:"' + cfg.id + '",Count:' + (cfg.count || 1) + 'b,tag:{' + tagParts.join(",") + '}}';
         try {
-            return player.world.createItemFromNbt(api.stringToNbt(snbt));
+            return player.getWorld().createItemFromNbt(api.stringToNbt(snbt));
         } catch(e) {}
     }
-    return player.world.createItem(cfg.id, cfg.count || 1);
+    return player.getWorld().createItem(cfg.id, cfg.count || 1);
 }
 
 var guiRef;
@@ -473,7 +473,7 @@ function buildShopDataFromConfig(player) {
             try {
                 var mItem;
                 if (mSelected && mSelected.itemNbt) {
-                    mItem = player.world.createItemFromNbt(api.stringToNbt(mSelected.itemNbt));
+                    mItem = player.getWorld().createItemFromNbt(api.stringToNbt(mSelected.itemNbt));
                 } else {
                     mItem = player.world.createItem(foodId, 1);
                 }

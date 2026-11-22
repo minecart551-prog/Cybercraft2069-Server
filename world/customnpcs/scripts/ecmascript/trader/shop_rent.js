@@ -120,7 +120,9 @@ var ID_APP_NAME_FIELD = 304;
 // ============================================================================
 // STATE VARIABLES
 // ============================================================================
-function createCfgItem(player, api, cfg) {
+function createCfgItem(player, cfg) {
+    var api = Java.type("noppes.npcs.api.NpcAPI").Instance();
+    var world = player.getWorld();
     if (cfg && cfg.nbt) {
         var tagParts = [];
         for (var key in cfg.nbt) {
@@ -147,10 +149,10 @@ function createCfgItem(player, api, cfg) {
         }
         var snbt = '{id:"' + cfg.id + '",Count:' + (cfg.count || 1) + 'b,tag:{' + tagParts.join(",") + '}}';
         try {
-            return player.world.createItemFromNbt(api.stringToNbt(snbt));
+            return world.createItemFromNbt(api.stringToNbt(snbt));
         } catch(e) {}
     }
-    return player.world.createItem(cfg.id, cfg.count || 1);
+    return world.createItem(cfg.id, cfg.count || 1);
 }
 
 var guiRef = null;
@@ -398,7 +400,7 @@ function buildShopDataFromConfig(player) {
         }
 
         try {
-            var item = createCfgItem(player, api, cfg);
+            var item = createCfgItem(player, cfg);
             var loreArr = cfg.lore ? cfg.lore.slice() : [];
             loreArr.push("");
             loreArr.push("§aPrice: §e" + displayPrice + "¢");
@@ -433,7 +435,8 @@ function buildShopDataFromConfig(player) {
             try {
                 var mItem;
                 if (mSelected && mSelected.itemNbt) {
-                    mItem = player.world.createItemFromNbt(api.stringToNbt(mSelected.itemNbt));
+                    var api = Java.type("noppes.npcs.api.NpcAPI").Instance();
+                    mItem = world.createItemFromNbt(api.stringToNbt(mSelected.itemNbt));
                 } else {
                     mItem = world.createItem(foodId, 1);
                 }
@@ -442,7 +445,7 @@ function buildShopDataFromConfig(player) {
                 mLore.push("§aPrice: §e" + mPrice + "¢");
                 mLore.push("§7Source: Market");
                 mItem.setLore(mLore);
-                    foodArr[slotIdx] = mItem.getItemNbt().toJsonString();
+                foodArr[slotIdx] = mItem.getItemNbt().toJsonString();
                 selectedMarketListings[slotIdx] = mSelected.id;
                 slotIdx++;
             } catch (e) {}
@@ -466,7 +469,7 @@ function buildShopDataFromConfig(player) {
                 var displayName = potionId.replace(/_/g, " ").replace(/\b\w/g, function(c) { return c.toUpperCase(); });
                 pitem.setCustomName("§bSplash Potion of " + displayName);
             } else {
-                pitem = createCfgItem(player, api, cfg);
+                pitem = createCfgItem(player, cfg);
             }
             var ploreArr = cfg.lore ? cfg.lore.slice() : [];
             ploreArr.push("");
