@@ -14,6 +14,7 @@ function init(event){
         var skinUrl = urls[Math.floor(Math.random() * urls.length)];
         npc.getDisplay().setSkinUrl(skinUrl);
     }
+    npc.setCanRideVehicles(false);
         var item = npc.world.createItem(rewardItem, rewardCount);
     npc.getStats().setMaxHealth(400);
     npc.getStats().setRespawnType(3);

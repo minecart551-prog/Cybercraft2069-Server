@@ -113,12 +113,8 @@ function canEdit(player, block) {
         var Factions = Java.type("noppes.npcs.util.FactionsInterop");
         var mcPlayer = player.getMCEntity();
         var level = player.getWorld().getMCLevel();
-        var BlockPos = Java.type("net.minecraft.core.BlockPos");
-        var pos = new BlockPos(block.getX(), block.getY(), block.getZ());
-        return Factions.canEditClaim(mcPlayer, level, pos);
-    } catch(e) {
-        player.message("DEBUG canEdit error: " + e);
-    }
+        return Factions.canEditClaim(mcPlayer, level, block.getX(), block.getY(), block.getZ());
+    } catch(e) {}
     try { if (player.getMCEntity().hasPermissions(4)) return true; } catch(e) {}
     return false;
 }
