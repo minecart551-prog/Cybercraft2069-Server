@@ -43,14 +43,14 @@ var CONFIG_SHOP_ITEMS = [
 { id: "cyberwarecore:cyberware_scanner", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:cyberware_scanner"]},
 { id: "cyberwarecore:basic_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:basic_os"]},
 { id: "cyberwarecore:advanced_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:advanced_os"]},
-{ id: "cyberwarecore:military_os", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:military_os"]},
-{ id: "cyberwarecore:sandevistan_warp_dancer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:sandevistan_warp_dancer"]},
+{ id: "cyberwarecore:military_os", count: 1, special: true, price: CREEPERDOC_PRICES["cyberwarecore:military_os"]},
+{ id: "cyberwarecore:sandevistan_warp_dancer", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:sandevistan_warp_dancer"]},
 ],
 //Face
 [
 { id: "cyberwarecore:clairvoyant", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:clairvoyant"]},
 { id: "cyberwarecore:doomsayer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:doomsayer"]},
-{ id: "cyberwarecore:the_oracle", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:the_oracle"]},
+{ id: "cyberwarecore:the_oracle", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:the_oracle"]},
 //{ id: "cyberwarecore:stalker", count: 1, price: 50000},
 ],
 //Neural
@@ -61,30 +61,30 @@ var CONFIG_SHOP_ITEMS = [
 [
 { id: "cyberwarecore:plasma_palm", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:plasma_palm"]},
 { id: "cyberwarecore:gorilla_arms", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:gorilla_arms"]},
-{ id: "cyberwarecore:para_bellum", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:para_bellum"]},
+{ id: "cyberwarecore:para_bellum", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:para_bellum"]},
 ],
 //Blood
 [
 { id: "cyberwarecore:adrenal_booster", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:adrenal_booster"]},
 { id: "cyberwarecore:axolotl", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:axolotl"]},
 { id: "cyberwarecore:universal_booster", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:universal_booster"]},
-{ id: "cyberwarecore:blood_pump", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:blood_pump"]},
-{ id: "cyberwarecore:inmunosupresores", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:inmunosupresores"]},
+{ id: "cyberwarecore:blood_pump", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:blood_pump"]},
+{ id: "cyberwarecore:inmunosupresores", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:inmunosupresores"]},
 ],
 //Armor
 [
 { id: "cyberwarecore:thermal_plating", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:thermal_plating"]},
 { id: "cyberwarecore:scarab", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:scarab"]},
-{ id: "cyberwarecore:scar_coalescer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:scar_coalescer"]},
+{ id: "cyberwarecore:scar_coalescer", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:scar_coalescer"]},
 ],
 //Skeleton
 [
 { id: "cyberwarecore:titanium_bones", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:titanium_bones"]},
 { id: "cyberwarecore:bionic_joints", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:bionic_joints"]},
 { id: "cyberwarecore:epimorphic_skeleton", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:epimorphic_skeleton"]},
-{ id: "cyberwarecore:impact_absorbers", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:impact_absorbers"]},
-{ id: "cyberwarecore:dense_marrow", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:dense_marrow"]},
-{ id: "cyberwarecore:kinetic_frame", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:kinetic_frame"]},
+{ id: "cyberwarecore:impact_absorbers", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:impact_absorbers"]},
+{ id: "cyberwarecore:dense_marrow", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:dense_marrow"]},
+{ id: "cyberwarecore:kinetic_frame", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:kinetic_frame"]},
 ],
 //Legs
 [
@@ -92,9 +92,9 @@ var CONFIG_SHOP_ITEMS = [
 { id: "cyberwarecore:hydraulic_tendons", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:hydraulic_tendons"]},
 { id: "cyberwarecore:hollow_bones", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:hollow_bones"]},
 { id: "cyberwarecore:gravity_stabilizer", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:gravity_stabilizer"]},
-{ id: "cyberwarecore:reinforced_tendons", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:reinforced_tendons"]},
-{ id: "cyberwarecore:rara_avis", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:rara_avis"]},
-{ id: "cyberwarecore:spring_joints", count: 1, price: CREEPERDOC_PRICES["cyberwarecore:spring_joints"]},
+{ id: "cyberwarecore:reinforced_tendons", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:reinforced_tendons"]},
+{ id: "cyberwarecore:rara_avis", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:rara_avis"]},
+{ id: "cyberwarecore:spring_joints", special: true, count: 1, price: CREEPERDOC_PRICES["cyberwarecore:spring_joints"]},
 ],
 
 
@@ -411,6 +411,9 @@ function cfg_getLore(tabIndex, globalIndex, sellMode) {
     if (!cfg) return null;
     var loreArr = cfg.lore ? cfg.lore.slice() : [];
     loreArr.push("");
+    if (cfg && cfg.special === true) {
+        loreArr.push("\\u00a7cOnly available in Special Gears Shop");
+    }
     if (sellMode) {
         var sellPrice = Math.max(0, Math.floor((cfg.price || 0) * (1 - SELL_LOSS_PERCENTAGE)));
         loreArr.push("\u00a76Sell Price: \u00a7e" + sellPrice + "\u00a2");
@@ -611,6 +614,11 @@ function customGuiSlotClicked(event) {
         var price = entry.price;
         if (price === null || price === undefined) {
             player.message("§cThis item has no price set!");
+            return;
+        }
+        // Tagged items are not sold here
+        if (cfg && cfg.special === true) {
+            player.message("\\u00a7cOnly available in Special Gears Shop");
             return;
         }
         var playerCoins = countPlayerCoins(player);
