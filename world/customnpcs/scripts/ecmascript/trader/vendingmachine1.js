@@ -17,18 +17,18 @@ var CONFIG_TAB_ROWS = [
 
 var CONFIG_SHOP_ITEMS = [
     [
-        { id: "minecraft:sweet_berries",  count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:sweet_berries"] : null),  lore: [] },
-        { id: "minecraft:carrot",         count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:carrot"] : null),  lore: [] },
-        { id: "minecraft:apple",          count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:apple"] : null),  lore: [] },
-        { id: "minecraft:baked_potato",   count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:baked_potato"] : null),  lore: [] },
-        { id: "minecraft:cooked_chicken", count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:cooked_chicken"] : null),  lore: [] },
-        { id: "minecraft:cooked_beef",    count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["minecraft:cooked_beef"] : null),  lore: [] },
+        { id: "minecraft:sweet_berries",  count: 1, price: 1,  lore: [] },
+        { id: "minecraft:carrot",         count: 1, price: 2,  lore: [] },
+        { id: "minecraft:apple",          count: 1, price: 2,  lore: [] },
+        { id: "minecraft:baked_potato",   count: 1, price: 3,  lore: [] },
+        { id: "minecraft:cooked_chicken", count: 1, price: 3,  lore: [] },
+        { id: "minecraft:cooked_beef",    count: 1, price: 6,  lore: [] },
      //   { id: "minecraft:golden_carrot",  count: 1, price: 10, lore: [] },
      //   { id: "minecraft:golden_apple",   count: 1, price: 20, lore: [] },
     ],
     [
-        { id: "potion:strong_swiftness", count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["potion:strong_swiftness"] : null),   lore: [] },
-        { id: "potion:strong_healing",   count: 1, price: (typeof VENDINGMACHINE1_PRICES !== "undefined" ? VENDINGMACHINE1_PRICES["potion:strong_healing"] : null),  lore: [] },
+        { id: "potion:strong_swiftness", count: 1, price: 5,   lore: [] },
+        { id: "potion:strong_healing",   count: 1, price: 12,  lore: [] },
     ],
 ];
 
@@ -488,7 +488,6 @@ function buildShopDataFromConfig(player) {
 }
 
 function init(event) {
-    event.block.addScript("economy.js");
     event.block.setModel("minecraft:barrier");
 }
 
