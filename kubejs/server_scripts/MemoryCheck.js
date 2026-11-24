@@ -1,6 +1,6 @@
 
 // Auto restart every 5 hours + save-all every 5 minutes (KubeJS server script) 
-// Put in: kubejs/server_scripts/auto_restart.js  
+// Put in: kubejs/server_scripts/auto_restart.js
 // Uses scheduled callbacks instead of checking every tick, so it costs ~nothing while idle.
 
 const RESTART_INTERVAL_TICKS = 5 * 60 * 60 * 20; // 5 hours
