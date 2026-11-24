@@ -1862,6 +1862,18 @@ var CONFIG_SHOP_ITEMS = [
         { id: "decocraft:wrought_iron_chair_white", count: 1, price: FURNITURESTORE_PRICES["decocraft:wrought_iron_chair_white"], nbt: {}, lore: [] },
     ]
 },
+// ── Yuushya Seating ──
+{ id: "yuushya:bar_stool", count: 1, price: FURNITURESTORE_PRICES["yuushya:bar_stool"], nbt: {}, lore: [] },
+{ id: "yuushya:chair", count: 1, price: FURNITURESTORE_PRICES["yuushya:chair"], nbt: {}, lore: [] },
+{ id: "yuushya:classroom_chair", count: 1, price: FURNITURESTORE_PRICES["yuushya:classroom_chair"], nbt: {}, lore: [] },
+{ id: "yuushya:couch", count: 1, price: FURNITURESTORE_PRICES["yuushya:couch"], nbt: {}, lore: [] },
+{ id: "yuushya:cushion_armchair", count: 1, price: FURNITURESTORE_PRICES["yuushya:cushion_armchair"], nbt: {}, lore: [] },
+{ id: "yuushya:gaming_chair", count: 1, price: FURNITURESTORE_PRICES["yuushya:gaming_chair"], nbt: {}, lore: [] },
+{ id: "yuushya:office_chair", count: 1, price: FURNITURESTORE_PRICES["yuushya:office_chair"], nbt: {}, lore: [] },
+{ id: "yuushya:park_bench", count: 1, price: FURNITURESTORE_PRICES["yuushya:park_bench"], nbt: {}, lore: [] },
+{ id: "yuushya:park_bench_no_handrail", count: 1, price: FURNITURESTORE_PRICES["yuushya:park_bench_no_handrail"], nbt: {}, lore: [] },
+{ id: "yuushya:park_stool", count: 1, price: FURNITURESTORE_PRICES["yuushya:park_stool"], nbt: {}, lore: [] },
+{ id: "yuushya:seat", count: 1, price: FURNITURESTORE_PRICES["yuushya:seat"], nbt: {}, lore: [] },
 ],
     // Tab 3 - Bedroom
 [
