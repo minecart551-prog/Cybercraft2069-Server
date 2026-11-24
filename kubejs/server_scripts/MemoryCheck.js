@@ -6,7 +6,7 @@
 const RESTART_INTERVAL_TICKS = 5 * 60 * 60 * 20; // 5 hours
 const WARNING_TICKS = 60 * 20;                   // warn 1 minute before
 const COUNTDOWN_FROM = 10;                       // count down the last 10 seconds
-const SAVE_INTERVAL_TICKS = 5 * 60 * 20;         // save-all every 5 minutes
+const SAVE_INTERVAL_TICKS = 5 * 60 * 20;         // save-all every 5 minutes 
 
 let restartStarted = false;
 
