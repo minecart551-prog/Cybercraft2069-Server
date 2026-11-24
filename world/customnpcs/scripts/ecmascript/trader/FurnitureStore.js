@@ -6029,19 +6029,25 @@ function variantSlotToIndex(slotIndex) {
 // ============================================================
 //  SEARCH FUNCTIONS
 // ============================================================
-function buildSearchResultMap(tabIndex, query) {
+// Search runs across ALL tabs. Each result is { tab: <tabIndex>, idx: <itemIndex> }
+// so the render/click code can resolve the item regardless of the open tab.
+function buildSearchResultMap(query) {
     if (!query || query.length === 0) return null;
     var lowerQuery = query.toLowerCase();
-    var items = CONFIG_SHOP_ITEMS[tabIndex] || [];
     var results = [];
-    for (var i = 0; i < items.length; i++) {
-        var cfg = items[i];
-        if (!cfg) continue;
-        var cleanId = cfg.id.replace(/^[^:]+:/, "").replace(/_/g, " ").toLowerCase();
-        var rawId   = cfg.id.toLowerCase();
-        var label   = (cfg.variantLabel || "").toLowerCase();
-        if (rawId.indexOf(lowerQuery) !== -1 || cleanId.indexOf(lowerQuery) !== -1 || label.indexOf(lowerQuery) !== -1) {
-            results.push(i);
+    for (var t = 0; t < CONFIG_MAX_PAGES; t++) {
+        var items = CONFIG_SHOP_ITEMS[t] || [];
+        // Only index slots that actually have display data in storedSlotItems
+        var totalSlots = (CONFIG_TAB_ROWS[t] || 5) * numCols;
+        for (var i = 0; i < items.length && i < totalSlots; i++) {
+            var cfg = items[i];
+            if (!cfg) continue;
+            var cleanId = cfg.id.replace(/^[^:]+:/, "").replace(/_/g, " ").toLowerCase();
+            var rawId   = cfg.id.toLowerCase();
+            var label   = (cfg.variantLabel || "").toLowerCase();
+            if (rawId.indexOf(lowerQuery) !== -1 || cleanId.indexOf(lowerQuery) !== -1 || label.indexOf(lowerQuery) !== -1) {
+                results.push({ tab: t, idx: i });
+            }
         }
     }
     return results;
@@ -6052,10 +6058,11 @@ function searchResultRows() {
     return Math.ceil(searchResultMap.length / numCols);
 }
 
-function searchViewportToGlobal(slotIndex) {
-    if (!searchResultMap) return viewportToGlobal(slotIndex);
+// Returns the { tab, idx } entry for a grid slot while searching, or -1 if none.
+function searchResultAt(slotIndex) {
+    if (!searchResultMap) return -1;
     var resultIndex = viewportRow * numCols + slotIndex;
-    if (resultIndex >= searchResultMap.length) return -1;
+    if (resultIndex < 0 || resultIndex >= searchResultMap.length) return -1;
     return searchResultMap[resultIndex];
 }
 
@@ -6415,20 +6422,23 @@ function updateVisibleSlots(player, api) {
     for (var i = 0; i < mySlots.length; i++) {
         mySlots[i].setStack(null);
 
+        var tab = currentPage;
         var globalIndex;
         if (searchResultMap !== null) {
-            globalIndex = searchViewportToGlobal(i);
-            if (globalIndex === -1) continue;
+            var result = searchResultAt(i);
+            if (result === -1) continue;
+            tab = result.tab;
+            globalIndex = result.idx;
         } else {
             globalIndex = viewportToGlobal(i);
         }
 
-        var pageData = storedSlotItems[currentPage];
+        var pageData = storedSlotItems[tab];
         if (pageData && globalIndex < pageData.length && pageData[globalIndex]) {
             try {
                 var entry = pageData[globalIndex];
                 var item = player.world.createItemFromNbt(api.stringToNbt(entry.displayNbt));
-                var loreArr = cfg_getLore(currentPage, globalIndex, isSellMode);
+                var loreArr = cfg_getLore(tab, globalIndex, isSellMode);
                 if (loreArr) item.setLore(loreArr);
                 mySlots[i].setStack(item);
             } catch(e) {}
@@ -6486,7 +6496,7 @@ function customGuiButton(event) {
             var field = gui.getComponent(searchFieldId);
             if (field) searchQuery = field.getText();
         }
-        searchResultMap = buildSearchResultMap(currentPage, searchQuery);
+        searchResultMap = buildSearchResultMap(searchQuery);
         viewportRow = 0;
         closeVariantPanel();
         if (searchResultMap !== null && searchResultMap.length === 0) {
@@ -6611,15 +6621,18 @@ function customGuiSlotClicked(event) {
     var slotIndex = mySlots.indexOf(clickedSlot);
     if (slotIndex === -1) return;
 
+    var tab = currentPage;
     var globalIndex;
     if (searchResultMap !== null) {
-        globalIndex = searchViewportToGlobal(slotIndex);
-        if (globalIndex === -1) return;
+        var result = searchResultAt(slotIndex);
+        if (result === -1) return;
+        tab = result.tab;
+        globalIndex = result.idx;
     } else {
         globalIndex = viewportToGlobal(slotIndex);
     }
 
-    var pageData = storedSlotItems[currentPage];
+    var pageData = storedSlotItems[tab];
     if (!pageData || globalIndex >= pageData.length) return;
 
     var entry = pageData[globalIndex];
@@ -6628,7 +6641,7 @@ function customGuiSlotClicked(event) {
     var item = mySlots[slotIndex].getStack();
     if (!item || item.isEmpty()) return;
 
-    var cfg = (CONFIG_SHOP_ITEMS[currentPage] || [])[globalIndex];
+    var cfg = (CONFIG_SHOP_ITEMS[tab] || [])[globalIndex];
     if (!cfg) return;
 
     // If this is a variant parent — open the variant panel
