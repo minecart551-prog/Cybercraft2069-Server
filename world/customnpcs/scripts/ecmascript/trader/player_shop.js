@@ -33,6 +33,9 @@ var ID_ROWS_FIELD = 115;
 var ID_SET_ROWS_BUTTON = 116;
 var ID_EARNINGS_LABEL = 7;
 var ID_WITHDRAW_BUTTON = 117;
+var ID_MODEL_BUTTON = 118;
+var MODEL_OPTIONS = ["minecraft:barrier", "decocraft:cooler"];
+var MODEL_LABELS = ["Invisible", "Cooler"];
 
 // ========== CORRUPTION RESISTANCE LAYER ==========
 function safeJSONParse(jsonString, defaultValue) {
@@ -158,6 +161,9 @@ function ensureAdminWidgets(player, api) {
     }
     if (!guiRef.getComponent(ID_WITHDRAW_BUTTON)) {
         guiRef.addButton(ID_WITHDRAW_BUTTON, "Withdraw", -105, 66, 60, 18);
+    }
+    if (!guiRef.getComponent(ID_MODEL_BUTTON)) {
+        guiRef.addButton(ID_MODEL_BUTTON, modelButtonLabel(lastBlock), -105, 86, 70, 18);
     }
     // player inventory is needed in edit mode to stock items / change the tab icon
     if (guiRef.getPlayerSlots().length === 0) guiRef.showPlayerInventory(3, 91, false);
@@ -353,6 +359,18 @@ function customGuiButton(event) {
             updateScrollIndicator();
             if (guiRef) guiRef.update();
         }
+        return;
+    }
+    if (event.buttonId === ID_MODEL_BUTTON) {
+        if (!adminMode) return;
+        var idx = (getModelIndex(lastBlock) + 1) % MODEL_OPTIONS.length;
+        applyModel(lastBlock, idx);
+        try {
+            var btn = guiRef.getComponent(ID_MODEL_BUTTON);
+            if (btn) btn.setLabel(modelButtonLabel(lastBlock));
+        } catch(e) {}
+        player.message("§aModel set to §e" + MODEL_LABELS[idx]);
+        if (guiRef) guiRef.update();
         return;
     }
     if (event.buttonId === ID_WITHDRAW_BUTTON) {
@@ -583,6 +601,27 @@ function saveTabItems() {
     atomicSave(blockData, "TabItems", tabItems);
 }
 
+// Block model toggle (invisible barrier / cooler)
+function getModelIndex(block) {
+    try {
+        var v = block.getStoreddata().get("ShopModel");
+        if (v === null || v === undefined) return 0;
+        var n = parseInt(String(v));
+        return (isNaN(n) || n < 0 || n > 1) ? 0 : n;
+    } catch(e) { return 0; }
+}
+
+function applyModel(block, index) {
+    try {
+        block.setModel(MODEL_OPTIONS[index]);
+        block.getStoreddata().put("ShopModel", index);
+    } catch(e) {}
+}
+
+function modelButtonLabel(block) {
+    return "Model: " + MODEL_LABELS[getModelIndex(block)];
+}
+
 // Shared shop earnings (in cents) stored in block storeddata
 function getEarnings(block) {
     try {
@@ -682,4 +721,7 @@ function removeCoins(player, amount) {
     return true;
 }
 
-function init(event) {}
+function init(event) {
+    // restore the chosen model on block load
+    applyModel(event.block, getModelIndex(event.block));
+}
