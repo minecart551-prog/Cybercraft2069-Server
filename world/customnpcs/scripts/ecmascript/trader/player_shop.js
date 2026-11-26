@@ -34,6 +34,7 @@ var ID_SET_ROWS_BUTTON = 116;
 var ID_EARNINGS_LABEL = 7;
 var ID_WITHDRAW_BUTTON = 117;
 var ID_MODEL_BUTTON = 118;
+var ID_ICON_BUTTON = 119;
 var MODEL_OPTIONS = ["minecraft:barrier", "decocraft:cooler"];
 var MODEL_LABELS = ["Invisible", "Cooler"];
 
@@ -153,17 +154,20 @@ function ensureAdminWidgets(player, api) {
     if (!guiRef.getComponent(3)) guiRef.addLabel(3, "§7Price:", 2, -100, 0.8, 0.8);
     if (!guiRef.getComponent(ID_PRICE_FIELD)) guiRef.addTextField(ID_PRICE_FIELD, 30, -104, 90, 18).setText("");
     if (!guiRef.getComponent(ID_SET_PRICE_BUTTON)) guiRef.addButton(ID_SET_PRICE_BUTTON, "Set", 125, -104, 35, 18);
-    if (!guiRef.getComponent(6)) guiRef.addLabel(6, "§7Rows:", -105, -29, 0.8, 0.8);
-    if (!guiRef.getComponent(ID_ROWS_FIELD)) guiRef.addTextField(ID_ROWS_FIELD, -105, -17, 40, 18).setText("" + totalRows);
-    if (!guiRef.getComponent(ID_SET_ROWS_BUTTON)) guiRef.addButton(ID_SET_ROWS_BUTTON, "Set", -60, -17, 30, 18);
+    if (!guiRef.getComponent(6)) guiRef.addLabel(6, "§7Rows:", -105, -52, 0.8, 0.8);
+    if (!guiRef.getComponent(ID_ROWS_FIELD)) guiRef.addTextField(ID_ROWS_FIELD, -105, -40, 40, 18).setText("" + totalRows);
+    if (!guiRef.getComponent(ID_SET_ROWS_BUTTON)) guiRef.addButton(ID_SET_ROWS_BUTTON, "Set", -60, -40, 30, 18);
     if (!guiRef.getComponent(ID_EARNINGS_LABEL)) {
-        guiRef.addLabel(ID_EARNINGS_LABEL, "§6Earnings: §e" + getEarnings(lastBlock) + "¢", -105, 52, 80, 12);
+        guiRef.addLabel(ID_EARNINGS_LABEL, "§6Earnings: §e" + getEarnings(lastBlock) + "¢", -105, -18, 80, 12);
     }
     if (!guiRef.getComponent(ID_WITHDRAW_BUTTON)) {
-        guiRef.addButton(ID_WITHDRAW_BUTTON, "Withdraw", -105, 66, 60, 18);
+        guiRef.addButton(ID_WITHDRAW_BUTTON, "Withdraw", -105, 0, 60, 18);
+    }
+    if (!guiRef.getComponent(ID_ICON_BUTTON)) {
+        guiRef.addButton(ID_ICON_BUTTON, "Set Tab Icon", -105, 20, 70, 18);
     }
     if (!guiRef.getComponent(ID_MODEL_BUTTON)) {
-        guiRef.addButton(ID_MODEL_BUTTON, modelButtonLabel(lastBlock), -105, 86, 70, 18);
+        guiRef.addButton(ID_MODEL_BUTTON, modelButtonLabel(lastBlock), -105, 40, 70, 18);
     }
     // player inventory is needed in edit mode to stock items / change the tab icon
     if (guiRef.getPlayerSlots().length === 0) guiRef.showPlayerInventory(3, 91, false);
@@ -210,7 +214,6 @@ function interact(event) {
         var tabX = tabStartX;
         var tabSlot = guiRef.addItemSlot(tabX + 4, tabY + 5);
         tabSlots.push(tabSlot);
-        guiRef.addButton(102, "", tabX, tabY, tabWidth, tabHeight);
         mySlots = slotPositions.map(function(pos) {
             return guiRef.addItemSlot(pos.x, pos.y);
         });
@@ -237,26 +240,6 @@ function interact(event) {
                 tabSlots[0].setStack(tabItem);
             } catch(e) {}
         }
-    }
-    // Highlight current tab
-    if (adminMode && guiRef) {
-        var tabWidth = 25;
-        var tabHeight = 28;
-        var tabStartX = -1;
-        var tabY = -80;
-        var highlightTabX = tabStartX;
-        try {
-            guiRef.removeComponent(20);
-            guiRef.removeComponent(21);
-            guiRef.removeComponent(22);
-            guiRef.removeComponent(23);
-        } catch(e) {}
-        try {
-            guiRef.addColoredLine(20, highlightTabX - 1, tabY - 1, highlightTabX + tabWidth + 1, tabY - 1, 0xFFFF00, 2);
-            guiRef.addColoredLine(21, highlightTabX - 1, tabY + tabHeight + 1, highlightTabX + tabWidth + 1, tabY + tabHeight + 1, 0xFFFF00, 2);
-            guiRef.addColoredLine(22, highlightTabX - 1, tabY - 1, highlightTabX - 1, tabY + tabHeight + 1, 0xFFFF00, 2);
-            guiRef.addColoredLine(23, highlightTabX + tabWidth + 1, tabY - 1, highlightTabX + tabWidth + 1, tabY + tabHeight + 1, 0xFFFF00, 2);
-        } catch(e) {}
     }
     updateVisibleSlots(player, api, adminMode);
     updateScrollIndicator();
@@ -359,6 +342,20 @@ function customGuiButton(event) {
             updateScrollIndicator();
             if (guiRef) guiRef.update();
         }
+        return;
+    }
+    if (event.buttonId === ID_ICON_BUTTON) {
+        if (!adminMode) return;
+        var held = player.getMainhandItem();
+        if (!held || held.isEmpty()) {
+            player.message("§cHold the item you want as the tab icon.");
+            return;
+        }
+        var iconCopy = player.getWorld().createItemFromNbt(held.getItemNbt());
+        tabSlots[0].setStack(iconCopy);
+        saveTabItems();
+        player.message("§aTab icon set to §e" + held.getDisplayName());
+        if (guiRef) guiRef.update();
         return;
     }
     if (event.buttonId === ID_MODEL_BUTTON) {
