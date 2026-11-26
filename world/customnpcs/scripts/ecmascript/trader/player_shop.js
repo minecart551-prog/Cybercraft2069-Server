@@ -31,6 +31,8 @@ var ID_SCROLL_UP = 111;
 var ID_SCROLL_DOWN = 112;
 var ID_ROWS_FIELD = 115;
 var ID_SET_ROWS_BUTTON = 116;
+var ID_EARNINGS_LABEL = 7;
+var ID_WITHDRAW_BUTTON = 117;
 
 // ========== CORRUPTION RESISTANCE LAYER ==========
 function safeJSONParse(jsonString, defaultValue) {
@@ -142,6 +144,24 @@ function viewportToGlobal(slotIndex) {
     return globalRow * numCols + localCol;
 }
 
+// Admin widgets live inside the GUI bounds (x 0..176, y 0..166) so they are always visible
+function ensureAdminWidgets(player, api) {
+    if (!guiRef) return;
+    if (!guiRef.getComponent(3)) guiRef.addLabel(3, "§7Price:", 2, -100, 0.8, 0.8);
+    if (!guiRef.getComponent(ID_PRICE_FIELD)) guiRef.addTextField(ID_PRICE_FIELD, 60, -104, 60, 18).setText("");
+    if (!guiRef.getComponent(ID_SET_PRICE_BUTTON)) guiRef.addButton(ID_SET_PRICE_BUTTON, "Set", 125, -104, 35, 18);
+    if (!guiRef.getComponent(6)) guiRef.addLabel(6, "§7Rows:", -105, -29, 0.8, 0.8);
+    if (!guiRef.getComponent(ID_ROWS_FIELD)) guiRef.addTextField(ID_ROWS_FIELD, -105, -17, 40, 18).setText("" + totalRows);
+    if (!guiRef.getComponent(ID_SET_ROWS_BUTTON)) guiRef.addButton(ID_SET_ROWS_BUTTON, "Set", -60, -17, 30, 18);
+    if (!guiRef.getComponent(ID_EARNINGS_LABEL)) {
+        guiRef.addLabel(ID_EARNINGS_LABEL, "§6Earnings: §e" + getEarnings(lastBlock) + "¢", 2, 52, 80, 12);
+    }
+    if (!guiRef.getComponent(ID_WITHDRAW_BUTTON)) {
+        guiRef.addButton(ID_WITHDRAW_BUTTON, "Withdraw", 2, 66, 60, 18);
+    }
+    updateEarningsLabel(api);
+}
+
 // ========== Open GUI ==========
 function interact(event) {
     var player = event.player;
@@ -192,12 +212,7 @@ function interact(event) {
         guiRef.addButton(112, "↓", scrollX, scrollY + 20, 18, 18);
         guiRef.addLabel(10, "", scrollX + 1, scrollY + 42, 0.7, 0.7);
         if (adminMode) {
-            guiRef.addLabel(3, "§7Price:", 2, -100, 0.8, 0.8);
-            guiRef.addTextField(100, 60, -104, 60, 18).setText("");
-            guiRef.addButton(101, "Set", 125, -104, 35, 18);
-            guiRef.addLabel(6, "§7Rows:", -105, -29, 0.8, 0.8);
-            guiRef.addTextField(115, -105, -17, 40, 18).setText("" + totalRows);
-            guiRef.addButton(116, "Set", -60, -17, 30, 18);
+            ensureAdminWidgets(player, api);
             guiRef.showPlayerInventory(3, 91, false);
         }
         if (storedTabItems && storedTabItems[0]) {
@@ -208,6 +223,7 @@ function interact(event) {
         }
         player.showCustomGui(guiRef);
     } else {
+        if (adminMode) ensureAdminWidgets(player, api);
         if (storedTabItems && storedTabItems[0]) {
             try {
                 var tabItem = player.getWorld().createItemFromNbt(api.stringToNbt(storedTabItems[0]));
@@ -237,6 +253,7 @@ function interact(event) {
     }
     updateVisibleSlots(player, api, adminMode);
     updateScrollIndicator();
+    updateEarningsLabel(api);
     if (guiRef) guiRef.update();
 }
 
@@ -335,6 +352,20 @@ function customGuiButton(event) {
             updateScrollIndicator();
             if (guiRef) guiRef.update();
         }
+        return;
+    }
+    if (event.buttonId === ID_WITHDRAW_BUTTON) {
+        if (!adminMode) return;
+        var earnings = getEarnings(lastBlock);
+        if (earnings <= 0) {
+            player.message("§cNo earnings to withdraw.");
+            return;
+        }
+        setEarnings(lastBlock, 0);
+        giveCoins(player, earnings);
+        updateEarningsLabel(api);
+        player.message("§aWithdrew §e" + earnings + "¢ §aof shop earnings.");
+        if (guiRef) guiRef.update();
         return;
     }
     if (event.buttonId === 116) {
@@ -509,8 +540,12 @@ function customGuiSlotClicked(event) {
     }
     try {
         var item = player.getWorld().createItemFromNbt(api.stringToNbt(entry.displayNbt));
-        removeCoins(player, price);
+        if (!removeCoins(player, price)) {
+            player.message("§cNot enough coins!");
+            return;
+        }
         player.giveItem(item);
+        addEarnings(lastBlock, price);
         pageData[globalIndex] = null;
         storedSlotItems[0] = pageData;
         savePageItems();
@@ -547,6 +582,42 @@ function saveTabItems() {
     atomicSave(blockData, "TabItems", tabItems);
 }
 
+// Shared shop earnings (in cents) stored in block storeddata
+function getEarnings(block) {
+    try {
+        var v = block.getStoreddata().get("Earnings");
+        if (v === null || v === undefined) return 0;
+        var n = parseFloat(String(v));
+        return isNaN(n) ? 0 : Math.floor(n);
+    } catch(e) { return 0; }
+}
+
+function setEarnings(block, value) {
+    try { block.getStoreddata().put("Earnings", Math.floor(value)); } catch(e) {}
+}
+
+function addEarnings(block, amount) {
+    setEarnings(block, getEarnings(block) + amount);
+}
+
+function updateEarningsLabel(api) {
+    if (!guiRef) return;
+    try {
+        var lbl = guiRef.getComponent(ID_EARNINGS_LABEL);
+        if (lbl) lbl.setText("§6Earnings: §e" + getEarnings(lastBlock) + "¢");
+    } catch(e) {}
+}
+
+function giveCoins(player, amount) {
+    var emeralds = Math.floor(amount / (STONE_TO_COAL * COAL_TO_EMERALD));
+    amount -= emeralds * STONE_TO_COAL * COAL_TO_EMERALD;
+    var coals = Math.floor(amount / STONE_TO_COAL);
+    var stones = amount % STONE_TO_COAL;
+    if (emeralds > 0) player.giveItem(player.getWorld().createItem("coins:emerald_coin", emeralds));
+    if (coals > 0) player.giveItem(player.getWorld().createItem("coins:coal_coin", coals));
+    if (stones > 0) player.giveItem(player.getWorld().createItem("coins:stone_coin", stones));
+}
+
 function countCoins(player) {
     var stoneTotal = 0, coalTotal = 0, emeraldTotal = 0;
     var inv = player.getInventory();
@@ -563,6 +634,7 @@ function countCoins(player) {
 }
 
 function removeCoins(player, amount) {
+    if (countCoins(player) < amount) return false;
     var remaining = amount;
     var inv = player.getInventory();
     for (var i = 0; i < inv.getSize() && remaining > 0; i++) {
@@ -606,6 +678,7 @@ function removeCoins(player, amount) {
             }
         }
     }
+    return true;
 }
 
 function init(event) {}
