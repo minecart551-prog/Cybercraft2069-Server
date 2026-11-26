@@ -112,7 +112,7 @@ function canEdit(player, block) {
 // ========== Layout ==========
 var slotPositions = [];
 var startX = 0;
-var startY = -50;
+var startY = -60;
 var rowSpacing = 18;
 var colSpacing = 18;
 for (var row = 0; row < viewportRows; row++) {
@@ -148,7 +148,7 @@ function ensureAdminWidgets(player, api) {
         guiRef.addButton(ID_MODEL_BUTTON, modelButtonLabel(lastBlock), -105, 20, 70, 18);
     }
     // player inventory is needed in edit mode to stock items / change the tab icon
-    if (guiRef.getPlayerSlots().length === 0) guiRef.showPlayerInventory(3, 91, false);
+    if (guiRef.getPlayerSlots().length === 0) guiRef.showPlayerInventory(3, 81, false);
     updateEarningsLabel(api);
 }
 
@@ -231,8 +231,8 @@ function updateVisibleSlots(player, api, adminMode) {
                 }
                 while (loreArray.length > 0 && loreArray[loreArray.length - 1] === "") loreArray.pop();
                 loreArray.push("");
-                loreArray.push("§aPrice: §e" + price + "¢");
-                if (!adminMode) loreArray.push("§7Click to purchase");
+                loreArray.push("§aPrice: §e" + price + "¢ each");
+                if (!adminMode) loreArray.push("§7Click to purchase 1");
                 item.setLore(loreArray);
                 mySlots[i].setStack(item);
             } catch(e) {}
@@ -470,19 +470,38 @@ function customGuiSlotClicked(event) {
         return;
     }
     try {
-        var item = player.getWorld().createItemFromNbt(api.stringToNbt(entry.displayNbt));
+        var storedItem = player.getWorld().createItemFromNbt(api.stringToNbt(entry.displayNbt));
+        var count = storedItem.getStackSize();
+        if (count <= 0) return;
         if (!removeCoins(player, price)) {
             player.message("§cNot enough coins!");
             return;
         }
-        player.giveItem(item);
+        // give exactly one item
+        var bought = player.getWorld().createItemFromNbt(api.stringToNbt(entry.displayNbt));
+        bought.setStackSize(1);
+        player.giveItem(bought);
         addEarnings(lastBlock, price);
-        pageData[globalIndex] = null;
+        if (count <= 1) {
+            pageData[globalIndex] = null;
+            mySlots[slotIndex].setStack(null);
+        } else {
+            storedItem.setStackSize(count - 1);
+            var loreArr = storedItem.getLore();
+            var cleanLore = [];
+            for (var i = 0; i < loreArr.length; i++) {
+                var line = loreArr[i];
+                if (line.indexOf("Price:") === -1 && line.indexOf("Click to purchase") === -1) cleanLore.push(line);
+            }
+            while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") cleanLore.pop();
+            storedItem.setLore(cleanLore);
+            pageData[globalIndex].displayNbt = storedItem.getItemNbt().toJsonString();
+        }
         storedSlotItems[0] = pageData;
         savePageItems();
-        mySlots[slotIndex].setStack(null);
+        updateVisibleSlots(player, api, adminMode);
         if (guiRef) guiRef.update();
-        player.message("§aPurchased for §e" + price + "¢!");
+        player.message("§aPurchased 1x for §e" + price + "¢!");
     } catch(e) {
         player.message("§cError: " + e);
     }
