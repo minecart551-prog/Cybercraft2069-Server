@@ -148,17 +148,19 @@ function viewportToGlobal(slotIndex) {
 function ensureAdminWidgets(player, api) {
     if (!guiRef) return;
     if (!guiRef.getComponent(3)) guiRef.addLabel(3, "§7Price:", 2, -100, 0.8, 0.8);
-    if (!guiRef.getComponent(ID_PRICE_FIELD)) guiRef.addTextField(ID_PRICE_FIELD, 60, -104, 60, 18).setText("");
+    if (!guiRef.getComponent(ID_PRICE_FIELD)) guiRef.addTextField(ID_PRICE_FIELD, 30, -104, 90, 18).setText("Price");
     if (!guiRef.getComponent(ID_SET_PRICE_BUTTON)) guiRef.addButton(ID_SET_PRICE_BUTTON, "Set", 125, -104, 35, 18);
     if (!guiRef.getComponent(6)) guiRef.addLabel(6, "§7Rows:", -105, -29, 0.8, 0.8);
     if (!guiRef.getComponent(ID_ROWS_FIELD)) guiRef.addTextField(ID_ROWS_FIELD, -105, -17, 40, 18).setText("" + totalRows);
     if (!guiRef.getComponent(ID_SET_ROWS_BUTTON)) guiRef.addButton(ID_SET_ROWS_BUTTON, "Set", -60, -17, 30, 18);
     if (!guiRef.getComponent(ID_EARNINGS_LABEL)) {
-        guiRef.addLabel(ID_EARNINGS_LABEL, "§6Earnings: §e" + getEarnings(lastBlock) + "¢", 2, 52, 80, 12);
+        guiRef.addLabel(ID_EARNINGS_LABEL, "§6Earnings: §e" + getEarnings(lastBlock) + "¢", -105, 52, 80, 12);
     }
     if (!guiRef.getComponent(ID_WITHDRAW_BUTTON)) {
-        guiRef.addButton(ID_WITHDRAW_BUTTON, "Withdraw", 2, 66, 60, 18);
+        guiRef.addButton(ID_WITHDRAW_BUTTON, "Withdraw", -105, 66, 60, 18);
     }
+    // player inventory is needed in edit mode to stock items / change the tab icon
+    if (guiRef.getPlayerSlots().length === 0) guiRef.showPlayerInventory(3, 91, false);
     updateEarningsLabel(api);
 }
 
@@ -196,7 +198,7 @@ function interact(event) {
         var tabWidth = 25;
         var tabHeight = 28;
         var tabSpacing = 2;
-        var tabStartX = 0;
+        var tabStartX = -1;
         var tabY = -80;
         tabSlots = [];
         var tabX = tabStartX;
@@ -213,7 +215,6 @@ function interact(event) {
         guiRef.addLabel(10, "", scrollX + 1, scrollY + 42, 0.7, 0.7);
         if (adminMode) {
             ensureAdminWidgets(player, api);
-            guiRef.showPlayerInventory(3, 91, false);
         }
         if (storedTabItems && storedTabItems[0]) {
             try {
@@ -235,7 +236,7 @@ function interact(event) {
     if (adminMode && guiRef) {
         var tabWidth = 25;
         var tabHeight = 28;
-        var tabStartX = 0;
+        var tabStartX = -1;
         var tabY = -80;
         var highlightTabX = tabStartX;
         try {
