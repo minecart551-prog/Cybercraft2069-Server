@@ -34,7 +34,6 @@ var ID_SET_ROWS_BUTTON = 116;
 var ID_EARNINGS_LABEL = 7;
 var ID_WITHDRAW_BUTTON = 117;
 var ID_MODEL_BUTTON = 118;
-var ID_ICON_BUTTON = 119;
 var MODEL_OPTIONS = ["minecraft:barrier", "decocraft:cooler"];
 var MODEL_LABELS = ["Invisible", "Cooler"];
 
@@ -71,23 +70,6 @@ function loadShopItems(blockData) {
         atomicSave(blockData, "ShopItems", emptyData);
         return emptyData;
     }
-    return parsed;
-}
-function loadTabItems(blockData, expectedLength) {
-    var rawData = safeGetData(blockData, "TabItems", null);
-    if (rawData === null) {
-        var defaultArray = makeNullArray(expectedLength);
-        atomicSave(blockData, "TabItems", defaultArray);
-        return defaultArray;
-    }
-    var parsed = safeJSONParse(rawData, null);
-    if (parsed === null || !Array.isArray(parsed)) {
-        var defaultArray = makeNullArray(expectedLength);
-        atomicSave(blockData, "TabItems", defaultArray);
-        return defaultArray;
-    }
-    while (parsed.length < expectedLength) parsed.push(null);
-    if (parsed.length > expectedLength) parsed = parsed.slice(0, expectedLength);
     return parsed;
 }
 function loadTabRows(blockData, currentPage) {
@@ -129,7 +111,6 @@ function canEdit(player, block) {
 
 // ========== Layout ==========
 var slotPositions = [];
-var tabSlots = [];
 var startX = 0;
 var startY = -50;
 var rowSpacing = 18;
@@ -201,7 +182,6 @@ function interact(event) {
 
     if (!guiRef) {
         guiRef = api.createCustomGui(176, 166, 0, true, player);
-        tabSlots = [];
         mySlots = slotPositions.map(function(pos) {
             return guiRef.addItemSlot(pos.x, pos.y);
         });
@@ -262,11 +242,7 @@ function updateVisibleSlots(player, api, adminMode) {
 
 // Persist whatever is in a highlighted slot back into stored data.
 // Tab slots go into TabItems; shop slots keep their price and store a clean NBT string.
-function syncHighlightedSlot(slot, isTabSlot, player, api) {
-    if (isTabSlot) {
-        saveTabItems();
-        return;
-    }
+function syncHighlightedSlot(slot, player, api) {
     var hIndex = mySlots.indexOf(slot);
     if (hIndex === -1) return;
     var gIndex = viewportToGlobal(hIndex);
@@ -387,18 +363,6 @@ function customGuiButton(event) {
     var inputText = priceField.getText().trim();
     if (!inputText) { player.message("§cPlease enter a value!"); return; }
 
-    // Tab slot highlighted -> rename tab
-    var tabSlotIndex = tabSlots.indexOf(highlightedSlot);
-    if (tabSlotIndex !== -1) {
-        var tabItem = highlightedSlot.getStack();
-        if (!tabItem || tabItem.isEmpty()) { player.message("§cNo item in tab slot!"); return; }
-        tabItem.setCustomName(inputText);
-        highlightedSlot.setStack(tabItem);
-        player.message("§aRenamed tab to: " + inputText);
-        saveTabItems();
-        return;
-    }
-
     if (!highlightedSlot) { player.message("§cClick a shop slot first."); return; }
     var price = parseInt(inputText);
     if (isNaN(price) || price < 0) { player.message("§cInvalid price!"); return; }
@@ -424,16 +388,6 @@ function customGuiSlotClicked(event) {
     var slotIndex = mySlots.indexOf(clickedSlot);
 
     if (adminMode) {
-        // Tab slot
-        var clickedTabIndex = -1;
-        for (var i = 0; i < tabSlots.length; i++) {
-            if (tabSlots[i] === clickedSlot) { clickedTabIndex = i; break; }
-        }
-        if (clickedTabIndex !== -1) {
-            highlightedSlot = clickedSlot;
-            if (guiRef) guiRef.update();
-            return;
-        }
         if (slotIndex !== -1) {
             highlightedSlot = clickedSlot;
             for (var i = 0; i < highlightLineIds.length; i++) {
@@ -451,7 +405,6 @@ function customGuiSlotClicked(event) {
         }
         // click on an ordinary (non-tab, non-shop) slot, e.g. player inventory -> stock/change item
         if (!highlightedSlot) return;
-        var isTabSlot = (tabSlots.indexOf(highlightedSlot) !== -1);
         try {
             var slotStack = highlightedSlot.getStack();
             var maxStack = stack ? stack.getMaxStackSize() : 64;
@@ -480,12 +433,12 @@ function customGuiSlotClicked(event) {
                     highlightedSlot.setStack(itemCopy);
                     player.removeItem(stack, stack.getStackSize());
                 }
-                syncHighlightedSlot(highlightedSlot, isTabSlot, player, api);
+                syncHighlightedSlot(highlightedSlot, player, api);
             } else if (slotStack && !slotStack.isEmpty()) {
                 // empty hand on highlighted slot -> take item back
                 player.giveItem(slotStack);
                 highlightedSlot.setStack(null);
-                syncHighlightedSlot(highlightedSlot, isTabSlot, player, api);
+                syncHighlightedSlot(highlightedSlot, player, api);
                 highlightedSlot = null;
                 for (var i = 0; i < highlightLineIds.length; i++) {
                     try { guiRef.removeComponent(highlightLineIds[i]); } catch(e) {}
@@ -538,7 +491,6 @@ function customGuiSlotClicked(event) {
 function customGuiClosed(event) {
     if (!skipSaveOnClose) {
         savePageItems();
-        saveTabItems();
     }
     if (event && event.player) delete adminSession[event.player.getName()];
     guiRef = null;
@@ -553,15 +505,6 @@ function savePageItems() {
     atomicSave(blockData, "ShopItems", storedSlotItems);
 }
 
-function saveTabItems() {
-    if (!lastBlock || !tabSlots || tabSlots.length === 0) return;
-    var blockData = lastBlock.getStoreddata();
-    var tabItems = tabSlots.map(function(slot) {
-        var stack = slot.getStack();
-        return (stack && !stack.isEmpty()) ? stack.getItemNbt().toJsonString() : null;
-    });
-    atomicSave(blockData, "TabItems", tabItems);
-}
 
 // Block model toggle (invisible barrier / cooler)
 function getModelIndex(block) {
