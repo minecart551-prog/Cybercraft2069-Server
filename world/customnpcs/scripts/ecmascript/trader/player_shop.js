@@ -9,6 +9,8 @@ var highlightLineIds = [];
 var highlightedSlot = null;
 var lastBlock = null;
 var lastPlayer = null;
+// admin mode decided at interact time (shift+right click); GUI callbacks have no sneaking state
+var adminSession = {};
 var storedSlotItems = {};
 var currentPage = 0;
 var maxPages = 1;
@@ -148,11 +150,13 @@ function interact(event) {
     lastPlayer = player;
 
     var bedrockMode = (player.getMainhandItem() && player.getMainhandItem().getName() === "minecraft:bedrock");
-    var adminMode = player.isSneaking() && (bedrockMode || canEdit(player, lastBlock));
-    if (player.isSneaking() && !adminMode) {
+    var wantsAdmin = player.isSneaking() || bedrockMode;
+    var adminMode = bedrockMode || (player.isSneaking() && canEdit(player, lastBlock));
+    if (wantsAdmin && !adminMode) {
         player.message("§cYou don't have permission to edit this shop.");
         return;
     }
+    adminSession[player.getName()] = adminMode;
 
     var blockData = lastBlock.getStoreddata();
     storedSlotItems = loadShopItems(blockData);
@@ -255,7 +259,7 @@ function updateVisibleSlots(player, api, adminMode) {
         if (pageData && globalIndex < pageData.length && pageData[globalIndex]) {
             try {
                 var item = player.getWorld().createItemFromNbt(api.stringToNbt(pageData[globalIndex].displayNbt));
-                var price = pageData[globalIndex].price;
+                var price = pageData[globalIndex].price || 0;
                 var lore = item.getLore();
                 var loreArray = [];
                 for (var j = 0; j < lore.length; j++) {
@@ -273,10 +277,44 @@ function updateVisibleSlots(player, api, adminMode) {
     }
 }
 
+// Persist whatever is in a highlighted slot back into stored data.
+// Tab slots go into TabItems; shop slots keep their price and store a clean NBT string.
+function syncHighlightedSlot(slot, isTabSlot, player, api) {
+    if (isTabSlot) {
+        saveTabItems();
+        return;
+    }
+    var hIndex = mySlots.indexOf(slot);
+    if (hIndex === -1) return;
+    var gIndex = viewportToGlobal(hIndex);
+    var pageData = storedSlotItems[0];
+    if (!pageData) { pageData = makeNullArray(slotPositions.length); }
+    var old = pageData[gIndex];
+    var price = old ? old.price : 0;
+    var stack = slot.getStack();
+    if (stack && !stack.isEmpty()) {
+        // strip price/purchase lore before storing so it can be rebuilt on render
+        var lore = stack.getLore();
+        var cleanLore = [];
+        for (var j = 0; j < lore.length; j++) {
+            var line = lore[j];
+            if (line.indexOf("Price:") === -1 && line.indexOf("Click to purchase") === -1) cleanLore.push(line);
+        }
+        while (cleanLore.length > 0 && cleanLore[cleanLore.length - 1] === "") cleanLore.pop();
+        stack.setLore(cleanLore);
+        pageData[gIndex] = { displayNbt: stack.getItemNbt().toJsonString(), price: price };
+    } else {
+        pageData[gIndex] = null;
+    }
+    storedSlotItems[0] = pageData;
+    savePageItems();
+    updateVisibleSlots(player, api, !!adminSession[player.getName()]);
+}
+
 function customGuiButton(event) {
     var player = event.player;
     var api = event.API;
-    var adminMode = (player.getMainhandItem() && player.getMainhandItem().getName() === "minecraft:bedrock") || canEdit(player, lastBlock);
+    var adminMode = !!adminSession[player.getName()] || (player.getMainhandItem() && player.getMainhandItem().getName() === "minecraft:bedrock");
     var maxViewportRow = Math.max(0, totalRows - viewportRows);
 
     if (event.buttonId === 111) {
@@ -328,7 +366,9 @@ function customGuiButton(event) {
         var maxVr = Math.max(0, totalRows - viewportRows);
         if (viewportRow > maxVr) viewportRow = maxVr;
         player.message("§aSet rows to §e" + totalRows);
-        interact({player: player, API: api, block: lastBlock});
+        updateVisibleSlots(player, api, adminMode);
+        updateScrollIndicator();
+        if (guiRef) guiRef.update();
         return;
     }
     if (event.buttonId !== 101) return;
@@ -371,7 +411,7 @@ function customGuiSlotClicked(event) {
     var stack = event.stack;
     var player = event.player;
     var api = event.API;
-    var adminMode = (player.getMainhandItem() && player.getMainhandItem().getName() === "minecraft:bedrock") || canEdit(player, lastBlock);
+    var adminMode = !!adminSession[player.getName()] || (player.getMainhandItem() && player.getMainhandItem().getName() === "minecraft:bedrock");
     var slotIndex = mySlots.indexOf(clickedSlot);
 
     if (adminMode) {
@@ -400,54 +440,52 @@ function customGuiSlotClicked(event) {
             if (guiRef) guiRef.update();
             return;
         }
-        // Player inventory slot -> stock
+        // click on an ordinary (non-tab, non-shop) slot, e.g. player inventory -> stock/change item
         if (!highlightedSlot) return;
-        var playerSlots = guiRef.getPlayerSlots();
-        var pIndex = -1;
-        for (var i = 0; i < playerSlots.length; i++) {
-            if (playerSlots[i] === clickedSlot) { pIndex = i; break; }
-        }
-        if (pIndex !== -1 && stack && !stack.isEmpty()) {
-            var hIndex = mySlots.indexOf(highlightedSlot);
-            if (hIndex === -1) return;
-            var gIndex = viewportToGlobal(hIndex);
-            var pageData = storedSlotItems[0];
-            if (!pageData) { pageData = makeNullArray(slotPositions.length); storedSlotItems[0] = pageData; }
-            pageData[gIndex] = { displayNbt: stack.getItemNbt().toJsonString(), price: 0 };
-            storedSlotItems[0] = pageData;
-            savePageItems();
-            mySlots[hIndex].setStack(stack);
-            clickedSlot.setStack(null);
-            if (guiRef) guiRef.update();
-            player.message("§aStocked. Set a price to sell.");
-            return;
-        }
-        // Remove item (highlighted slot + empty hand)
-        if (stack === null || (stack && stack.isEmpty())) {
-            if (!highlightedSlot) return;
-            var hIndex2 = mySlots.indexOf(highlightedSlot);
-            if (hIndex2 !== -1) {
-                var gIndex2 = viewportToGlobal(hIndex2);
-                var pageData2 = storedSlotItems[0];
-                var old = pageData2 ? pageData2[gIndex2] : null;
-                if (old && old.displayNbt) {
-                    try {
-                        var oldItem = player.getWorld().createItemFromNbt(api.stringToNbt(old.displayNbt));
-                        player.giveItem(oldItem);
-                    } catch(e) {}
+        var isTabSlot = (tabSlots.indexOf(highlightedSlot) !== -1);
+        try {
+            var slotStack = highlightedSlot.getStack();
+            var maxStack = stack ? stack.getMaxStackSize() : 64;
+
+            if (stack && !stack.isEmpty()) {
+                if (slotStack && !slotStack.isEmpty() && slotStack.getDisplayName() === stack.getDisplayName()) {
+                    // merge into existing stack
+                    var total = slotStack.getStackSize() + stack.getStackSize();
+                    if (total <= maxStack) {
+                        slotStack.setStackSize(total);
+                        highlightedSlot.setStack(slotStack);
+                        player.removeItem(stack, stack.getStackSize());
+                    } else {
+                        var overflow = total - maxStack;
+                        slotStack.setStackSize(maxStack);
+                        highlightedSlot.setStack(slotStack);
+                        var overflowCopy = player.getWorld().createItemFromNbt(stack.getItemNbt());
+                        overflowCopy.setStackSize(overflow);
+                        player.removeItem(stack, stack.getStackSize());
+                        player.giveItem(overflowCopy);
+                    }
+                } else {
+                    // replace: return old item to player, put a clean copy in the slot
+                    var itemCopy = player.getWorld().createItemFromNbt(stack.getItemNbt());
+                    if (slotStack && !slotStack.isEmpty()) player.giveItem(slotStack);
+                    highlightedSlot.setStack(itemCopy);
+                    player.removeItem(stack, stack.getStackSize());
                 }
-                if (pageData2) pageData2[gIndex2] = null;
-                storedSlotItems[0] = pageData2;
-                savePageItems();
-                mySlots[hIndex2].setStack(null);
+                syncHighlightedSlot(highlightedSlot, isTabSlot, player, api);
+            } else if (slotStack && !slotStack.isEmpty()) {
+                // empty hand on highlighted slot -> take item back
+                player.giveItem(slotStack);
+                highlightedSlot.setStack(null);
+                syncHighlightedSlot(highlightedSlot, isTabSlot, player, api);
                 highlightedSlot = null;
                 for (var i = 0; i < highlightLineIds.length; i++) {
                     try { guiRef.removeComponent(highlightLineIds[i]); } catch(e) {}
                 }
                 highlightLineIds = [];
-                if (guiRef) guiRef.update();
             }
-            return;
+            if (guiRef) guiRef.update();
+        } catch(e) {
+            player.message("§cError: " + e);
         }
         return;
     }
@@ -486,9 +524,11 @@ function customGuiSlotClicked(event) {
 
 function customGuiClosed(event) {
     if (!skipSaveOnClose) savePageItems();
+    if (event && event.player) delete adminSession[event.player.getName()];
     guiRef = null;
     highlightedSlot = null;
     highlightLineIds = [];
+    viewportRow = 0;
 }
 
 function savePageItems() {
