@@ -148,7 +148,7 @@ function viewportToGlobal(slotIndex) {
 function ensureAdminWidgets(player, api) {
     if (!guiRef) return;
     if (!guiRef.getComponent(3)) guiRef.addLabel(3, "§7Price:", 2, -100, 0.8, 0.8);
-    if (!guiRef.getComponent(ID_PRICE_FIELD)) guiRef.addTextField(ID_PRICE_FIELD, 30, -104, 90, 18).setText("Price");
+    if (!guiRef.getComponent(ID_PRICE_FIELD)) guiRef.addTextField(ID_PRICE_FIELD, 30, -104, 90, 18).setText("");
     if (!guiRef.getComponent(ID_SET_PRICE_BUTTON)) guiRef.addButton(ID_SET_PRICE_BUTTON, "Set", 125, -104, 35, 18);
     if (!guiRef.getComponent(6)) guiRef.addLabel(6, "§7Rows:", -105, -29, 0.8, 0.8);
     if (!guiRef.getComponent(ID_ROWS_FIELD)) guiRef.addTextField(ID_ROWS_FIELD, -105, -17, 40, 18).setText("" + totalRows);
