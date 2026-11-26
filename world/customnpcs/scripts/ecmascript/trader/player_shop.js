@@ -577,7 +577,10 @@ function customGuiSlotClicked(event) {
 }
 
 function customGuiClosed(event) {
-    if (!skipSaveOnClose) savePageItems();
+    if (!skipSaveOnClose) {
+        savePageItems();
+        saveTabItems();
+    }
     if (event && event.player) delete adminSession[event.player.getName()];
     guiRef = null;
     highlightedSlot = null;
@@ -605,10 +608,10 @@ function saveTabItems() {
 function getModelIndex(block) {
     try {
         var v = block.getStoreddata().get("ShopModel");
-        if (v === null || v === undefined) return 0;
+        if (v === null || v === undefined) return 1; // default to cooler
         var n = parseInt(String(v));
-        return (isNaN(n) || n < 0 || n > 1) ? 0 : n;
-    } catch(e) { return 0; }
+        return (isNaN(n) || n < 0 || n > 1) ? 1 : n;
+    } catch(e) { return 1; }
 }
 
 function applyModel(block, index) {
