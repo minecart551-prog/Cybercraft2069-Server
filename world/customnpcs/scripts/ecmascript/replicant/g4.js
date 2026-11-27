@@ -19,7 +19,7 @@ function init(event){
     npc.getStats().setMaxHealth(400);
     npc.getStats().setRespawnType(3);
     npc.getStats().getRanged().setStrength(20);
-    npc.getStats().getRanged().setAccuracy(70);
+    npc.getStats().getRanged().setAccuracy(68);
   //  npc.getStats().getRanged().setSpeed(10);
     npc.getInventory().setDropItem(1, item, 100);
          npc.getInventory().setExp(30,30);
