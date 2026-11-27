@@ -12,7 +12,8 @@
       {"name": "Special Gears 1", "initials": "", "pos": [2188, -10, 1203], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "cyberwarecore:kinetic_frame"},
       {"name": "Special Gears 2", "initials": "", "pos": [2412, -51, 1496], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "cyberwarecore:kinetic_frame"},   
       {"name": "Special Gears 4", "initials": "", "pos": [2178, -35, 144], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "cyberwarecore:kinetic_frame"},  
-      {"name": "Special Gears 5", "initials": "", "pos": [2281, -50, 1973], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "cyberwarecore:kinetic_frame"},        
+      {"name": "Special Gears 5", "initials": "", "pos": [2281, -50, 1973], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "cyberwarecore:kinetic_frame"},    
+      {"name": "Special Gears 6", "initials": "", "pos": [2230, -51, 468], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "cyberwarecore:kinetic_frame"}, 
       {"name": "Special Gears 3", "initials": "", "pos": [2162, -51, 1361], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "cyberwarecore:kinetic_frame"}
     ]
   },
