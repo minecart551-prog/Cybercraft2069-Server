@@ -22,7 +22,7 @@ var CONFIG_TAB_NAMES = [
 
 var CONFIG_TAB_ROWS = [
     10,
-    17,
+    19,
     7,
     1,
     1,
@@ -124,6 +124,13 @@ var CONFIG_SHOP_ITEMS = [
 ],
     // Tab 1 — Colored Blocks
     [
+    { id: "bbs:chroma_red", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_red"], lore: [] },
+    { id: "bbs:chroma_blue", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_blue"], lore: [] },
+    { id: "bbs:chroma_cyan", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_cyan"], lore: [] },
+    { id: "bbs:chroma_green", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_green"], lore: [] },
+    { id: "bbs:chroma_magenta", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_magenta"], lore: [] },
+    { id: "bbs:chroma_white", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_white"], lore: [] },
+    { id: "bbs:chroma_yellow", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_yellow"], lore: [] },
     { id: "minecraft:ink_sac", count: 1, price: BUILDINGBLOCKS_PRICES["minecraft:ink_sac"], lore: [] },
     { id: "minecraft:glow_ink_sac", count: 1, price: BUILDINGBLOCKS_PRICES["minecraft:glow_ink_sac"], lore: [] },
     { id: "minecraft:purple_dye", count: 1, price: BUILDINGBLOCKS_PRICES["minecraft:purple_dye"], lore: [] },
@@ -293,13 +300,7 @@ var CONFIG_SHOP_ITEMS = [
     { id: "minecraft:purple_banner", count: 1, price: BUILDINGBLOCKS_PRICES["minecraft:purple_banner"], lore: [] },
     { id: "minecraft:magenta_banner", count: 1, price: BUILDINGBLOCKS_PRICES["minecraft:magenta_banner"], lore: [] },
     { id: "minecraft:pink_banner", count: 1, price: BUILDINGBLOCKS_PRICES["minecraft:pink_banner"], lore: [] },
-    { id: "bbs:chroma_red", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_red"], lore: [] },
-    { id: "bbs:chroma_blue", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_blue"], lore: [] },
-    { id: "bbs:chroma_cyan", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_cyan"], lore: [] },
-    { id: "bbs:chroma_green", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_green"], lore: [] },
-    { id: "bbs:chroma_magenta", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_magenta"], lore: [] },
-    { id: "bbs:chroma_white", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_white"], lore: [] },
-    { id: "bbs:chroma_yellow", count: 1, price: BUILDINGBLOCKS_PRICES["bbs:chroma_yellow"], lore: [] },
+
     null,
     null,
     null,
