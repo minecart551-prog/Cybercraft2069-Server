@@ -34,6 +34,7 @@
       {"name": "Shop 11", "initials": "", "pos": [1834, -43, 831], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:music_disc_far"},  
       {"name": "Shop 12", "initials": "", "pos": [2010, -47, 427], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:music_disc_far"},  
       {"name": "Shop 13", "initials": "", "pos": [1256, -37, -705], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:music_disc_far"},  
+      {"name": "Shop 14", "initials": "", "pos": [2678, -49, 1361], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "minecraft:music_disc_far"},  
       {"name": "Furniture Store", "initials": "", "pos": [2551, 45, 893], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Furniture Store 2", "initials": "", "pos": [2218, -47, 1233], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
       {"name": "Furniture Store 3", "initials": "", "pos": [1383, -37, -79], "color": "#000000", "yaw": 0, "global": false, "keywords": [], "icon": "decocraft:armchair_lime"},
