@@ -22,7 +22,7 @@ var CONFIG_TAB_NAMES = [
 
 var CONFIG_TAB_ROWS = [
     10,
-    19,
+    20,
     7,
     1,
     1,
