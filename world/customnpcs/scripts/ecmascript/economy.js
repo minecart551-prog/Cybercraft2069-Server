@@ -3639,6 +3639,13 @@ var FURNITURESTORE_PRICES = {
 
 // --- BUILDINGBLOCKS_PRICES (298 entries) ---
 var BUILDINGBLOCKS_PRICES = {
+    "bbs:chroma_blue": 1,
+    "bbs:chroma_cyan": 1,
+    "bbs:chroma_green": 1,
+    "bbs:chroma_magenta": 1,
+    "bbs:chroma_red": 1,
+    "bbs:chroma_white": 1,
+    "bbs:chroma_yellow": 1,
     "kubejs:barrier": 1,
     "minecraft:acacia_leaves": 1,
     "minecraft:acacia_log": 1,
